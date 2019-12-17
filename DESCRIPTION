@@ -1,0 +1,29 @@
+Package: policyTree
+Title: Multi-Action Treatment Effect Estimation and Exact Tree Search (beta)
+Version: 0.1.0
+Authors@R: c(
+    person("Zhengyuan", "Zhou", role = "aut"),
+    person("Susan", "Athey", role = "aut"),
+    person("Stefan", "Wager", role = "aut"),
+    person("Ayush", "Kanodia", role = "aut"),
+    person("Erik", "Sverdrup", role = "cre", email = "erikcs@stanford.edu")
+    )
+Description: Multi-action treatment effect estimation and policy learning
+ as in Zhou, Athey and Wager (2018) <arXiv:1810.04778>.
+Depends:
+    R (>= 3.5.0)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Suggests:
+    testthat (>= 2.1.0),
+    DiagrammeR
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.0.1
+LinkingTo:
+    Rcpp,
+    BH
+Imports:
+    Rcpp,
+    grf (>= 1.0.0)
+URL: https://github.com/grf-labs/policyTree

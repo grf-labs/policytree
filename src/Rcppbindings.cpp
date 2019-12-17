@@ -1,0 +1,74 @@
+/*-------------------------------------------------------------------------------
+  This file is part of policyTree.
+
+  policyTree is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  policyTree is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with policyTree. If not, see <http://www.gnu.org/licenses/>.
+#-------------------------------------------------------------------------------*/
+#include <queue>
+
+#include "tree_search.h"
+
+/**
+  * Find the depth `depth` tree that maximizes the sum of rewards.
+  *
+  * @param X The features
+  * @param Y The rewards
+  * @param depth The tree depth (0-indexed)
+  * @return The best tree stored in an adjacency list (same format as `grf`).
+  *
+  * The returned list: a list of of lists (nodes), where each each leaf node
+  * have the entries: ($is_leaf = TRUE, $outcome = column_id_of_best_action)
+  * and each non-leaf node have entries:
+  * ($is_leaf = FALSE, split_variable = colum_id_of_best_split,
+  *  $split_value = best_split, $left_child = list_index_of_left_child,
+  *  $right_child = list_index_of_right_child).
+  *
+  */
+// [[Rcpp::export]]
+Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
+                            const Rcpp::NumericMatrix& Y,
+                            int depth) {
+  size_t num_rows = X.rows();
+  size_t num_cols_x = X.cols();
+  size_t num_cols_y = Y.cols();
+  const Data* data = new Data(X, Y, num_rows, num_cols_x, num_cols_y);
+
+  std::unique_ptr<Node> root = tree_search(depth, data);
+
+  Rcpp::List nodes;
+  int i = 1;
+  std::queue<std::unique_ptr<Node>> frontier;
+  frontier.push(std::move(root));
+  while (frontier.size() > 0) {
+    auto node = std::move(frontier.front());
+    frontier.pop();
+    if (node->left_child == nullptr && node->right_child == nullptr) {
+      auto list_node = Rcpp::List::create(Rcpp::Named("is_leaf") = true,
+                                          Rcpp::Named("outcome") = node->action_id + 1); // C++ index
+      nodes.push_back(list_node);
+    } else {
+      auto list_node = Rcpp::List::create(Rcpp::Named("is_leaf") = false,
+                                          Rcpp::Named("split_variable") = node->index + 1, // C++ index
+                                          Rcpp::Named("split_value") = node->value,
+                                          Rcpp::Named("left_child") = i + 1,
+                                          Rcpp::Named("right_child") = i + 2);
+      nodes.push_back(list_node);
+      frontier.push(std::move(node->left_child));
+      frontier.push(std::move(node->right_child));
+      i += 2;
+    }
+  }
+
+  delete data;
+  return nodes;
+}

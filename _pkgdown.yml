@@ -1,0 +1,32 @@
+navbar:
+  type: default
+  left:
+  - text: "Get started"
+    href: articles/policyTree.html
+  - text: "Reference"
+    href: reference/index.html
+  - text: "Changelog"
+    href: CHANGELOG.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/grf-labs/policyTree
+
+reference:
+  - title: Tree search
+    contents:
+      - policy_tree
+      - predict.policy_tree
+      - print.policy_tree
+      - plot.policy_tree
+
+  - title: Treatment effect estimation
+    contents:
+      - multi_causal_forest
+      - predict.multi_causal_forest
+      - get_conditional_means
+      - get_double_robust_scores
+      - print.multi_causal_forest
+
+  - title: Simulate data
+    contents:
+      - starts_with("gen_data")

@@ -1,0 +1,114 @@
+---
+title: "policyTree introduction"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{policyTree introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+set.seed(42)
+```
+
+```{r setup}
+library(policyTree)
+library(grf)
+```
+
+# Binary treatment effect estimation and policy learning
+```{r}
+n <- 10000
+p <- 10
+
+X <- matrix(rnorm(n * p), n, p)
+ee <- 1 / (1 + exp(X[, 3]))
+tt <- 1 / (1 + exp((X[, 1] + X[, 2]) / 2)) - 0.5
+W <- rbinom(n, 1, ee)
+Y <- X[, 3] + W * tt + rnorm(n)
+
+cf <- causal_forest(X, Y, W)
+
+plot(tt, predict(cf)$predictions)
+
+dr <- get_double_robust_scores(cf)
+tree <- policy_tree(X, dr, 2)
+tree
+pp <- predict(tree, X)
+boxplot(tt ~ pp)
+plot(tree)
+
+plot(X[, 1], X[, 2], col = pp)
+abline(0, -1, lwd = 4, col = 4)
+```
+
+# Multi-action treatment effect estimation
+
+The following example is from the 3-action DGP from section 6.4.1 in [Zhou, Athey and Wager (2018)](https://arxiv.org/abs/1810.04778)
+
+```{r}
+n <- 1000
+p <- 10
+data <- gen_data_mapl(n, p)
+head(data.frame(data)[1:6])
+
+multi.forest <- multi_causal_forest(X = data$X, Y = data$Y, W = data$action)
+
+# tau.hats:
+head(predict(multi.forest)$predictions)
+```
+
+### Policy learning
+
+Cross-fitted Augmented Inverse Propensity Weighted Learning (CAIPWL) with the optimal depth 2 tree
+
+```{r}
+Gamma.matrix <- get_double_robust_scores(multi.forest)
+head(Gamma.matrix)
+
+train <- sample(1:n, 900)
+opt.tree <- policy_tree(data$X[train, ], Gamma.matrix[train, ], depth = 2)
+opt.tree
+
+plot(opt.tree)
+```
+
+Predict treatment on held out data
+
+```{r}
+head(predict(opt.tree, data$X[-train, ]))
+```
+
+# Efficient Policy Learning - Binary Treatment and Instrumental Variables
+
+The following example is from section 5.2 in [Wager and Athey (2017)](https://arxiv.org/abs/1702.02896).
+
+```{r}
+n <- 500
+data <- gen_data_epl(n, type = "continuous")
+head(data.frame(data))[1:6]
+
+iv.forest <- grf::instrumental_forest(X = data$X, Y = data$Y, W = data$W, Z = data$Z)
+
+gamma <- get_double_robust_scores(iv.forest)
+head(gamma)
+```
+
+Find the depth-2 tree which solves (2):
+
+```{r}
+train <- sample(1:400)
+tree <- policy_tree(data$X[train, ], gamma[train, ])
+tree
+```
+
+Evaluate the policy on held out data:
+
+```{r}
+piX <- predict(tree, data$X[-train, ]) - 1
+head(piX)
+
+reward.policy <- mean((2 * piX - 1) * data$tau[-train])
+reward.policy
+```
