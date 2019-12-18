@@ -93,7 +93,7 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
 }
 
 
-// Find the best action in a leaf node
+// Find the best action in a leaf node (O(nd))
 std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_sets,
                                           const Data* data) {
   size_t num_rewards = data->num_rewards();
@@ -117,7 +117,7 @@ std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_se
 }
 
 
-// Find the best action (left and right) in the parent of a leaf node
+// Find the best action (left and right) in the parent of a leaf node (O(npd))
 std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_sets,
                                          const Data* data,
                                          std::vector<std::vector<double>>& sum_array) {
@@ -253,6 +253,9 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
  *
  * The split condition reads: if value <= split value, go to left, else right.
  *
+ * Time complexity: O(p^k n^(k-1) (log n + d) + pnlog n) where p is the number of
+ * features, n the number of observations, d the number of actions, and k
+ * the tree depth.
  */
 std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       int level,
