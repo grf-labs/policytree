@@ -74,7 +74,7 @@ policy_tree <- function(X, Gamma, depth = 2) {
 
 #' Predict method for policy_tree
 #'
-#' Predict values based on fitted policyTree object.
+#' Predict values based on fitted policy_tree object.
 #' @param object policy_tree object
 #' @param newdata A data frame with features
 #' @param ... Additional arguments (currently ignored).

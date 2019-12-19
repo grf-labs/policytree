@@ -18,7 +18,7 @@ A vector of predictions. Each element is an integer from 1 to d where d is
 the number of columns in the reward matrix.
 }
 \description{
-Predict values based on fitted policyTree object.
+Predict values based on fitted policy_tree object.
 }
 \examples{
 n <- 50
