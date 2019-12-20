@@ -10,10 +10,10 @@ conditional_means.causal_forest <- function(object, ...) {
 }
 
 
-#' @describeIn get_double_robust_scores Scores \eqn{(\Gamma_0, \Gamma_1)}
-#' @method get_double_robust_scores causal_forest
+#' @describeIn double_robust_scores Scores \eqn{(\Gamma_0, \Gamma_1)}
+#' @method double_robust_scores causal_forest
 #' @export
-get_double_robust_scores.causal_forest <- function(object, ...) {
+double_robust_scores.causal_forest <- function(object, ...) {
   mu.matrix <- conditional_means(object, ...)
   W.hat.matrix <- cbind(1 - object$W.hat, object$W.hat) # [control, treated]
   n.obs <- nrow(W.hat.matrix)

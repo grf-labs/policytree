@@ -43,9 +43,9 @@ conditional_means <- function(object, ...) {
 #' Y <- runif(n)
 #' W <- sample(1:d, n, replace = TRUE)
 #' forests <- multi_causal_forest(X = X, Y = Y, W = W)
-#' get_double_robust_scores(forests)
+#' double_robust_scores(forests)
 #' }
 #' @export
-get_double_robust_scores <- function(object, ...) {
-  UseMethod("get_double_robust_scores")
+double_robust_scores <- function(object, ...) {
+  UseMethod("double_robust_scores")
 }

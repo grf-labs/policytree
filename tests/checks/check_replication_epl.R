@@ -18,7 +18,7 @@ res <- parallel::mclapply(1:nrow(params), function(i) {
     data <- gen_data_epl(n, type = dgp)
     data.test <- gen_data_epl(n, type = dgp)
     cf <- grf::instrumental_forest(data$X, data$Y, data$W, data$Z)
-    gamma <- get_double_robust_scores(cf)
+    gamma <- double_robust_scores(cf)
 
     tree <- policy_tree(data$X, gamma)
     pi.x <- predict(tree, data.test$X) - 1 # EPL: 0=control, 1=treated

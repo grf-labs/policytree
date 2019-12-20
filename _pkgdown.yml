@@ -24,7 +24,7 @@ reference:
       - multi_causal_forest
       - predict.multi_causal_forest
       - conditional_means
-      - get_double_robust_scores
+      - double_robust_scores
       - print.multi_causal_forest
 
   - title: Simulate data

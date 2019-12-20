@@ -32,7 +32,7 @@ cf <- causal_forest(X, Y, W)
 
 plot(tt, predict(cf)$predictions)
 
-dr <- get_double_robust_scores(cf)
+dr <- double_robust_scores(cf)
 tree <- policy_tree(X, dr, 2)
 tree
 pp <- predict(tree, X)
@@ -64,7 +64,7 @@ head(predict(multi.forest)$predictions)
 Cross-fitted Augmented Inverse Propensity Weighted Learning (CAIPWL) with the optimal depth 2 tree
 
 ```{r}
-Gamma.matrix <- get_double_robust_scores(multi.forest)
+Gamma.matrix <- double_robust_scores(multi.forest)
 head(Gamma.matrix)
 
 train <- sample(1:n, 900)
@@ -91,7 +91,7 @@ head(data.frame(data))[1:6]
 
 iv.forest <- grf::instrumental_forest(X = data$X, Y = data$Y, W = data$W, Z = data$Z)
 
-gamma <- get_double_robust_scores(iv.forest)
+gamma <- double_robust_scores(iv.forest)
 head(gamma)
 ```
 

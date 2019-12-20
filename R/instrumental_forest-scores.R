@@ -10,7 +10,7 @@ conditional_means.instrumental_forest <- function(object, ...) {
 }
 
 
-#' @describeIn get_double_robust_scores Scores \eqn{(-\Gamma, \Gamma)}
+#' @describeIn double_robust_scores Scores \eqn{(-\Gamma, \Gamma)}
 #' @note For instrumental_forest this method returns \eqn{(-\Gamma_i, \Gamma_i)} where \eqn{\Gamma_i}
 #'  is the double robust estimator of the treatment effect as in eqn. (52) in Athey and Wager (2017).
 #'
@@ -20,9 +20,9 @@ conditional_means.instrumental_forest <- function(object, ...) {
 #'
 #' @references Athey, Susan, and Stefan Wager. "Efficient policy learning." arXiv preprint arXiv:1702.02896 (2017).
 #'
-#' @method get_double_robust_scores instrumental_forest
+#' @method double_robust_scores instrumental_forest
 #' @export
-get_double_robust_scores.instrumental_forest <- function(object, compliance.score = NULL, ...) {
+double_robust_scores.instrumental_forest <- function(object, compliance.score = NULL, ...) {
   if (is.null(compliance.score)) {
     compliance.forest <- grf::causal_forest(
       X = object$X.orig,

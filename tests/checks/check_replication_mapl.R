@@ -27,7 +27,7 @@ res <- parallel::mclapply(1:nrow(params), function(i) {
     data <- gen_data_mapl(n, p)
     mcf <- multi_causal_forest(X = data$X, Y = data$Y, W = data$action,
                                tune.parameters = tune.parameters)
-    Gamma.hat <- get_double_robust_scores(mcf)
+    Gamma.hat <- double_robust_scores(mcf)
     tree <- policy_tree(X = data$X, Gamma = Gamma.hat)
 
     index.policy <- cbind(1:n.test, predict(tree, data.test$X))

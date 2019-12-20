@@ -58,7 +58,7 @@ head(predict(multi.forest)$predictions)
 
 ### Policy learning
 ```r
-Gamma.matrix <- get_double_robust_scores(multi.forest)
+Gamma.matrix <- double_robust_scores(multi.forest)
 head(Gamma.matrix)
 #>              A         B         C
 #> [1,] 0.4953139 0.8489728 0.4768008
@@ -94,7 +94,7 @@ Tree search
 
 Treatment effects
 * `multi_causal_forest()`: fits one causal forest for each treatment. Operates similarly to _grf_: `predict()` returns treatment estimates.
-* `get_double_robust_scores()`: generic function dispatching on appropriate forest type. By the OOB nature of forest estimates these have cross-fitting "baked in".
+* `double_robust_scores()`: generic function dispatching on appropriate forest type. By the OOB nature of forest estimates these have cross-fitting "baked in".
 
 ### Contributing
 

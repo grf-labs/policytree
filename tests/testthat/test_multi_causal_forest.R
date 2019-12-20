@@ -9,7 +9,7 @@ test_that("everything runs", {
   mcf <- multi_causal_forest(X, Y, W)
   predict(mcf)
   conditional_means(mcf)
-  get_double_robust_scores(mcf)
+  double_robust_scores(mcf)
   p <- capture.output(print(mcf))
 
   multi_causal_forest(X, Y, W, orthog.boosting = TRUE)

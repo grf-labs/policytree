@@ -8,11 +8,11 @@ test_that("everything runs", {
 
   cf <- grf::causal_forest(X, Y, W)
   conditional_means(cf)
-  get_double_robust_scores(cf)
+  double_robust_scores(cf)
 
   iv <- grf::instrumental_forest(X, Y, W, Z)
   conditional_means(iv)
-  get_double_robust_scores(iv)
+  double_robust_scores(iv)
 
   expect_equal(1, 1)
 })

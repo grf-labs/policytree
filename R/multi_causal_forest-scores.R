@@ -10,10 +10,10 @@ conditional_means.multi_causal_forest <- function(object, ...) {
 }
 
 
-#' @describeIn get_double_robust_scores Matrix \eqn{\Gamma} of scores for each treatment \eqn{a}
-#' @method get_double_robust_scores multi_causal_forest
+#' @describeIn double_robust_scores Matrix \eqn{\Gamma} of scores for each treatment \eqn{a}
+#' @method double_robust_scores multi_causal_forest
 #' @export
-get_double_robust_scores.multi_causal_forest <- function(object, ...) {
+double_robust_scores.multi_causal_forest <- function(object, ...) {
   mu.matrix <- conditional_means(object, ...)
   n.obs <- nrow(object$W.hat)
   n.treatments <- ncol(object$W.hat)
