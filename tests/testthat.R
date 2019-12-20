@@ -1,5 +1,5 @@
 library(testthat)
-library(policyTree)
+library(policytree)
 
 options(warn = 2) # warnings are errors
-test_check("policyTree")
+test_check("policytree")

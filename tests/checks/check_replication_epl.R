@@ -1,7 +1,7 @@
 # Test that figure 3 from EPL matches https://arxiv.org/abs/1702.02896
 # Usage: `Rscript check_replication_epl.R` (time with 20 cores: ~ 6 hours)
 # grf version: 1.0.1
-library(policyTree)
+library(policytree)
 
 nsim <- 200
 n <- c(500, 1000, 2000, 4000, 8000, 16000)

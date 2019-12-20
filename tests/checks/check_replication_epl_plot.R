@@ -1,5 +1,5 @@
 library(ggplot2)
-library(policyTree)
+library(policytree)
 
 df <- read.csv("check_replication_epl_out.csv")
 df <- do.call(

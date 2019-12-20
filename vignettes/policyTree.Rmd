@@ -1,8 +1,8 @@
 ---
-title: "policyTree introduction"
+title: "policytree introduction"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{policyTree introduction}
+  %\VignetteIndexEntry{policytree introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,7 +13,7 @@ set.seed(42)
 ```
 
 ```{r setup}
-library(policyTree)
+library(policytree)
 library(grf)
 ```
 

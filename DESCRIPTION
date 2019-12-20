@@ -1,4 +1,4 @@
-Package: policyTree
+Package: policytree
 Title: Multi-Action Treatment Effect Estimation and Exact Tree Search (beta)
 Version: 0.1.0
 Authors@R: c(
@@ -26,4 +26,4 @@ LinkingTo:
 Imports:
     Rcpp,
     grf (>= 1.0.0)
-URL: https://github.com/grf-labs/policyTree
+URL: https://github.com/grf-labs/policytree

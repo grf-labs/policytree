@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.com/grf-labs/policyTree.svg?branch=master)](https://travis-ci.com/grf-labs/policyTree)
+[![Build Status](https://travis-ci.com/grf-labs/policytree.svg?branch=master)](https://travis-ci.com/grf-labs/policytree)
 
-# policyTree
+# policytree
 
 Learn optimal policies via doubly robust empirical welfare maximization over trees
 
@@ -9,26 +9,26 @@ Learn optimal policies via doubly robust empirical welfare maximization over tre
 * Fit optimal policies with exact tree search
 
 ### Documentation
-https://grf-labs.github.io/policyTree/
-* [Get started](https://grf-labs.github.io/policyTree/articles/policyTree.html)
-* [Reference](https://grf-labs.github.io/policyTree/reference/index.html)
+https://grf-labs.github.io/policytree/
+* [Get started](https://grf-labs.github.io/policytree/articles/policytree.html)
+* [Reference](https://grf-labs.github.io/policytree/reference/index.html)
 
 ### Installation
 
-From CRAN:
+<!-- From CRAN: -->
 
-```R
-install.packages("policyTree")
-```
+<!-- ```R -->
+<!-- install.packages("policytree") -->
+<!-- ``` -->
 
 Install the latest development version from source:
 
 ```
-git clone https://github.com/grf-labs/policyTree.git
-Rscript -e 'install.packages("policyTree", repos = NULL, type = "source")'
+git clone https://github.com/grf-labs/policytree.git
+Rscript -e 'install.packages("policytree", repos = NULL, type = "source")'
 
 # or
-devtools::install_github("grf-labs/policyTree")
+devtools::install_github("grf-labs/policytree")
 ```
 
 Installing from source requires a C++ 11 compiler (on Windows Rtools is required as well) together with the R packages
@@ -36,7 +36,7 @@ Installing from source requires a C++ 11 compiler (on Windows Rtools is required
 
 ### Multi-action treatment effect estimation
 ```r
-library(policyTree)
+library(policytree)
 n <- 250
 p <- 10
 d <- 3

@@ -23,7 +23,7 @@
 #' tree
 #'
 #' @export
-#' @useDynLib policyTree
+#' @useDynLib policytree
 #' @importFrom Rcpp evalCpp
 #' @importFrom utils type.convert
 policy_tree <- function(X, Gamma, depth = 2) {

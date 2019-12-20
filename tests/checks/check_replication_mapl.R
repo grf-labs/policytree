@@ -1,7 +1,7 @@
 # Test that table 2 from MAPL matches https://arxiv.org/abs/1810.04778
 # Usage: `Rscript test_replication_mapl.R` (time with 16 cores: ~ 7 hours)
 # grf version: 1.0.1
-library(policyTree)
+library(policytree)
 
 nsim <- 400
 n <- c(1000, 1500, 2000, 2500)

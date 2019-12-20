@@ -2,14 +2,14 @@ navbar:
   type: default
   left:
   - text: "Get started"
-    href: articles/policyTree.html
+    href: articles/policytree.html
   - text: "Reference"
     href: reference/index.html
   - text: "Changelog"
     href: CHANGELOG.html
   right:
   - icon: fa-github fa-lg
-    href: https://github.com/grf-labs/policyTree
+    href: https://github.com/grf-labs/policytree
 
 reference:
   - title: Tree search
