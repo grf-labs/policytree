@@ -15,12 +15,12 @@
 #' Y <- runif(n)
 #' W <- sample(1:d, n, replace = TRUE)
 #' forests <- multi_causal_forest(X = X, Y = Y, W = W)
-#' get_conditional_means(forests)
+#' conditional_means(forests)
 #' }
 #' @importFrom stats predict
 #' @keywords internal
-get_conditional_means <- function(object, ...) {
-  UseMethod("get_conditional_means")
+conditional_means <- function(object, ...) {
+  UseMethod("conditional_means")
 }
 
 #' Matrix \eqn{\Gamma} of scores for each treatment \eqn{a}

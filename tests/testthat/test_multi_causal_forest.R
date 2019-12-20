@@ -8,7 +8,7 @@ test_that("everything runs", {
 
   mcf <- multi_causal_forest(X, Y, W)
   predict(mcf)
-  get_conditional_means(mcf)
+  conditional_means(mcf)
   get_double_robust_scores(mcf)
   p <- capture.output(print(mcf))
 

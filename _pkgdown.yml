@@ -23,7 +23,7 @@ reference:
     contents:
       - multi_causal_forest
       - predict.multi_causal_forest
-      - get_conditional_means
+      - conditional_means
       - get_double_robust_scores
       - print.multi_causal_forest
 

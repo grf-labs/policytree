@@ -1,7 +1,7 @@
-#' @describeIn get_conditional_means Mean rewards \eqn{\mu} for control/treated
-#' @method get_conditional_means causal_forest
+#' @describeIn conditional_means Mean rewards \eqn{\mu} for control/treated
+#' @method conditional_means causal_forest
 #' @export
-get_conditional_means.causal_forest <- function(object, ...) {
+conditional_means.causal_forest <- function(object, ...) {
   tau.hat <- predict(object, ...)$predictions
   Y.hat.0 <- object$Y.hat - object$W.hat * tau.hat
   Y.hat.1 <- object$Y.hat + (1 - object$W.hat) * tau.hat
@@ -14,7 +14,7 @@ get_conditional_means.causal_forest <- function(object, ...) {
 #' @method get_double_robust_scores causal_forest
 #' @export
 get_double_robust_scores.causal_forest <- function(object, ...) {
-  mu.matrix <- get_conditional_means(object, ...)
+  mu.matrix <- conditional_means(object, ...)
   W.hat.matrix <- cbind(1 - object$W.hat, object$W.hat) # [control, treated]
   n.obs <- nrow(W.hat.matrix)
   observed.treatment.idx <- cbind(1:n.obs, object$W.orig + 1)

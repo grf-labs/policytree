@@ -1,7 +1,7 @@
-#' @describeIn get_conditional_means Mean rewards \eqn{\mu} for control/treated
-#' @method get_conditional_means instrumental_forest
+#' @describeIn conditional_means Mean rewards \eqn{\mu} for control/treated
+#' @method conditional_means instrumental_forest
 #' @export
-get_conditional_means.instrumental_forest <- function(object, ...) {
+conditional_means.instrumental_forest <- function(object, ...) {
   tau.hat <- predict(object, ...)$predictions
   Y.hat.0 <- object$Y.hat - object$W.hat * tau.hat
   Y.hat.1 <- object$Y.hat + (1 - object$W.hat) * tau.hat
