@@ -112,3 +112,13 @@ head(piX)
 reward.policy <- mean((2 * piX - 1) * data$tau[-train])
 reward.policy
 ```
+
+# Gauging the runtime of tree search
+
+The amortized runtime of the exact tree search is $O(p^k n^{k-1} (log n + d) + pnlog n)$ where $p$ is the number of features, $d$ the number of treatments, $n$ the number of observations, and $k$ the tree depth.
+
+For a depth two tree this is $O(p^2 n (log n + d))$ (ignoring the last term which is a global sort done at the beginning) meaning that it scales log-linearly ($nlogn$) with the number of observations, i.e. if you double the number of observations, the search will take at least four times as long.
+
+For a depth three tree it is $O(p^3 n^2 (log n + d))$. If a depth two tree with 1000 observations, 4 features and 3 actions took around 0.18 seconds, you can
+expect the level three tree to take approximately $1000\cdot 4$ times as long ($\approx
+\frac{p^3n^2}{p^2n}=pn$)
