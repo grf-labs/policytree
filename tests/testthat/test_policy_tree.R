@@ -37,16 +37,16 @@ test_that("exact tree search finds the correct depth 1 tree", {
   Y <- matrix(rnorm(n * d), n, d)
   split1 <- sample(X[X != 0 & X != 1], 1)
   splitvar1 <- sample(1:p, 1)
-  best.outcome1 <- sample(1:d, 1)
-  best.outcome2 <- sample((1:d)[-best.outcome1], 1)
-  Y[X[, splitvar1] < split1, best.outcome1] <- Y[X[, splitvar1] < split1, best.outcome1] + 500
-  Y[X[, splitvar1] >= split1, best.outcome2] <- Y[X[, splitvar1] >= split1, best.outcome2] + 500
+  best.action1 <- sample(1:d, 1)
+  best.action2 <- sample((1:d)[-best.action1], 1)
+  Y[X[, splitvar1] < split1, best.action1] <- Y[X[, splitvar1] < split1, best.action1] + 500
+  Y[X[, splitvar1] >= split1, best.action2] <- Y[X[, splitvar1] >= split1, best.action2] + 500
   tree <- policy_tree(X, Y, depth = 1)
 
   expect_equal(tree$nodes[[1]]$split_variable, splitvar1)
   expect_lte(tree$nodes[[1]]$split_value, split1)
-  expect_equal(tree$nodes[[2]]$outcome, best.outcome1)
-  expect_equal(tree$nodes[[3]]$outcome, best.outcome2)
+  expect_equal(tree$nodes[[2]]$action, best.action1)
+  expect_equal(tree$nodes[[3]]$action, best.action2)
 })
 
 
@@ -63,22 +63,22 @@ test_that("exact tree search finds the optimal depth 2 reward", {
   splitvar2 <- sample(1:p, 1)
   split3 <- sample(X, 1)
   splitvar3 <- sample(1:p, 1)
-  best.outcome1 <- 1
-  best.outcome2 <- 2
-  best.outcome3 <- 3
-  best.outcome4 <- 4
+  best.action1 <- 1
+  best.action2 <- 2
+  best.action3 <- 3
+  best.action4 <- 4
 
   best.tree <- list()
   best.tree[[1]] <- list(is_leaf = FALSE, split_variable = splitvar1, split_value = split1, left_child = 2, right_child = 3)
   best.tree[[2]] <- list(is_leaf = FALSE, split_variable = splitvar2, split_value = split2, left_child = 4, right_child = 5)
   best.tree[[3]] <- list(is_leaf = FALSE, split_variable = splitvar3, split_value = split3, left_child = 6, right_child = 7)
-  best.tree[[4]] <- list(is_leaf = TRUE, outcome = best.outcome1)
-  best.tree[[5]] <- list(is_leaf = TRUE, outcome = best.outcome2)
-  best.tree[[6]] <- list(is_leaf = TRUE, outcome = best.outcome3)
-  best.tree[[7]] <- list(is_leaf = TRUE, outcome = best.outcome4)
+  best.tree[[4]] <- list(is_leaf = TRUE, action = best.action1)
+  best.tree[[5]] <- list(is_leaf = TRUE, action = best.action2)
+  best.tree[[6]] <- list(is_leaf = TRUE, action = best.action3)
+  best.tree[[7]] <- list(is_leaf = TRUE, action = best.action4)
   best.tree <- list(nodes = best.tree)
   leaf.nodes <- apply(X, 1, function(sample) find_leaf_node(best.tree, sample))
-  best.action <- sapply(leaf.nodes, function(node) best.tree$nodes[[node]]$outcome)
+  best.action <- sapply(leaf.nodes, function(node) best.tree$nodes[[node]]$action)
   Y[cbind(1:n, best.action)] <- runif(n) * 10
   best.reward <- mean(Y[cbind(1:n, best.action)])
 
@@ -102,22 +102,22 @@ test_that("exact tree search finds the optimal depth 2 reward (discrete X)", {
   splitvar2 <- sample(1:p, 1)
   split3 <- sample(X, 1)
   splitvar3 <- sample(1:p, 1)
-  best.outcome1 <- 1
-  best.outcome2 <- 2
-  best.outcome3 <- 3
-  best.outcome4 <- 4
+  best.action1 <- 1
+  best.action2 <- 2
+  best.action3 <- 3
+  best.action4 <- 4
 
   best.tree <- list()
   best.tree[[1]] <- list(is_leaf = FALSE, split_variable = splitvar1, split_value = split1, left_child = 2, right_child = 3)
   best.tree[[2]] <- list(is_leaf = FALSE, split_variable = splitvar2, split_value = split2, left_child = 4, right_child = 5)
   best.tree[[3]] <- list(is_leaf = FALSE, split_variable = splitvar3, split_value = split3, left_child = 6, right_child = 7)
-  best.tree[[4]] <- list(is_leaf = TRUE, outcome = best.outcome1)
-  best.tree[[5]] <- list(is_leaf = TRUE, outcome = best.outcome2)
-  best.tree[[6]] <- list(is_leaf = TRUE, outcome = best.outcome3)
-  best.tree[[7]] <- list(is_leaf = TRUE, outcome = best.outcome4)
+  best.tree[[4]] <- list(is_leaf = TRUE, action = best.action1)
+  best.tree[[5]] <- list(is_leaf = TRUE, action = best.action2)
+  best.tree[[6]] <- list(is_leaf = TRUE, action = best.action3)
+  best.tree[[7]] <- list(is_leaf = TRUE, action = best.action4)
   best.tree <- list(nodes = best.tree)
   leaf.nodes <- apply(X, 1, function(sample) find_leaf_node(best.tree, sample))
-  best.action <- sapply(leaf.nodes, function(node) best.tree$nodes[[node]]$outcome)
+  best.action <- sapply(leaf.nodes, function(node) best.tree$nodes[[node]]$action)
   Y[cbind(1:n, best.action)] <- runif(n) * 10
   best.reward <- mean(Y[cbind(1:n, best.action)])
 
@@ -180,5 +180,5 @@ test_that("all equal rewards are pruned", {
   Y[, 2] <- 100
   ptn <- policy_tree(X, Y, depth = 2)
 
-  expect_equal(ptn$nodes[[1]]$outcome, 2)
+  expect_equal(ptn$nodes[[1]]$action, 2)
 })

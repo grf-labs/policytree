@@ -73,15 +73,15 @@ opt.tree <- policy_tree(X[train, ], Gamma.matrix[train, ], depth = 2)
 opt.tree
 #> policy_tree object
 #> Tree depth:  2
-#> Outcomes:  1: A 2: B 3: C
+#> Actions:  1: A 2: B 3: C
 #> Variable splits:
 #> (1) split_variable: X6  split_value: 0.421259
 #>   (2) split_variable: X3  split_value: 0.683169
-#>     (4) * outcome: 1
-#>     (5) * outcome: 3
+#>     (4) * action: 1
+#>     (5) * action: 3
 #>   (3) split_variable: X6  split_value: 0.686948
-#>     (6) * outcome: 2
-#>     (7) * outcome: 3
+#>     (6) * action: 2
+#>     (7) * action: 3
 
 ## Predict treatment on held out data
 head(predict(opt.tree, X[-train, ]))
@@ -90,7 +90,7 @@ head(predict(opt.tree, X[-train, ]))
 
 ### Details
 Tree search
-* `policy_tree()`: fits a depth L tree by exhaustive search (_Nxp_ features on _Nxd_ outcomes). The optimal tree maximizes the sum of rewards.
+* `policy_tree()`: fits a depth L tree by exhaustive search (_Nxp_ features on _Nxd_ actions). The optimal tree maximizes the sum of rewards.
 
 Treatment effects
 * `multi_causal_forest()`: fits one causal forest for each treatment. Operates similarly to _grf_: `predict()` returns treatment estimates.

@@ -27,7 +27,7 @@
   * @return The best tree stored in an adjacency list (same format as `grf`).
   *
   * The returned list: a list of of lists (nodes), where each each leaf node
-  * have the entries: ($is_leaf = TRUE, $outcome = column_id_of_best_action)
+  * have the entries: ($is_leaf = TRUE, $action = column_id_of_best_action)
   * and each non-leaf node have entries:
   * ($is_leaf = FALSE, split_variable = colum_id_of_best_split,
   *  $split_value = best_split, $left_child = list_index_of_left_child,
@@ -54,7 +54,7 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
     frontier.pop();
     if (node->left_child == nullptr && node->right_child == nullptr) {
       auto list_node = Rcpp::List::create(Rcpp::Named("is_leaf") = true,
-                                          Rcpp::Named("outcome") = node->action_id + 1); // C++ index
+                                          Rcpp::Named("action") = node->action_id + 1); // C++ index
       nodes.push_back(list_node);
     } else {
       auto list_node = Rcpp::List::create(Rcpp::Named("is_leaf") = false,

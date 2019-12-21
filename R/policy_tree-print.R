@@ -5,14 +5,14 @@
 #' @method print policy_tree
 #' @export
 print.policy_tree <- function(x, ...) {
-  outcome.names <- if (all(x$outcome.names == 1:x$n.outcomes)) {
-    1:x$n.outcomes
+  action.names <- if (all(x$action.names == 1:x$n.actions)) {
+    1:x$n.actions
   } else {
-    paste0(1:x$n.outcomes, ": ", x$outcome.names)
+    paste0(1:x$n.actions, ": ", x$action.names)
   }
   cat("policy_tree object", "\n")
   cat("Tree depth: ", x$depth, "\n")
-  cat("Outcomes: ", outcome.names, "\n")
+  cat("Actions: ", action.names, "\n")
   cat("Variable splits:", "\n")
 
   # Add the index of each node as an attribute for easy access.
@@ -34,7 +34,7 @@ print.policy_tree <- function(x, ...) {
     output <- paste(output, "(", node$index, ")", sep = "")
 
     if (node$is_leaf) {
-      output <- paste(output, "* outcome:", node$outcome)
+      output <- paste(output, "* action:", node$action)
     } else {
       split.var <- node$split_variable
       split.var.name <- x$columns[split.var]

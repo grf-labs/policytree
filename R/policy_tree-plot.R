@@ -9,9 +9,9 @@ create_dot_body <- function(tree, index = 1) {
 
   # Leaf case: print label only
   if (node$is_leaf) {
-    outcome <- node$outcome
+    action <- node$action
     line_label <- paste(index - 1, ' [shape=box,style=filled,color=".7 .3 1.0" , label="leaf node', "
-      outcome = ", outcome, '"];')
+      action = ", action, '"];')
     return(line_label)
   }
 

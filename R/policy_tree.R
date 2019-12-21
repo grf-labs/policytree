@@ -30,7 +30,7 @@ policy_tree <- function(X, Gamma, depth = 2) {
   X <- as.matrix(X)
   Gamma <- as.matrix(Gamma)
   n.features <- ncol(X)
-  n.outcomes <- ncol(Gamma)
+  n.actions <- ncol(Gamma)
   n.obs <- nrow(X)
 
   if (any(is.na(X))) {
@@ -49,11 +49,11 @@ policy_tree <- function(X, Gamma, depth = 2) {
     stop("X and Gamma does not have the same number of rows")
   }
 
-  outcome.names <- colnames(Gamma)
-  if (is.null(outcome.names)) {
-    outcome.names <- as.character(1:ncol(Gamma))
+  action.names <- colnames(Gamma)
+  if (is.null(action.names)) {
+    action.names <- as.character(1:ncol(Gamma))
   }
-  outcome.names <- type.convert(outcome.names, as.is = TRUE) # TRUE to not convert character to factor
+  action.names <- type.convert(action.names, as.is = TRUE) # TRUE to not convert character to factor
   columns <- colnames(X)
   if (is.null(columns)) {
     columns <- make.names(1:ncol(X))
@@ -63,9 +63,9 @@ policy_tree <- function(X, Gamma, depth = 2) {
   tree = list(nodes = nodes)
 
   tree[["depth"]] <- depth
-  tree[["n.outcomes"]] <- n.outcomes
+  tree[["n.actions"]] <- n.actions
   tree[["n.features"]] <- n.features
-  tree[["outcome.names"]] <- outcome.names
+  tree[["action.names"]] <- action.names
   tree[["columns"]] <- columns
   class(tree) <- "policy_tree"
 
@@ -104,7 +104,7 @@ predict.policy_tree <- function(object, newdata, ...) {
   }
 
   leaf.nodes <- apply(newdata, 1, function(sample) find_leaf_node(tree, sample))
-  out <- sapply(leaf.nodes, function(node) tree$nodes[[node]]$outcome)
+  out <- sapply(leaf.nodes, function(node) tree$nodes[[node]]$action)
 
   out
 }
