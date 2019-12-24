@@ -100,8 +100,7 @@ std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_se
   size_t best_action = -1;
   double best_reward = -INF;
 
-  std::vector<double> reward_sum(num_rewards);
-  reward_sum.resize(num_rewards);
+  std::vector<double> reward_sum(num_rewards, 0.0);
 
   for (size_t d = 0; d < num_rewards; d++) {
     for (const auto& point : sorted_sets[0]) {
@@ -354,7 +353,7 @@ std::unique_ptr<Node> tree_search(int depth, const Data* data) {
   sum_array.resize(num_rewards);
   for (auto& v : sum_array) {
     // + 1 because this is a cumulative sum of rewards, entry 0 will be zero.
-    v.resize(num_points + 1);
+    v.resize(num_points + 1, 0.0);
   }
 
   return find_best_split(sorted_sets, depth, data, sum_array);
