@@ -138,3 +138,6 @@ For a depth two tree this is $O(p^2 n (log n + d))$ (ignoring the last term whic
 For a depth three tree it is $O(p^3 n^2 (log n + d))$. If a depth two tree with 1000 observations, 4 features and 3 actions took around 0.18 seconds, you can
 expect the level three tree to take approximately $1000\cdot 4$ times as long ($\approx
 \frac{p^3n^2}{p^2n}=pn$)
+
+The runtime above is with continuous features. There are considerable time savings when the features are
+discrete. In the extreme case with all binary observations, the runtime will be practically linear in n.
