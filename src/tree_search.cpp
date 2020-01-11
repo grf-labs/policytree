@@ -67,7 +67,7 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
   std::vector<flat_set> res;
   res.reserve(data->num_features());
 
-  for (int cmp_dim = 0; cmp_dim < data->num_features(); cmp_dim++) {
+  for (size_t cmp_dim = 0; cmp_dim < data->num_features(); cmp_dim++) {
     auto cmp_func = [cmp_dim](const Point& lhs, const Point& rhs) {
       // if covariates have the same value use the sample index as tie-breaker
       const auto &a = lhs.get_value(cmp_dim);
@@ -266,7 +266,6 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
   // else continue the recursion
   } else {
     size_t num_points = sorted_sets[0].size();
-    size_t num_rewards = data->num_rewards();
     size_t num_features = data->num_features();
     size_t best_split_var;
     double best_split_val;
@@ -289,7 +288,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         if (right_sorted_sets[p].size() <= 0) throw std::runtime_error("first right_sorted_sets size 0");
 #endif
         left_sorted_sets[p].insert(point_bk); // O(log n)
-        for (int j = 0; j < num_features; j++) {
+        for (size_t j = 0; j < num_features; j++) {
           if (j == p) {
             continue;
           }
