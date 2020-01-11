@@ -309,7 +309,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
             (left_child->reward + right_child->reward >
               best_left_child->reward + best_right_child->reward)) {
           // "pruning", the recursive case (same action in both leaves):
-          if ((left_child->action_id != -1) &&
+          if ((left_child->action_id != (size_t) -1) &&
               (left_child->action_id == right_child->action_id)) {
             best_left_child = nullptr;
             best_right_child = nullptr;
