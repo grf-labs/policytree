@@ -15,11 +15,11 @@ https://grf-labs.github.io/policytree/
 
 ### Installation
 
-<!-- From CRAN: -->
+From CRAN:
 
-<!-- ```R -->
-<!-- install.packages("policytree") -->
-<!-- ``` -->
+```R
+install.packages("policytree")
+```
 
 Install the latest development version from source:
 
