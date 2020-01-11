@@ -14,7 +14,9 @@ branches:
   only:
     - master
 
-before_deploy: Rscript -e 'install.packages(getwd(), repos = NULL, type = "source"); pkgdown::build_site()'
+before_deploy:
+  - cp releases/CHANGELOG.md .
+  - Rscript -e 'install.packages(getwd(), repos = NULL, type = "source"); pkgdown::build_site()'
 deploy:
   provider: pages
   local_dir: docs/
