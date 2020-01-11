@@ -85,6 +85,7 @@
 #'  then tuning information will be included through the `tuning.output` attribute of each forest.
 #'
 #' @examples
+#' \dontrun{
 #' n <- 500
 #' p <- 10
 #' d <- 3
@@ -98,6 +99,7 @@
 #' W <- sample(c("TreatmentA", "TreatmentB", "TreatmentC"), n, replace = TRUE)
 #' mcf.named <- multi_causal_forest(X = X, Y = Y, W = W)
 #' mcf.named
+#' }
 #' @export
 multi_causal_forest <- function(X, Y, W,
                                 Y.hat = NULL,
@@ -240,6 +242,7 @@ multi_causal_forest <- function(X, Y, W,
 #' @return List containing matrix of predictions and other estimates (debiased error, etc.) for each treatment.
 #'
 #' @examples
+#' \dontrun{
 #' n <- 250
 #' p <- 10
 #' d <- 3
@@ -248,6 +251,7 @@ multi_causal_forest <- function(X, Y, W,
 #' W <- sample(1:d, n, replace = TRUE)
 #' mcf <- multi_causal_forest(X = X, Y = Y, W = W)
 #' head(predict(mcf)$predictions)
+#' }
 #' @method predict multi_causal_forest
 #' @export
 predict.multi_causal_forest <- function(object, newdata = NULL, ...) {
