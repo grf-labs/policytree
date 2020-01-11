@@ -266,7 +266,6 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
   // else continue the recursion
   } else {
     size_t num_points = sorted_sets[0].size();
-    size_t num_rewards = data->num_rewards();
     size_t num_features = data->num_features();
     size_t best_split_var;
     double best_split_val;
