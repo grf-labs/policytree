@@ -116,7 +116,7 @@ struct Node {
   size_t index;
   double value;
   double reward;
-  size_t action_id;
+  int action_id;
   std::unique_ptr<Node> left_child;
   std::unique_ptr<Node> right_child;
 };
