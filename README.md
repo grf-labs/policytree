@@ -1,3 +1,4 @@
+[![CRANstatus](https://www.r-pkg.org/badges/version/policytree)](https://cran.r-project.org/package=policytree)
 [![Build Status](https://travis-ci.com/grf-labs/policytree.svg?branch=master)](https://travis-ci.com/grf-labs/policytree)
 
 # policytree
