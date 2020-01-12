@@ -16,13 +16,13 @@ https://grf-labs.github.io/policytree/
 
 ### Installation
 
-From CRAN:
+The latest release of the package can be installed through CRAN:
 
 ```R
 install.packages("policytree")
 ```
 
-Install the latest development version from source:
+To install the latest development version from source:
 
 ```
 git clone https://github.com/grf-labs/policytree.git
