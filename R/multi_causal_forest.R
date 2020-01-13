@@ -85,7 +85,7 @@
 #'  then tuning information will be included through the `tuning.output` attribute of each forest.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' n <- 500
 #' p <- 10
 #' d <- 3
@@ -242,7 +242,7 @@ multi_causal_forest <- function(X, Y, W,
 #' @return List containing matrix of predictions and other estimates (debiased error, etc.) for each treatment.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' n <- 250
 #' p <- 10
 #' d <- 3

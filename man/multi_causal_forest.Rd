@@ -152,7 +152,7 @@ regression forest.
 }
 }
 \examples{
-\dontrun{
+\donttest{
 n <- 500
 p <- 10
 d <- 3

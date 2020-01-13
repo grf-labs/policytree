@@ -25,7 +25,7 @@ List containing matrix of predictions and other estimates (debiased error, etc.)
 Computes estimates of \eqn{\tau_a(x)}
 }
 \examples{
-\dontrun{
+\donttest{
 n <- 250
 p <- 10
 d <- 3

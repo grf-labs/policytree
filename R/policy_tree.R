@@ -14,7 +14,7 @@
 #'  Generalization and optimization." arXiv preprint arXiv:1810.04778 (2018).
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' n <- 50
 #' p <- 10
 #' d <- 3
@@ -86,7 +86,7 @@ policy_tree <- function(X, Gamma, depth = 2) {
 #'
 #' @method predict policy_tree
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' n <- 50
 #' p <- 10
 #' d <- 3

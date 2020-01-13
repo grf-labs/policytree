@@ -21,7 +21,7 @@ Finds the optimal (maximizing the sum of rewards) depth L tree by exhaustive sea
 action is the same in both the left and right leaf of a node, the node is pruned.
 }
 \examples{
-\dontrun{
+\donttest{
 n <- 50
 p <- 10
 d <- 3

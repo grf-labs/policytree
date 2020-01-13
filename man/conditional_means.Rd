@@ -37,7 +37,7 @@ A matrix of estimated mean rewards
 }}
 
 \examples{
-\dontrun{
+\donttest{
 n <- 500
 p <- 10
 d <- 3

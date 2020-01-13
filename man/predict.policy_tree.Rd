@@ -21,7 +21,7 @@ the number of columns in the reward matrix.
 Predict values based on fitted policy_tree object.
 }
 \examples{
-\dontrun{
+\donttest{
 n <- 50
 p <- 10
 d <- 3

@@ -7,7 +7,7 @@
 #'
 #' @return A matrix of estimated mean rewards
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' n <- 500
 #' p <- 10
 #' d <- 3
@@ -35,7 +35,7 @@ conditional_means <- function(object, ...) {
 #'
 #' @return A matrix of scores for each treatment
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' n <- 500
 #' p <- 10
 #' d <- 3

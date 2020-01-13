@@ -49,7 +49,7 @@ For instrumental_forest this method returns \eqn{(-\Gamma_i, \Gamma_i)} where \e
 is the double robust estimator of the treatment effect as in eqn. (52) in Athey and Wager (2017).
 }
 \examples{
-\dontrun{
+\donttest{
 n <- 500
 p <- 10
 d <- 3
