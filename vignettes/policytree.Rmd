@@ -105,7 +105,7 @@ n <- 500
 data <- gen_data_epl(n, type = "continuous")
 head(data.frame(data))[1:6]
 
-iv.forest <- grf::instrumental_forest(X = data$X, Y = data$Y, W = data$W, Z = data$Z)
+iv.forest <- instrumental_forest(X = data$X, Y = data$Y, W = data$W, Z = data$Z)
 
 gamma <- double_robust_scores(iv.forest)
 head(gamma)
