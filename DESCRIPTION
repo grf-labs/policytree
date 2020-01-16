@@ -1,6 +1,6 @@
 Package: policytree
-Title: Multi-Action Treatment Effect Estimation and Exact Tree Search (beta)
-Version: 0.1.0
+Title: Policy Learning via Doubly Robust Empirical Welfare Maximization over Trees
+Version: 0.9.0
 Authors@R: c(
     person("Zhengyuan", "Zhou", role = "aut"),
     person("Susan", "Athey", role = "aut"),

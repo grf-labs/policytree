@@ -21,6 +21,7 @@ the number of columns in the reward matrix.
 Predict values based on fitted policy_tree object.
 }
 \examples{
+\donttest{
 n <- 50
 p <- 10
 d <- 3
@@ -29,4 +30,5 @@ rewards <- matrix(rnorm(n * d), n, d)
 tree <- policy_tree(features, rewards, depth = 2)
 print(tree)
 predict(tree, features)
+}
 }

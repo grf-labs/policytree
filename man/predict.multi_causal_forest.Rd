@@ -25,6 +25,7 @@ List containing matrix of predictions and other estimates (debiased error, etc.)
 Computes estimates of \eqn{\tau_a(x)}
 }
 \examples{
+\donttest{
 n <- 250
 p <- 10
 d <- 3
@@ -33,4 +34,5 @@ Y <- runif(n)
 W <- sample(1:d, n, replace = TRUE)
 mcf <- multi_causal_forest(X = X, Y = Y, W = W)
 head(predict(mcf)$predictions)
+}
 }

@@ -1,3 +1,4 @@
+[![CRANstatus](https://www.r-pkg.org/badges/version/policytree)](https://cran.r-project.org/package=policytree)
 [![Build Status](https://travis-ci.com/grf-labs/policytree.svg?branch=master)](https://travis-ci.com/grf-labs/policytree)
 
 # policytree
@@ -15,13 +16,13 @@ https://grf-labs.github.io/policytree/
 
 ### Installation
 
-<!-- From CRAN: -->
+The latest release of the package can be installed through CRAN:
 
-<!-- ```R -->
-<!-- install.packages("policytree") -->
-<!-- ``` -->
+```R
+install.packages("policytree")
+```
 
-Install the latest development version from source:
+To install the latest development version from source:
 
 ```
 git clone https://github.com/grf-labs/policytree.git

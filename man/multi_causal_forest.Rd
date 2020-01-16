@@ -152,6 +152,7 @@ regression forest.
 }
 }
 \examples{
+\donttest{
 n <- 500
 p <- 10
 d <- 3
@@ -165,4 +166,5 @@ mcf
 W <- sample(c("TreatmentA", "TreatmentB", "TreatmentC"), n, replace = TRUE)
 mcf.named <- multi_causal_forest(X = X, Y = Y, W = W)
 mcf.named
+}
 }

@@ -14,6 +14,7 @@
 #'  Generalization and optimization." arXiv preprint arXiv:1810.04778 (2018).
 #'
 #' @examples
+#' \donttest{
 #' n <- 50
 #' p <- 10
 #' d <- 3
@@ -21,7 +22,7 @@
 #' rewards <- matrix(rnorm(n * d), n, d)
 #' tree <- policy_tree(features, rewards, depth = 2)
 #' tree
-#'
+#' }
 #' @export
 #' @useDynLib policytree
 #' @importFrom Rcpp evalCpp
@@ -85,6 +86,7 @@ policy_tree <- function(X, Gamma, depth = 2) {
 #'
 #' @method predict policy_tree
 #' @examples
+#' \donttest{
 #' n <- 50
 #' p <- 10
 #' d <- 3
@@ -93,6 +95,7 @@ policy_tree <- function(X, Gamma, depth = 2) {
 #' tree <- policy_tree(features, rewards, depth = 2)
 #' print(tree)
 #' predict(tree, features)
+#' }
 predict.policy_tree <- function(object, newdata, ...) {
   # if nrow = 1:
   if (is.null(dim(newdata))) {
