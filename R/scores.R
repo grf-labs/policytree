@@ -18,7 +18,7 @@
 #' conditional_means(forests)
 #' }
 #' @importFrom stats predict
-#' @keywords internal
+#' @export
 conditional_means <- function(object, ...) {
   UseMethod("conditional_means")
 }

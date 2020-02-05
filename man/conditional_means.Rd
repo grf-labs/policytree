@@ -48,4 +48,3 @@ forests <- multi_causal_forest(X = X, Y = Y, W = W)
 conditional_means(forests)
 }
 }
-\keyword{internal}
