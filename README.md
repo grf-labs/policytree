@@ -40,49 +40,48 @@ Installing from source requires a C++ 11 compiler (on Windows Rtools is required
 library(policytree)
 n <- 250
 p <- 10
-d <- 3
-X <- matrix(runif(n * p), n, p)
-Y <- runif(n)
+X <- matrix(rnorm(n * p), n, p)
 W <- sample(c("A", "B", "C"), n, replace = TRUE)
+Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
 multi.forest <- multi_causal_forest(X = X, Y = Y, W = W)
 
 # tau.hats
 head(predict(multi.forest)$predictions)
-#>               A          B            C
-#> 1 -0.0154032776 0.06835031 -0.045857681
-#> 2 -0.0266322101 0.04587167 -0.000490636
-#> 3 -0.0375290300 0.07230710 -0.048778941
-#> 4  0.0002828242 0.06351683 -0.032401124
-#> 5 -0.0090172925 0.06350601 -0.092397923
-#> 6  0.0144621507 0.07101125 -0.075447751
+#              A            B          C
+# 1  0.110469853 -0.005280646  0.1664277
+# 2  0.258415454 -0.747010156  0.1734191
+# 3  0.449918392 -0.284277647 -0.6307613
+# 4 -0.005547692  0.871686529 -0.6564725
+# 5  0.343872139 -0.090049312 -0.3968521
+# 6  0.376482355  0.233689768 -0.8111073
 ```
 
 ### Policy learning
 ```r
 Gamma.matrix <- double_robust_scores(multi.forest)
 head(Gamma.matrix)
-#>              A         B         C
-#> [1,] 0.4953139 0.8489728 0.4768008
-#> [2,] 0.4826144 0.9327100 0.4983701
-#> [3,] 0.5275024 0.6020840 1.0111579
-#> [4,] 1.4449256 0.5391810 0.4715283
-#> [5,] 0.5369825 1.8125964 0.4870979
-#> [6,] 0.5360087 0.5766404 0.2826482
+#              A          B           C
+# 1 -0.002612209 -0.1438422 -0.04243015
+# 2  0.417066177  0.4212708  1.04000173
+# 3  2.020414370  0.3963890  1.33038496
+# 4  1.193587749  1.7862142 -0.05668051
+# 5  0.808323778  0.5017521  1.52094053
+# 6 -0.045844471 -0.1460745 -1.56055025
 
 train <- sample(1:n, 200)
 opt.tree <- policy_tree(X[train, ], Gamma.matrix[train, ], depth = 2)
 opt.tree
-#> policy_tree object
-#> Tree depth:  2
-#> Actions:  1: A 2: B 3: C
-#> Variable splits:
-#> (1) split_variable: X6  split_value: 0.421259
-#>   (2) split_variable: X3  split_value: 0.683169
-#>     (4) * action: 1
-#>     (5) * action: 3
-#>   (3) split_variable: X6  split_value: 0.686948
-#>     (6) * action: 2
-#>     (7) * action: 3
+policy_tree object
+# Tree depth:  2
+# Actions:  1: A 2: B 3: C
+# Variable splits:
+# (1) split_variable: X3  split_value: 0.368037
+#   (2) split_variable: X2  split_value: -0.098143
+#     (4) * action: 1
+#     (5) * action: 2
+#   (3) split_variable: X2  split_value: 1.25697
+#     (6) * action: 3
+#     (7) * action: 2
 
 ## Predict treatment on held out data
 head(predict(opt.tree, X[-train, ]))

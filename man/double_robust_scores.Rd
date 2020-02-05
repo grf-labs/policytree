@@ -52,12 +52,11 @@ is the double robust estimator of the treatment effect as in eqn. (52) in Athey 
 \donttest{
 n <- 500
 p <- 10
-d <- 3
-X <- matrix(runif(n * p), n, p)
-Y <- runif(n)
-W <- sample(1:d, n, replace = TRUE)
+X <- matrix(rnorm(n * p), n, p)
+W <- sample(c("A", "B", "C"), n, replace = TRUE)
+Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
 forests <- multi_causal_forest(X = X, Y = Y, W = W)
-double_robust_scores(forests)
+head(double_robust_scores(forests))
 }
 }
 \references{

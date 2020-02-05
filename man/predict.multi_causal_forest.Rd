@@ -28,10 +28,9 @@ Computes estimates of \eqn{\tau_a(x)}
 \donttest{
 n <- 250
 p <- 10
-d <- 3
-X <- matrix(runif(n * p), n, p)
-Y <- runif(n)
-W <- sample(1:d, n, replace = TRUE)
+X <- matrix(rnorm(n * p), n, p)
+W <- sample(c("A", "B", "C"), n, replace = TRUE)
+Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
 mcf <- multi_causal_forest(X = X, Y = Y, W = W)
 head(predict(mcf)$predictions)
 }
