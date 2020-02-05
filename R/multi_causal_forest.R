@@ -257,13 +257,22 @@ multi_causal_forest <- function(X, Y, W,
 predict.multi_causal_forest <- function(object, newdata = NULL, ...) {
   forests <- object$forests
 
+  # A `grf` prediction object is a data frame with columns `predictions`
+  # and other estimates. This transforms the list of data frames for each
+  # forest (action k) to a list of each estimate (with each data frame containing
+  # n.actions columns).
   predictions <- sapply(forests, function(forest) {
     predict(forest, newdata = newdata, ...)
   })
-  outputs <- rownames(predictions)
+  outputs <- if(is.null(rownames(predictions))) {
+    "predictions"
+  } else {
+    rownames(predictions)
+  }
+  predictions <- matrix(predictions, ncol = length(object$forests))
 
-  out <- lapply(outputs, function(output) {
-    values <- as.data.frame(predictions[output, ])
+  out <- lapply(1:nrow(predictions), function(row) {
+    values <- as.data.frame(predictions[row, ])
     colnames(values) <- names(forests)
     values
   })

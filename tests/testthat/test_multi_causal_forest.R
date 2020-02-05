@@ -6,6 +6,7 @@ test_that("everything runs", {
   Y <- runif(n)
   W <- sample(1:d, n, replace = TRUE)
 
+  # Some simple smoke tests
   mcf <- multi_causal_forest(X, Y, W)
   predict(mcf)
   conditional_means(mcf)
@@ -18,7 +19,18 @@ test_that("everything runs", {
 
   multi_causal_forest(X, Y, W, W.hat = matrix(1 / 3, n, d))
 
-  expect_equal(1, 1)
+  #
+  predictions.oob <- predict(mcf)
+  predictions <- predict(mcf, X)
+  predictions.var <- predict(mcf, X, estimate.variance = TRUE)
+
+  expect_equal(length(predictions.oob), 3) # grf returns 3 estimates
+  expect_equal(length(predictions), 1) # grf returns 1 estimate
+  expect_equal(length(predictions.var), 2) # grf returns 2 estimates
+
+  expect_equal(ncol(predictions.oob$predictions), d)
+  expect_equal(ncol(predictions$predictions), d)
+  expect_equal(ncol(predictions.var$predictions), d)
 })
 
 test_that("predictions have not changed", {

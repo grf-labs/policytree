@@ -19,7 +19,7 @@ Suggests:
     testthat (>= 2.1.0),
     DiagrammeR
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.0.1
+RoxygenNote: 7.0.2
 LinkingTo:
     Rcpp,
     BH
