@@ -260,8 +260,11 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       int level,
                                       const Data* data,
                                       std::vector<std::vector<double>>& sum_array) {
-  // if at the parent of a leaf node we can compute the optimal action for both leaves
-  if (level == 1) {
+  if (level == 0) {
+    // this base case will only be hit if `find_best_split` is called directly with level = 0
+    return level_zero_learning(sorted_sets, data);
+  } else if (level == 1) {
+    // if at the parent of a leaf node we can compute the optimal action for both leaves
     return level_one_learning(sorted_sets, data, sum_array);
   // else continue the recursion
   } else {

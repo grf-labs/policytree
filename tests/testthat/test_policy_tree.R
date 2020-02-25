@@ -76,6 +76,36 @@ test_that("solver bindings run", {
 })
 
 
+test_that("exact tree search finds the correct depth 0 tree", {
+  depth <- 0
+  n <- 100
+  p <- sample(1:10, 1)
+  d <- sample(1:5, 1)
+  # Continuous X
+  X <- matrix(rnorm(n * p), n, p)
+  Y <- matrix(rnorm(n * d), n, d)
+
+  best.action <- which.max(colMeans(Y))
+  best.reward <- max(colMeans(Y))
+  tree <- policy_tree(X, Y, depth = depth)
+  action.tree <- predict(tree, X)
+  reward.tree <- mean(Y[cbind(1:n, action.tree)])
+
+  expect_equal(reward.tree, best.reward)
+  expect_true(all(best.action == action.tree))
+
+  # Discrete X
+  X <- matrix(sample(10:20, n * p, replace = TRUE), n, p)
+
+  tree <- policy_tree(X, Y, depth = depth)
+  action.tree <- predict(tree, X)
+  reward.tree <- mean(Y[cbind(1:n, action.tree)])
+
+  expect_equal(reward.tree, best.reward)
+  expect_true(all(best.action == action.tree))
+})
+
+
 test_that("exact tree search finds the correct depth 1 tree", {
   depth <- 1
   n <- 250
