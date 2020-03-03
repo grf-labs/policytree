@@ -265,3 +265,41 @@ test_that("all equal rewards are pruned", {
 
   expect_equal(ptn$nodes[[1]]$action, 2)
 })
+
+
+test_that("tree search with approximate splitting works as expected", {
+  depth <- 2
+  n <- 10000
+  p <- 5
+  d <- 2
+
+  X <- matrix(rnorm(n * p), n, p)
+  X.halved <- matrix(sample(X, n / 2, replace = TRUE), n, p)
+  Y <- matrix(rnorm(n * d), n, d)
+
+  time.full <- system.time(tree <- policy_tree(X, Y, depth = depth, split.step = 1))
+  time.skip2 <- system.time(tree.skip2 <- policy_tree(X, Y, depth = depth, split.step = 2))
+  time.halved <- system.time(tree.halved <- policy_tree(X.halved, Y, depth = depth, split.step = 1))
+
+  reward.full <- mean(Y[cbind(1:n, predict(tree, X))])
+  reward.skip2 <- mean(Y[cbind(1:n, predict(tree.skip2, X))])
+  reward.halved <- mean(Y[cbind(1:n, predict(tree.halved, X.halved))])
+  colmax <- which.max(colMeans(Y))
+  reward.colmax <- max(colMeans(Y))
+
+  expect_equal(time.skip2["elapsed"], time.halved["elapsed"], tol = 0.1)
+  expect_true(time.skip2["elapsed"] < time.full["elapsed"] / 2)
+  expect_true(reward.skip2 > 0.95 * reward.full)
+  expect_true(reward.skip2 > 2 * reward.colmax)
+  expect_true(reward.skip2 > reward.halved)
+
+  # Setting split.step to a number greater than the number of distinct features just implies no splits
+  tree.all <- policy_tree(X, Y, depth = depth, split.step = n + 100)
+  expect_true(all(predict(tree.all, X) == colmax))
+
+  # Which is the same as setting split.step to 0 or smaller
+  tree.all <- policy_tree(X, Y, depth = depth, split.step = 0)
+  expect_true(all(predict(tree.all, X) == colmax))
+  tree.all <- policy_tree(X, Y, depth = depth, split.step = -n)
+  expect_true(all(predict(tree.all, X) == colmax))
+})
