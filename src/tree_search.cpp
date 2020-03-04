@@ -252,7 +252,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
  *
  * The split condition reads: if value <= split value, go to left, else right.
  *
- * Time complexity: O(p^k n^(k-1) (log n + d) + pnlog n) where p is the number of
+ * Time complexity (k >= 1): O(p^k n^k (log n + d) + pnlog n) where p is the number of
  * features, n the number of observations, d the number of actions, and k
  * the tree depth.
  */
