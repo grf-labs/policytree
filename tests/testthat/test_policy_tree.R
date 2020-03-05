@@ -293,7 +293,9 @@ test_that("tree search with approximate splitting works as expected", {
   expect_true(reward.skip2 > 2 * reward.colmax)
   expect_true(reward.skip2 > reward.halved)
 
-  # Setting split.step to a number greater than the number of distinct features just implies no splits
+  # split.step <= 0 or greater than the number of distinct values is meaningless
+  # but passes through and just implies no splits:
+  # Setting split.step to a number greater than the number of distinct features
   tree.all <- policy_tree(X, Y, depth = depth, split.step = n + 100)
   expect_true(all(predict(tree.all, X) == colmax))
 

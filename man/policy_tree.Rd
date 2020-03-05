@@ -13,9 +13,9 @@ policy_tree(X, Gamma, depth = 2, split.step = 1)
 
 \item{depth}{The depth of the fitted tree. Default is 2.}
 
-\item{split.step}{An optional approximation parameter, the number of possible splits to consider when
-performing tree search. split.step = 1 (default) considers every possible split, split.step = 10
-considers splitting at every 10'th point and may yield a substantial speedup for densely packed
+\item{split.step}{An optional approximation parameter (integer above zero), the number of possible splits
+to consider when performing tree search. split.step = 1 (default) considers every possible split, split.step = 10
+considers splitting at every 10'th distinct value and will yield a substantial speedup for densely packed
 continuous data.}
 }
 \value{

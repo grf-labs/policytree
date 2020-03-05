@@ -156,7 +156,8 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       if (value == next_value) {
         continue;
       }
-      if (++split_counter == split_step) { // only split at every `split_step`th point
+      split_counter += 1;
+      if (split_counter == split_step) { // only split at every `split_step`th point
         split_counter = 0;
       } else {
         continue;
@@ -242,7 +243,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
  * @param level: The tree depth
  * @param split_step An optional approximation parameter, the number of possible splits to consider when
  *  performing tree search. split_step = 1 considers every possible split, split_step = 10
- *  considers splitting at every 10'th point and may yield a substantial speedup.
+ *  considers splitting at every 10'th distinct value and will yield a substantial speedup.
  * @param data: The data class
  * @param sum_array: A global zero initialized (num_rewards) x (num_points + 1)
  *  array which is used to calculate cumulative rewards.
@@ -318,7 +319,8 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         if (point_bk.get_value(p) >= next->get_value(p)) { // are the values the same then skip
           continue;
         }
-        if (++split_counter == split_step) { // only split at every `split_step`th point
+        split_counter += 1;
+        if (split_counter == split_step) { // only split at every `split_step`th point
           split_counter = 0;
         } else {
           continue;

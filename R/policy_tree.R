@@ -7,9 +7,9 @@
 #' @param X The covariates used. Dimension \eqn{Np} where \eqn{p} is the number of features.
 #' @param Gamma The rewards for each action. Dimension \eqn{Nd} where \eqn{d} is the number of actions.
 #' @param depth The depth of the fitted tree. Default is 2.
-#' @param split.step An optional approximation parameter, the number of possible splits to consider when
-#'  performing tree search. split.step = 1 (default) considers every possible split, split.step = 10
-#'  considers splitting at every 10'th point and may yield a substantial speedup for densely packed
+#' @param split.step An optional approximation parameter (integer above zero), the number of possible splits
+#'  to consider when performing tree search. split.step = 1 (default) considers every possible split, split.step = 10
+#'  considers splitting at every 10'th distinct value and will yield a substantial speedup for densely packed
 #'  continuous data.
 #'
 #' @return A policy_tree object.
