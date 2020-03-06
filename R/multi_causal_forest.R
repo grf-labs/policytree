@@ -20,8 +20,6 @@
 #' @param num.trees Number of trees grown in the forest. Note: Getting accurate
 #'                  confidence intervals generally requires more trees than
 #'                  getting accurate predictions. Default is 2000.
-#' @param num.trees.orthog Number of trees used in Y.hat and W.hat estimation (optional).
-#'  Default is max(50, num.trees / 4).
 #' @param sample.weights (experimental) Weights given to each sample in estimation.
 #'                       If NULL, each observation receives the same weight.
 #'                       Note: To avoid introducing confounding, weights should be
@@ -106,7 +104,6 @@ multi_causal_forest <- function(X, Y, W,
                                 Y.hat = NULL,
                                 W.hat = NULL,
                                 num.trees = 2000,
-                                num.trees.orthog = max(50, num.trees / 4),
                                 sample.weights = NULL,
                                 clusters = NULL,
                                 equalize.cluster.weights = FALSE,
@@ -136,7 +133,7 @@ multi_causal_forest <- function(X, Y, W,
 
   # Unconditional mean
   args.orthog <- list(X = X,
-                     num.trees = num.trees.orthog,
+                     num.trees = max(50, num.trees / 4),
                      sample.weights = sample.weights,
                      clusters = clusters,
                      equalize.cluster.weights = equalize.cluster.weights,

@@ -11,7 +11,6 @@ multi_causal_forest(
   Y.hat = NULL,
   W.hat = NULL,
   num.trees = 2000,
-  num.trees.orthog = max(50, num.trees/4),
   sample.weights = NULL,
   clusters = NULL,
   equalize.cluster.weights = FALSE,
@@ -53,9 +52,6 @@ these are estimated using a k separate regression forests. Default is NULL.}
 \item{num.trees}{Number of trees grown in the forest. Note: Getting accurate
 confidence intervals generally requires more trees than
 getting accurate predictions. Default is 2000.}
-
-\item{num.trees.orthog}{Number of trees used in Y.hat and W.hat estimation (optional).
-Default is max(50, num.trees / 4).}
 
 \item{sample.weights}{(experimental) Weights given to each sample in estimation.
 If NULL, each observation receives the same weight.
