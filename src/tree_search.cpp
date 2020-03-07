@@ -341,15 +341,15 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
       return level_zero_learning(sorted_sets, data);
     } else {
           // "pruning", the recursive case (same action in both leaves):
-      if ((best_left_child->action_id != -1) &&
+      if ((best_left_child->left_child == nullptr && best_right_child->left_child == nullptr) &&
               (best_left_child->action_id == best_right_child->action_id)) {
         double leaf_reward = best_left_child->reward + best_right_child->reward;
         size_t leaf_action = best_left_child->action_id;
-        best_ans_as_leaf = std::unique_ptr<Node> (new Node(-1, -1, leaf_reward, leaf_action));
+        best_ans_as_leaf = std::unique_ptr<Node> (new Node(0, -1, leaf_reward, leaf_action));
         return best_ans_as_leaf;
       } else {
         double best_reward = best_left_child->reward + best_right_child->reward;
-        auto ret = std::unique_ptr<Node> (new Node(best_split_var, best_split_val, best_reward, -1));
+        auto ret = std::unique_ptr<Node> (new Node(best_split_var, best_split_val, best_reward, 0));
         ret->left_child = std::move(best_left_child);
         ret->right_child = std::move(best_right_child);
         return ret;
