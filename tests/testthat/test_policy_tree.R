@@ -290,7 +290,7 @@ test_that("tree search with approximate splitting works as expected", {
   expect_equal(time.skip2["elapsed"], time.halved["elapsed"], tol = 0.1)
   expect_true(time.skip2["elapsed"] < time.full["elapsed"] / 2)
   expect_true(reward.skip2 > 0.95 * reward.full)
-  expect_true(reward.skip2 > 2 * reward.colmax)
+  expect_true(reward.skip2 > 1.5 * reward.colmax)
   expect_true(reward.skip2 > reward.halved)
 
   # split.step <= 0 or greater than the number of distinct values is meaningless
