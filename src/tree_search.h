@@ -113,6 +113,12 @@ struct Node {
     this->right_child = nullptr;
   }
 
+  // A node is a leaf node if its left or right child node is a nullptr.
+  // If one child is a nullptr, the other child is also a nullptr.
+  inline bool is_leaf() {
+    return (left_child == nullptr);
+  }
+
   size_t index;
   double value;
   double reward;
