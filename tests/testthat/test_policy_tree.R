@@ -277,8 +277,8 @@ test_that("tree search with approximate splitting works as expected", {
   X.halved <- matrix(sample(X, n / 2, replace = TRUE), n, p)
   Y <- matrix(rnorm(n * d), n, d)
 
-  time.full <- system.time(tree <- policy_tree(X, Y, depth = depth, split.step = 1))
-  time.skip2 <- system.time(tree.skip2 <- policy_tree(X, Y, depth = depth, split.step = 2))
+  tree <- policy_tree(X, Y, depth = depth, split.step = 1)
+  tree.skip2 <- policy_tree(X, Y, depth = depth, split.step = 2)
   tree.halved <- policy_tree(X.halved, Y, depth = depth, split.step = 1)
 
   reward.full <- mean(Y[cbind(1:n, predict(tree, X))])
@@ -287,7 +287,6 @@ test_that("tree search with approximate splitting works as expected", {
   colmax <- which.max(colMeans(Y))
   reward.colmax <- max(colMeans(Y))
 
-  expect_true(time.skip2["elapsed"] < time.full["elapsed"] / 2)
   expect_true(reward.skip2 > 0.95 * reward.full)
   expect_true(reward.skip2 > reward.colmax)
   expect_true(reward.skip2 > reward.halved)

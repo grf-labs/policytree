@@ -1,6 +1,6 @@
 Package: policytree
 Title: Policy Learning via Doubly Robust Empirical Welfare Maximization over Trees
-Version: 0.9.1
+Version: 0.9.2
 Authors@R: c(
     person("Zhengyuan", "Zhou", role = "aut"),
     person("Susan", "Athey", role = "aut"),
