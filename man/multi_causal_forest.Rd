@@ -137,31 +137,46 @@ A trained multi causal forest object (collection of causal forests). If tune.par
 then tuning information will be included through the \code{tuning.output} attribute of each forest.
 }
 \description{
-For k treatments this "naive" multivariate-grf proceeeds by fitting k separate causal forests
-where in forest i the treatment assignment vector is one-hot encoded for treament i. The steps are:
+Estimate the conditional response from K treatment arms by fitting K separate one-hot encoded causal forests.
+}
+\details{
+For K treatments this "naive" multivariate-grf proceeeds by fitting K separate causal forests
+where in forest k the treatment assignment vector is one-hot encoded for treament k. The steps are:
 \enumerate{
-\item Estimate propensities for each action 1..k: \eqn{e_k}. This is done with k separate regression forests
+\item Estimate propensities for each action 1..K: \eqn{e_k}. This is done with K separate regression forests
 with propensities normalized to sum to 1 at the final step.
 \item Estimate the expected response m(x) = E(Y | Xi) marginalizing over treatment. This is done with one
 regression forest.
-\item Estimate each \eqn{\tau_i} with a causal forest
+\item Estimate each \eqn{\tau_k} with a causal forest
 }
+
+The resulting treatment estimate will be the difference between an action k and the weighted average of
+all the other actions. In particular, if the conditional mean of arm k is \eqn{\mu_k(X)}, then \code{multi_causal_forest}
+will estimate \eqn{\hat \mu_k (X) = \mu_k(X) - \frac{1}{K-1} \sum_{i \neq k}^{K} \mu_i(X)}.
+
+To compare estimated contrasts with ground truth, one has to scale the difference with (K - 1) / K
+to adjust for the different baseline used in multi_causal_forest. For an illustration see the usage
+example below.
 }
 \examples{
 \donttest{
-n <- 500
-p <- 10
-d <- 3
+n <- 1000
+p <- 5
 X <- matrix(rnorm(n * p), n, p)
-W <- sample(1:d, n, replace = TRUE)
-Y <- X[, 1] + X[, 2] * (W == 2) + X[, 3] * (W == 3) + runif(n)
-mcf <- multi_causal_forest(X = X, Y = Y, W = W)
-mcf
-
-# Treaments may be labled arbitrarily
 W <- sample(c("A", "B", "C"), n, replace = TRUE)
-Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
-mcf.named <- multi_causal_forest(X = X, Y = Y, W = W)
-mcf.named
+muB <- X[, 2]
+muC <- 2 * X[, 2]
+Y <- X[, 1] + muB * (W == "B") + muC * (W == "C") + runif(n)
+
+mcf <- multi_causal_forest(X, Y, W)
+tau.mcf <- predict(mcf)$predictions
+# Contrast example: since we have K = 3 treatments, we scale the difference
+# by (K-1) / K = 2 / 3 to compare.
+contrast <- muC - muB
+contrastCB.hat <- 2 / 3 * (tau.mcf[, "C"] - tau.mcf[, "B"])
+
+plot(X[, 2], contrast)
+points(X[, 2], contrastCB.hat, col = "red")
+legend("topleft", c("muC - muB", "hat muC - hat muB"), col = 1:2, pch = 19)
 }
 }
