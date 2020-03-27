@@ -7,6 +7,10 @@
 #' @param X The covariates used. Dimension \eqn{Np} where \eqn{p} is the number of features.
 #' @param Gamma The rewards for each action. Dimension \eqn{Nd} where \eqn{d} is the number of actions.
 #' @param depth The depth of the fitted tree. Default is 2.
+#' @param split.step An optional approximation parameter (integer above zero), the number of possible splits
+#'  to consider when performing tree search. split.step = 1 (default) considers every possible split, split.step = 10
+#'  considers splitting at every 10'th distinct value and will yield a substantial speedup for densely packed
+#'  continuous data.
 #'
 #' @return A policy_tree object.
 #'
@@ -14,6 +18,7 @@
 #'  Generalization and optimization." arXiv preprint arXiv:1810.04778 (2018).
 #'
 #' @examples
+#' \donttest{
 #' n <- 50
 #' p <- 10
 #' d <- 3
@@ -21,12 +26,12 @@
 #' rewards <- matrix(rnorm(n * d), n, d)
 #' tree <- policy_tree(features, rewards, depth = 2)
 #' tree
-#'
+#' }
 #' @export
 #' @useDynLib policytree
 #' @importFrom Rcpp evalCpp
 #' @importFrom utils type.convert
-policy_tree <- function(X, Gamma, depth = 2) {
+policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
   X <- as.matrix(X)
   Gamma <- as.matrix(Gamma)
   n.features <- ncol(X)
@@ -59,7 +64,7 @@ policy_tree <- function(X, Gamma, depth = 2) {
     columns <- make.names(1:ncol(X))
   }
 
-  nodes <- tree_search_rcpp(X, Gamma, depth)
+  nodes <- tree_search_rcpp(X, Gamma, depth, split.step)
   tree = list(nodes = nodes)
 
   tree[["depth"]] <- depth
@@ -85,6 +90,7 @@ policy_tree <- function(X, Gamma, depth = 2) {
 #'
 #' @method predict policy_tree
 #' @examples
+#' \donttest{
 #' n <- 50
 #' p <- 10
 #' d <- 3
@@ -93,6 +99,7 @@ policy_tree <- function(X, Gamma, depth = 2) {
 #' tree <- policy_tree(features, rewards, depth = 2)
 #' print(tree)
 #' predict(tree, features)
+#' }
 predict.policy_tree <- function(object, newdata, ...) {
   # if nrow = 1:
   if (is.null(dim(newdata))) {

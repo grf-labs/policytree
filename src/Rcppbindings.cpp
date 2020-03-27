@@ -23,7 +23,9 @@
   *
   * @param X The features
   * @param Y The rewards
-  * @param depth The tree depth (0-indexed)
+  * @param depth The tree depth (0-indexed). An integer greater than or equal to zero.
+  * @param split_step The number of possible splits to consider when performing tree search.
+  * (an integer greater than or equal to one.)
   * @return The best tree stored in an adjacency list (same format as `grf`).
   *
   * The returned list: a list of of lists (nodes), where each each leaf node
@@ -37,13 +39,14 @@
 // [[Rcpp::export]]
 Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
                             const Rcpp::NumericMatrix& Y,
-                            int depth) {
+                            int depth,
+                            int split_step) {
   size_t num_rows = X.rows();
   size_t num_cols_x = X.cols();
   size_t num_cols_y = Y.cols();
   const Data* data = new Data(X, Y, num_rows, num_cols_x, num_cols_y);
 
-  std::unique_ptr<Node> root = tree_search(depth, data);
+  std::unique_ptr<Node> root = tree_search(depth, split_step, data);
 
   Rcpp::List nodes;
   int i = 1;

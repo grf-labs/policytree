@@ -76,6 +76,36 @@ test_that("solver bindings run", {
 })
 
 
+test_that("exact tree search finds the correct depth 0 tree", {
+  depth <- 0
+  n <- 100
+  p <- sample(1:10, 1)
+  d <- sample(1:5, 1)
+  # Continuous X
+  X <- matrix(rnorm(n * p), n, p)
+  Y <- matrix(rnorm(n * d), n, d)
+
+  best.action <- which.max(colMeans(Y))
+  best.reward <- max(colMeans(Y))
+  tree <- policy_tree(X, Y, depth = depth)
+  action.tree <- predict(tree, X)
+  reward.tree <- mean(Y[cbind(1:n, action.tree)])
+
+  expect_equal(reward.tree, best.reward)
+  expect_true(all(best.action == action.tree))
+
+  # Discrete X
+  X <- matrix(sample(10:20, n * p, replace = TRUE), n, p)
+
+  tree <- policy_tree(X, Y, depth = depth)
+  action.tree <- predict(tree, X)
+  reward.tree <- mean(Y[cbind(1:n, action.tree)])
+
+  expect_equal(reward.tree, best.reward)
+  expect_true(all(best.action == action.tree))
+})
+
+
 test_that("exact tree search finds the correct depth 1 tree", {
   depth <- 1
   n <- 250
@@ -234,4 +264,42 @@ test_that("all equal rewards are pruned", {
   ptn <- policy_tree(X, Y, depth = 2)
 
   expect_equal(ptn$nodes[[1]]$action, 2)
+})
+
+
+test_that("tree search with approximate splitting works as expected", {
+  depth <- 2
+  n <- 10000
+  p <- 5
+  d <- 2
+
+  X <- matrix(rnorm(n * p), n, p)
+  X.halved <- matrix(sample(X, n / 2, replace = TRUE), n, p)
+  Y <- matrix(rnorm(n * d), n, d)
+
+  tree <- policy_tree(X, Y, depth = depth, split.step = 1)
+  tree.skip2 <- policy_tree(X, Y, depth = depth, split.step = 2)
+  tree.halved <- policy_tree(X.halved, Y, depth = depth, split.step = 1)
+
+  reward.full <- mean(Y[cbind(1:n, predict(tree, X))])
+  reward.skip2 <- mean(Y[cbind(1:n, predict(tree.skip2, X))])
+  reward.halved <- mean(Y[cbind(1:n, predict(tree.halved, X.halved))])
+  colmax <- which.max(colMeans(Y))
+  reward.colmax <- max(colMeans(Y))
+
+  expect_true(reward.skip2 > 0.95 * reward.full)
+  expect_true(reward.skip2 > reward.colmax)
+  expect_true(reward.skip2 > reward.halved)
+
+  # split.step <= 0 or greater than the number of distinct values is meaningless
+  # but passes through and just implies no splits:
+  # Setting split.step to a number greater than the number of distinct features
+  tree.all <- policy_tree(X, Y, depth = depth, split.step = n + 100)
+  expect_true(all(predict(tree.all, X) == colmax))
+
+  # Which is the same as setting split.step to 0 or smaller
+  tree.all <- policy_tree(X, Y, depth = depth, split.step = 0)
+  expect_true(all(predict(tree.all, X) == colmax))
+  tree.all <- policy_tree(X, Y, depth = depth, split.step = -n)
+  expect_true(all(predict(tree.all, X) == colmax))
 })

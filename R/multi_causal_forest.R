@@ -20,8 +20,6 @@
 #' @param num.trees Number of trees grown in the forest. Note: Getting accurate
 #'                  confidence intervals generally requires more trees than
 #'                  getting accurate predictions. Default is 2000.
-#' @param num.trees.orthog Number of trees used in Y.hat and W.hat estimation (optional).
-#'  Default is max(50, num.trees / 4).
 #' @param sample.weights (experimental) Weights given to each sample in estimation.
 #'                       If NULL, each observation receives the same weight.
 #'                       Note: To avoid introducing confounding, weights should be
@@ -85,25 +83,27 @@
 #'  then tuning information will be included through the `tuning.output` attribute of each forest.
 #'
 #' @examples
+#' \donttest{
 #' n <- 500
 #' p <- 10
 #' d <- 3
-#' X <- matrix(runif(n * p), n, p)
-#' Y <- runif(n)
+#' X <- matrix(rnorm(n * p), n, p)
 #' W <- sample(1:d, n, replace = TRUE)
+#' Y <- X[, 1] + X[, 2] * (W == 2) + X[, 3] * (W == 3) + runif(n)
 #' mcf <- multi_causal_forest(X = X, Y = Y, W = W)
 #' mcf
 #'
 #' # Treaments may be labled arbitrarily
-#' W <- sample(c("TreatmentA", "TreatmentB", "TreatmentC"), n, replace = TRUE)
+#' W <- sample(c("A", "B", "C"), n, replace = TRUE)
+#' Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
 #' mcf.named <- multi_causal_forest(X = X, Y = Y, W = W)
 #' mcf.named
+#' }
 #' @export
 multi_causal_forest <- function(X, Y, W,
                                 Y.hat = NULL,
                                 W.hat = NULL,
                                 num.trees = 2000,
-                                num.trees.orthog = max(50, num.trees / 4),
                                 sample.weights = NULL,
                                 clusters = NULL,
                                 equalize.cluster.weights = FALSE,
@@ -133,7 +133,7 @@ multi_causal_forest <- function(X, Y, W,
 
   # Unconditional mean
   args.orthog <- list(X = X,
-                     num.trees = num.trees.orthog,
+                     num.trees = max(50, num.trees / 4),
                      sample.weights = sample.weights,
                      clusters = clusters,
                      equalize.cluster.weights = equalize.cluster.weights,
@@ -240,26 +240,36 @@ multi_causal_forest <- function(X, Y, W,
 #' @return List containing matrix of predictions and other estimates (debiased error, etc.) for each treatment.
 #'
 #' @examples
+#' \donttest{
 #' n <- 250
 #' p <- 10
-#' d <- 3
-#' X <- matrix(runif(n * p), n, p)
-#' Y <- runif(n)
-#' W <- sample(1:d, n, replace = TRUE)
+#' X <- matrix(rnorm(n * p), n, p)
+#' W <- sample(c("A", "B", "C"), n, replace = TRUE)
+#' Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
 #' mcf <- multi_causal_forest(X = X, Y = Y, W = W)
 #' head(predict(mcf)$predictions)
+#' }
 #' @method predict multi_causal_forest
 #' @export
 predict.multi_causal_forest <- function(object, newdata = NULL, ...) {
   forests <- object$forests
 
+  # A `grf` prediction object is a data frame with columns `predictions`
+  # and other estimates. This transforms the list of data frames for each
+  # forest (action k) to a list of each estimate (with each data frame containing
+  # n.actions columns).
   predictions <- sapply(forests, function(forest) {
     predict(forest, newdata = newdata, ...)
   })
-  outputs <- rownames(predictions)
+  outputs <- if(is.null(rownames(predictions))) {
+    "predictions"
+  } else {
+    rownames(predictions)
+  }
+  predictions <- matrix(predictions, ncol = length(object$forests))
 
-  out <- lapply(outputs, function(output) {
-    values <- as.data.frame(predictions[output, ])
+  out <- lapply(1:nrow(predictions), function(row) {
+    values <- as.data.frame(predictions[row, ])
     colnames(values) <- names(forests)
     values
   })

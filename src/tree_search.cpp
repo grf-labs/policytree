@@ -97,7 +97,7 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
 std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_sets,
                                           const Data* data) {
   size_t num_rewards = data->num_rewards();
-  size_t best_action = -1;
+  size_t best_action = 0;
   double best_reward = -INF;
 
   std::vector<double> reward_sum(num_rewards, 0.0);
@@ -112,22 +112,23 @@ std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_se
     }
   }
 
-  return std::unique_ptr<Node> (new Node(-1, -1, best_reward, best_action));
+  return std::unique_ptr<Node> (new Node(0, 0.0, best_reward, best_action));
 }
 
 
 // Find the best action (left and right) in the parent of a leaf node (O(npd))
 std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_sets,
                                          const Data* data,
-                                         std::vector<std::vector<double>>& sum_array) {
+                                         std::vector<std::vector<double>>& sum_array,
+                                         int split_step) {
   size_t num_points = sorted_sets[0].size();
   size_t num_rewards = data->num_rewards();
   size_t num_features = data->num_features();
 
-  size_t best_action_left = -1;
-  size_t best_action_right = -1;
-  double split_val = -1.0;
-  size_t split_var = -1;
+  size_t best_action_left = 0;
+  size_t best_action_right = 0;
+  double split_val = 0.0;
+  size_t split_var = 0;
   double best_reward = -INF;
   double global_best_left = -INF;
   double global_best_right = -INF;
@@ -142,6 +143,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       }
     }
     auto it = sorted_sets[p].cbegin();
+    int split_counter = 0;
     size_t n = 0;
     for (;;) {
       ++n;
@@ -154,10 +156,16 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       if (value == next_value) {
         continue;
       }
+      split_counter += 1;
+      if (split_counter == split_step) { // only split at every `split_step`th point
+        split_counter = 0;
+      } else {
+        continue;
+      }
       double left_best = -INF;
       double right_best = -INF;
-      size_t left_action = -1;
-      size_t right_action = -1;
+      size_t left_action = 0;
+      size_t right_action = 0;
       for (size_t d = 0; d < num_rewards; d++) {
         double left_reward = sum_array[d][n];
         double right_reward = sum_array[d][num_points] - left_reward;
@@ -184,11 +192,11 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
   if (best_reward > -INF) {
     // "pruning": if both actions are the same then treat this as a leaf node
     if (best_action_left == best_action_right) {
-      return std::unique_ptr<Node> (new Node(-1, -1, best_reward, best_action_left));
+      return std::unique_ptr<Node> (new Node(0, 0.0, best_reward, best_action_left));
     } else {
-      auto left = std::unique_ptr<Node> (new Node(-1, -1, global_best_left, best_action_left));
-      auto right = std::unique_ptr<Node> (new Node(-1, -1, global_best_right, best_action_right));
-      auto ans = std::unique_ptr<Node> (new Node(split_var, split_val, best_reward, -1));
+      auto left = std::unique_ptr<Node> (new Node(0, 0.0, global_best_left, best_action_left));
+      auto right = std::unique_ptr<Node> (new Node(0, 0.0, global_best_right, best_action_right));
+      auto ans = std::unique_ptr<Node> (new Node(split_var, split_val, best_reward, 0));
       ans->left_child = std::move(left);
       ans->right_child = std::move(right);
       return ans;
@@ -233,6 +241,9 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
  *
  * @param sorted_sets: A vector of sorted sets
  * @param level: The tree depth
+ * @param split_step An optional approximation parameter, the number of possible splits to consider when
+ *  performing tree search. split_step = 1 considers every possible split, split_step = 10
+ *  considers splitting at every 10'th distinct value and will yield a substantial speedup.
  * @param data: The data class
  * @param sum_array: A global zero initialized (num_rewards) x (num_points + 1)
  *  array which is used to calculate cumulative rewards.
@@ -252,21 +263,24 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
  *
  * The split condition reads: if value <= split value, go to left, else right.
  *
- * Time complexity: O(p^k n^(k-1) (log n + d) + pnlog n) where p is the number of
+ * Time complexity (k >= 1): O(p^k n^k (log n + d) + pnlog n) where p is the number of
  * features, n the number of observations, d the number of actions, and k
  * the tree depth.
  */
 std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       int level,
+                                      int split_step,
                                       const Data* data,
                                       std::vector<std::vector<double>>& sum_array) {
-  // if at the parent of a leaf node we can compute the optimal action for both leaves
-  if (level == 1) {
-    return level_one_learning(sorted_sets, data, sum_array);
+  if (level == 0) {
+    // this base case will only be hit if `find_best_split` is called directly with level = 0
+    return level_zero_learning(sorted_sets, data);
+  } else if (level == 1) {
+    // if at the parent of a leaf node we can compute the optimal action for both leaves
+    return level_one_learning(sorted_sets, data, sum_array, split_step);
   // else continue the recursion
   } else {
     size_t num_points = sorted_sets[0].size();
-    size_t num_rewards = data->num_rewards();
     size_t num_features = data->num_features();
     size_t best_split_var;
     double best_split_val;
@@ -281,6 +295,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
     for (size_t p = 0; p < num_features; p++) {
       auto right_sorted_sets = sorted_sets; // copy operator
       auto left_sorted_sets = create_sorted_sets(data, true); // empty
+      int split_counter = 0;
       for (size_t n = 0; n < num_points - 1; n++) {
         auto point = right_sorted_sets[p].cbegin(); // O(1)
         Point point_bk = *point; // store the Point instance since the iterator will be invalid after erase
@@ -304,47 +319,46 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         if (point_bk.get_value(p) >= next->get_value(p)) { // are the values the same then skip
           continue;
         }
-        auto left_child = find_best_split(left_sorted_sets, level - 1, data, sum_array);
-        auto right_child = find_best_split(right_sorted_sets, level - 1, data, sum_array);
+        split_counter += 1;
+        if (split_counter == split_step) { // only split at every `split_step`th point
+          split_counter = 0;
+        } else {
+          continue;
+        }
+        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, data, sum_array);
+        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, data, sum_array);
         if ((best_left_child == nullptr) ||
             (left_child->reward + right_child->reward >
               best_left_child->reward + best_right_child->reward)) {
-          // "pruning", the recursive case (same action in both leaves):
-          if ((left_child->action_id != -1) &&
-              (left_child->action_id == right_child->action_id)) {
-            best_left_child = nullptr;
-            best_right_child = nullptr;
-            // save the result of a redundant `return level_zero_learning(sorted_sets, data)` later on
-            double leaf_reward = left_child->reward + right_child->reward;
-            size_t leaf_action = left_child->action_id;
-            best_ans_as_leaf = std::unique_ptr<Node> (new Node(-1, -1, leaf_reward, leaf_action));
-          } else {
-            best_left_child = std::move(left_child);
-            best_right_child = std::move(right_child);
-            best_split_var = p;
-            best_split_val = point_bk.get_value(p);
-          }
+          best_left_child = std::move(left_child);
+          best_right_child = std::move(right_child);
+          best_split_var = p;
+          best_split_val = point_bk.get_value(p);
         }
       }
     }
     if (best_left_child == nullptr) {
-      if (best_ans_as_leaf != nullptr) {
+      return level_zero_learning(sorted_sets, data);
+    } else {
+          // "pruning", the recursive case (same action in both leaves):
+      if ((best_left_child->is_leaf() && best_right_child->is_leaf()) &&
+              (best_left_child->action_id == best_right_child->action_id)) {
+        double leaf_reward = best_left_child->reward + best_right_child->reward;
+        size_t leaf_action = best_left_child->action_id;
+        best_ans_as_leaf = std::unique_ptr<Node> (new Node(0, 0.0, leaf_reward, leaf_action));
         return best_ans_as_leaf;
       } else {
-        return level_zero_learning(sorted_sets, data);
+        double best_reward = best_left_child->reward + best_right_child->reward;
+        auto ret = std::unique_ptr<Node> (new Node(best_split_var, best_split_val, best_reward, 0));
+        ret->left_child = std::move(best_left_child);
+        ret->right_child = std::move(best_right_child);
+        return ret;
       }
-    } else {
-      double best_reward = best_left_child->reward + best_right_child->reward;
-      auto ret = std::unique_ptr<Node> (new Node(best_split_var, best_split_val, best_reward, -1));
-      ret->left_child = std::move(best_left_child);
-      ret->right_child = std::move(best_right_child);
-      return ret;
     }
   }
 }
 
-
-std::unique_ptr<Node> tree_search(int depth, const Data* data) {
+std::unique_ptr<Node> tree_search(int depth, int split_step, const Data* data) {
   size_t num_rewards = data->num_rewards();
   size_t num_points = data->num_rows;
   auto sorted_sets = create_sorted_sets(data);
@@ -356,5 +370,5 @@ std::unique_ptr<Node> tree_search(int depth, const Data* data) {
     v.resize(num_points + 1, 0.0);
   }
 
-  return find_best_split(sorted_sets, depth, data, sum_array);
+  return find_best_split(sorted_sets, depth, split_step, data, sum_array);
 }

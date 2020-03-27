@@ -8,3 +8,6 @@
 ^tests/checks
 ^CHANGELOG.md
 ^.github
+^releases
+^tmp_
+^paper

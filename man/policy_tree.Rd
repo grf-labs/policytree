@@ -4,7 +4,7 @@
 \alias{policy_tree}
 \title{Fit a policy with exact tree search}
 \usage{
-policy_tree(X, Gamma, depth = 2)
+policy_tree(X, Gamma, depth = 2, split.step = 1)
 }
 \arguments{
 \item{X}{The covariates used. Dimension \eqn{Np} where \eqn{p} is the number of features.}
@@ -12,6 +12,11 @@ policy_tree(X, Gamma, depth = 2)
 \item{Gamma}{The rewards for each action. Dimension \eqn{Nd} where \eqn{d} is the number of actions.}
 
 \item{depth}{The depth of the fitted tree. Default is 2.}
+
+\item{split.step}{An optional approximation parameter (integer above zero), the number of possible splits
+to consider when performing tree search. split.step = 1 (default) considers every possible split, split.step = 10
+considers splitting at every 10'th distinct value and will yield a substantial speedup for densely packed
+continuous data.}
 }
 \value{
 A policy_tree object.
@@ -21,6 +26,7 @@ Finds the optimal (maximizing the sum of rewards) depth L tree by exhaustive sea
 action is the same in both the left and right leaf of a node, the node is pruned.
 }
 \examples{
+\donttest{
 n <- 50
 p <- 10
 d <- 3
@@ -28,7 +34,7 @@ features <- matrix(rnorm(n * p), n, p)
 rewards <- matrix(rnorm(n * d), n, d)
 tree <- policy_tree(features, rewards, depth = 2)
 tree
-
+}
 }
 \references{
 Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning:

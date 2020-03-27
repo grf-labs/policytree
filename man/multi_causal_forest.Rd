@@ -11,7 +11,6 @@ multi_causal_forest(
   Y.hat = NULL,
   W.hat = NULL,
   num.trees = 2000,
-  num.trees.orthog = max(50, num.trees/4),
   sample.weights = NULL,
   clusters = NULL,
   equalize.cluster.weights = FALSE,
@@ -53,9 +52,6 @@ these are estimated using a k separate regression forests. Default is NULL.}
 \item{num.trees}{Number of trees grown in the forest. Note: Getting accurate
 confidence intervals generally requires more trees than
 getting accurate predictions. Default is 2000.}
-
-\item{num.trees.orthog}{Number of trees used in Y.hat and W.hat estimation (optional).
-Default is max(50, num.trees / 4).}
 
 \item{sample.weights}{(experimental) Weights given to each sample in estimation.
 If NULL, each observation receives the same weight.
@@ -152,17 +148,20 @@ regression forest.
 }
 }
 \examples{
+\donttest{
 n <- 500
 p <- 10
 d <- 3
-X <- matrix(runif(n * p), n, p)
-Y <- runif(n)
+X <- matrix(rnorm(n * p), n, p)
 W <- sample(1:d, n, replace = TRUE)
+Y <- X[, 1] + X[, 2] * (W == 2) + X[, 3] * (W == 3) + runif(n)
 mcf <- multi_causal_forest(X = X, Y = Y, W = W)
 mcf
 
 # Treaments may be labled arbitrarily
-W <- sample(c("TreatmentA", "TreatmentB", "TreatmentC"), n, replace = TRUE)
+W <- sample(c("A", "B", "C"), n, replace = TRUE)
+Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
 mcf.named <- multi_causal_forest(X = X, Y = Y, W = W)
 mcf.named
+}
 }
