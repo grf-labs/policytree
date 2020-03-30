@@ -3,20 +3,26 @@
 #' Estimate the conditional response from K treatment arms by fitting K separate one-hot encoded causal forests.
 #'
 #' For K treatments this "naive" multivariate-grf proceeeds by fitting K separate causal forests
-#' where in forest k the treatment assignment vector is one-hot encoded for treament k. The steps are:
+#' where in forest k the treatment assignment vector is one-hot encoded for treament k
+#' (i.e. treatment vector  w_k entry i is one where individual i receives treatment k, else zero). The steps are:
 #' 1) Estimate propensities for each action 1..K: \eqn{e_k}. This is done with K separate regression forests
 #' with propensities normalized to sum to 1 at the final step.
 #' 2) Estimate the expected response m(x) = E(Y | Xi) marginalizing over treatment. This is done with one
 #' regression forest.
-#' 3) Estimate each \eqn{\tau_k} with a causal forest
+#' 3) Estimate each \eqn{\tau_k} with a causal forest.
 #'
 #' The resulting treatment estimate will be the difference between an action k and the weighted average of
-#' all the other actions. In particular, if the conditional mean of arm k is \eqn{\mu_k(X)}, then `multi_causal_forest`
-#' will estimate \eqn{\hat \mu_k (X) = \mu_k(X) - \frac{1}{K-1} \sum_{i \neq k}^{K} \mu_i(X)}.
+#' all the other actions. In particular, if the model is (mutually exclusive treatment assignment, \eqn{w_1 + w_2 + w_3 = 1}):
+#' \deqn{y(x) = g(x) + \tau_1 w_1 + \tau_2 w_2 + \tau_3 w_3 + \varepsilon}
+#' then `multi_causal_forest` will estimate
+#' \deqn{y(x) = g_1(x) + T_1 w_1 + \varepsilon}
+#' for treatment 1, where \eqn{T_1 = \tau_1 - \tau_2 - \tau_3} (and \eqn{g_1(x) = g(x) - \tau_2 - \tau_3}).
+#' For treatment 2:
+#' \deqn{y(x) = g_2(x) + T_2 w_2 + \varepsilon}
+#' with \eqn{T_2 = \tau_2 - \tau_1 - \tau_2}.
 #'
-#' To compare estimated contrasts with ground truth, one has to scale the difference with (K - 1) / K
-#' to adjust for the different baseline used in multi_causal_forest. For an illustration see the usage
-#' example below.
+#' This means that estimated contrasts, for example, \eqn{\hat T_2  - \hat T_1} will be proportional to the
+#' contrast \eqn{\tau_2 - \tau_1}. In practice the weighting (K-1) / K is an appropriate adjustment.
 #'
 #' @param X The covariates used in the causal regression.
 #' @param Y The outcome (must be a numeric vector with no NAs).
@@ -94,24 +100,54 @@
 #'
 #' @examples
 #' \donttest{
-#' n <- 1000
+#' n <- 5000
 #' p <- 5
 #' X <- matrix(rnorm(n * p), n, p)
 #' W <- sample(c("A", "B", "C"), n, replace = TRUE)
-#' muB <- X[, 2]
-#' muC <- 2 * X[, 2]
-#' Y <- X[, 1] + muB * (W == "B") + muC * (W == "C") + runif(n)
+#' tauA <- 0.5 * X[, 1]
+#' tauB <- X[, 1]
+#' tauC <- 5 * X[, 1]
+#' Y <- rowMeans(X[, 3:5]) + tauA * (W == "A") + tauB * (W == "B") + tauC * (W == "C") + runif(n)
 #'
 #' mcf <- multi_causal_forest(X, Y, W)
 #' tau.mcf <- predict(mcf)$predictions
-#' # Contrast example: since we have K = 3 treatments, we scale the difference
-#' # by (K-1) / K = 2 / 3 to compare.
-#' contrast <- muC - muB
-#' contrastCB.hat <- 2 / 3 * (tau.mcf[, "C"] - tau.mcf[, "B"])
 #'
-#' plot(X[, 2], contrast)
-#' points(X[, 2], contrastCB.hat, col = "red")
-#' legend("topleft", c("muC - muB", "hat muC - hat muB"), col = 1:2, pch = 19)
+#' contrast <- tauC - tauB
+#' contrastCB.hat <- tau.mcf[, "C"] - tau.mcf[, "B"]
+#'
+#' reg <- lm(tauC - tauB ~ tau.mcf[, "C"] + tau.mcf[, "B"] - 1)
+#' contrastCB.hat.infeasible <- coef(reg)[1] * tau.mcf[, "C"] + coef(reg)[2] * tau.mcf[, "B"]
+#'
+#' plot(X[, 1], contrastCB.hat)
+#' points(X[, 1], 2/3 * contrastCB.hat, col = "red")
+#' points(X[, 1], contrastCB.hat.infeasible, col = "green")
+#' lines(X[, 1], contrast, col = "blue")
+#' legend("topleft", c("unscaled", "(K-1)/K", "infeasible weights", "tauC - tauB"), col = 1:4, pch = 19)
+#'
+#' # An example where the scaled estimate is off
+#' n <- 5000
+#' p <- 5
+#' X <- matrix(rnorm(n * p), n, p)
+#' W <- sample(c("A", "B", "C"), n, replace = TRUE, prob = c(1/5, 3/5, 1/5))
+#' tauA <- 0.5 * X[, 1]
+#' tauB <- X[, 1]
+#' tauC <- 5 * X[, 1]
+#' Y <- rowMeans(X[, 3:5]) + tauA * (W == "A") + tauB * (W == "B") + tauC * (W == "C") + runif(n)
+#'
+#' mcf <- multi_causal_forest(X, Y, W)
+#' tau.mcf <- predict(mcf)$predictions
+#'
+#' contrast <- tauB - tauA
+#' contrastBA.hat <- tau.mcf[, "B"] - tau.mcf[, "A"]
+#'
+#' reg <- lm(tauB - tauA ~ tau.mcf[, "B"] + tau.mcf[, "A"] - 1)
+#' contrastBA.hat.infeasible <- coef(reg)[1] * tau.mcf[, "B"] + coef(reg)[2] * tau.mcf[, "A"]
+#'
+#' plot(X[, 1], contrastBA.hat)
+#' points(X[, 1], 2/3 * contrastBA.hat, col = "red")
+#' points(X[, 1], contrastBA.hat.infeasible, col = "green")
+#' lines(X[, 1], contrast, col = "blue")
+#' legend("topleft", c("unscaled", "(K-1)/K", "infeasible weights", "tauB - tauA"), col = 1:4, pch = 19)
 #' }
 #' @export
 multi_causal_forest <- function(X, Y, W,
