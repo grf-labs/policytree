@@ -166,10 +166,12 @@ contrast \eqn{\tau_2 - \tau_1}. In practice the weighting (K-1) / K is an approp
 }
 \examples{
 \donttest{
+# `multi_causal_forest` returns treatment estimates as a linear combination of all actions. Scaling the
+# contrasts by the (K - 1) / K where K is the number actions is usually an appropriate adjustment.
 n <- 5000
 p <- 5
 X <- matrix(rnorm(n * p), n, p)
-W <- sample(c("A", "B", "C"), n, replace = TRUE)
+W <- sample(c("A", "B", "C"), n, replace = TRUE, prob = c(1/5, 3/5, 1/5))
 tauA <- 0.5 * X[, 1]
 tauB <- X[, 1]
 tauC <- 5 * X[, 1]
@@ -190,19 +192,8 @@ points(X[, 1], contrastCB.hat.infeasible, col = "green")
 lines(X[, 1], contrast, col = "blue")
 legend("topleft", c("unscaled", "(K-1)/K", "infeasible weights", "tauC - tauB"), col = 1:4, pch = 19)
 
-# An example where the scaled estimate is off
-n <- 5000
-p <- 5
-X <- matrix(rnorm(n * p), n, p)
-W <- sample(c("A", "B", "C"), n, replace = TRUE, prob = c(1/5, 3/5, 1/5))
-tauA <- 0.5 * X[, 1]
-tauB <- X[, 1]
-tauC <- 5 * X[, 1]
-Y <- rowMeans(X[, 3:5]) + tauA * (W == "A") + tauB * (W == "B") + tauC * (W == "C") + runif(n)
-
-mcf <- multi_causal_forest(X, Y, W)
-tau.mcf <- predict(mcf)$predictions
-
+# Note that the estimates can be scaled off drastically from ground truth as the two treatment estimates
+# can be targeted with very different weights in the different causal forests.
 contrast <- tauB - tauA
 contrastBA.hat <- tau.mcf[, "B"] - tau.mcf[, "A"]
 
@@ -213,6 +204,6 @@ plot(X[, 1], contrastBA.hat)
 points(X[, 1], 2/3 * contrastBA.hat, col = "red")
 points(X[, 1], contrastBA.hat.infeasible, col = "green")
 lines(X[, 1], contrast, col = "blue")
-legend("topleft", c("unscaled", "(K-1)/K", "infeasible weights", "tauB - tauA"), col = 1:4, pch = 19)
+legend("topleft", c("unscaled", "(K-1)/K", "infeasible weights", "tauB - tauA"), col = 1:4, pch = 19, bg = "white")
 }
 }
