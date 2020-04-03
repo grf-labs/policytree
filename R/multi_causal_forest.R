@@ -5,24 +5,27 @@
 #' For K treatments this "naive" multivariate-grf proceeeds by fitting K separate causal forests
 #' where in forest k the treatment assignment vector is one-hot encoded for treament k
 #' (i.e. treatment vector  w_k entry i is one where individual i receives treatment k, else zero). The steps are:
-#' 1) Estimate propensities for each action 1..K: \eqn{e_k}. This is done with K separate regression forests
+#' 1) Estimate propensities \eqn{e_k(x)} for each action 1..K:. This is done with K separate regression forests
 #' with propensities normalized to sum to 1 at the final step.
 #' 2) Estimate the expected response m(x) = E(Y | Xi) marginalizing over treatment. This is done with one
 #' regression forest.
-#' 3) Estimate each \eqn{\tau_k} with a causal forest.
+#' 3) Estimate each \eqn{\tau_k(x)} with a causal forest.
 #'
 #' The resulting treatment estimate will be the difference between an action k and the weighted average of
 #' all the other actions. In particular, if the model is (mutually exclusive treatment assignment, \eqn{w_1 + w_2 + w_3 = 1}):
-#' \deqn{y(x) = g(x) + \tau_1 w_1 + \tau_2 w_2 + \tau_3 w_3 + \varepsilon}
+#' \deqn{y(x) = g(x) + \tau_1(x) w_1 + \tau_2(x) w_2 + \tau_3(x) w_3 + \varepsilon}
 #' then `multi_causal_forest` will estimate
-#' \deqn{y(x) = g_1(x) + T_1 w_1 + \varepsilon}
-#' for treatment 1, where \eqn{T_1 = \tau_1 - \tau_2 - \tau_3} (and \eqn{g_1(x) = g(x) - \tau_2 - \tau_3}).
-#' For treatment 2:
-#' \deqn{y(x) = g_2(x) + T_2 w_2 + \varepsilon}
-#' with \eqn{T_2 = \tau_2 - \tau_1 - \tau_2}.
+#' \deqn{y(x) = g_1(x) + T_1(x) w_1 + \varepsilon}
+#' for treatment 1, where \eqn{T_1(x) = \tau_1(x) - \tau_2(x) - \tau_3(x)} (and \eqn{g_1(x) = g(x) - \tau_2(x) - \tau_3(x)}).
 #'
-#' This means that estimated contrasts, for example, \eqn{\hat T_2  - \hat T_1} will be proportional to the
-#' contrast \eqn{\tau_2 - \tau_1}. In practice the weighting (K-1) / K is an appropriate adjustment.
+#' For treatment 2:
+#' \deqn{y(x) = g_2(x) + T_2(x) w_2 + \varepsilon}
+#' with \eqn{T_2 = \tau_2(x) - \tau_1(x) - \tau_3(x)}.
+#'
+#' This means that estimated contrasts, for example, \eqn{\hat T_2(x)  - \hat T_1(x)} will be proportional to the
+#' contrast \eqn{\tau_2(x) - \tau_1(x)}. In practice the weighting (K-1) / K is an appropriate adjustment, though this
+#' will not always be the case. For example, instances where the signal is dominated by a single treatment
+#' arm may cause all the forests to excessively favor splits according to this target.
 #'
 #' @param X The covariates used in the causal regression.
 #' @param Y The outcome (must be a numeric vector with no NAs).
@@ -105,10 +108,10 @@
 #' n <- 5000
 #' p <- 5
 #' X <- matrix(rnorm(n * p), n, p)
-#' W <- sample(c("A", "B", "C"), n, replace = TRUE, prob = c(1/5, 3/5, 1/5))
+#' W <- sample(c("A", "B", "C"), n, replace = TRUE)
 #' tauA <- 0.5 * X[, 1]
 #' tauB <- X[, 1]
-#' tauC <- 5 * X[, 1]
+#' tauC <- 1.5 * X[, 1]
 #' Y <- rowMeans(X[, 3:5]) + tauA * (W == "A") + tauB * (W == "B") + tauC * (W == "C") + runif(n)
 #'
 #' mcf <- multi_causal_forest(X, Y, W)
@@ -125,20 +128,6 @@
 #' points(X[, 1], contrastCB.hat.infeasible, col = "green")
 #' lines(X[, 1], contrast, col = "blue")
 #' legend("topleft", c("unscaled", "(K-1)/K", "infeasible weights", "tauC - tauB"), col = 1:4, pch = 19)
-#'
-#' # Note that the estimates can be scaled off drastically from ground truth as the two treatment estimates
-#' # can be targeted with very different weights in the different causal forests.
-#' contrast <- tauB - tauA
-#' contrastBA.hat <- tau.mcf[, "B"] - tau.mcf[, "A"]
-#'
-#' reg <- lm(tauB - tauA ~ tau.mcf[, "B"] + tau.mcf[, "A"] - 1)
-#' contrastBA.hat.infeasible <- coef(reg)[1] * tau.mcf[, "B"] + coef(reg)[2] * tau.mcf[, "A"]
-#'
-#' plot(X[, 1], contrastBA.hat)
-#' points(X[, 1], 2/3 * contrastBA.hat, col = "red")
-#' points(X[, 1], contrastBA.hat.infeasible, col = "green")
-#' lines(X[, 1], contrast, col = "blue")
-#' legend("topleft", c("unscaled", "(K-1)/K", "infeasible weights", "tauB - tauA"), col = 1:4, pch = 19, bg = "white")
 #' }
 #' @export
 multi_causal_forest <- function(X, Y, W,
