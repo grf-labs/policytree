@@ -21,7 +21,7 @@ double_robust_scores.multi_causal_forest <- function(object, ...) {
 
   # The treatment data structures are ordered columnwise from 1..n.treatments,
   # but the original W vector may be encoded arbitrarily (eg "0, 1, 2" , "A, B, C", etc.)
-  observed.treatment <- sapply(object$W.orig, function(w) match(w, treatment.names))
+  observed.treatment <- match(object$W.orig, treatment.names)
   observed.treatment.idx <- cbind(1:n.obs, observed.treatment)
 
   YY <- matrix(0, n.obs, n.treatments)
