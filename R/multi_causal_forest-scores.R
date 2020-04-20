@@ -19,9 +19,9 @@ double_robust_scores.multi_causal_forest <- function(object, ...) {
   n.treatments <- ncol(object$W.hat)
   treatment.names <- colnames(object$W.hat)
 
-  # grep since the treatment data structures are ordered columnwise from 1..n.treatments,
+  # The treatment data structures are ordered columnwise from 1..n.treatments,
   # but the original W vector may be encoded arbitrarily (eg "0, 1, 2" , "A, B, C", etc.)
-  observed.treatment <- sapply(object$W.orig, function(w) grep(w, treatment.names))
+  observed.treatment <- sapply(object$W.orig, function(w) match(w, treatment.names))
   observed.treatment.idx <- cbind(1:n.obs, observed.treatment)
 
   YY <- matrix(0, n.obs, n.treatments)
