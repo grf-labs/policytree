@@ -18,6 +18,7 @@ branches:
 before_deploy:
   - cp releases/CHANGELOG.md .
   - Rscript -e 'install.packages(getwd(), repos = NULL, type = "source"); pkgdown::build_site()'
+  - cp pkgdown/favicon/* docs/
 deploy:
   provider: pages
   local_dir: docs/
