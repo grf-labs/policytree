@@ -3,13 +3,9 @@ cache: packages
 warnings_are_errors: true
 r_check_args: --as-cran --run-donttest
 
-r_binary_packages:
-  - knitr
-  - rmarkdown
-
 r_packages:
+  # Online documentation
   - pkgdown
-  - BH # Boost header files
 
 branches:
   only:
