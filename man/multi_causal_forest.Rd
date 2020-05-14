@@ -137,62 +137,31 @@ A trained multi causal forest object (collection of causal forests). If tune.par
 then tuning information will be included through the \code{tuning.output} attribute of each forest.
 }
 \description{
-Estimate the conditional response from K treatment arms by fitting K separate one-hot encoded causal forests.
-}
-\details{
-For K treatments this "naive" multivariate-grf proceeeds by fitting K separate causal forests
-where in forest k the treatment assignment vector is one-hot encoded for treament k
-(i.e. treatment vector  w_k entry i is one where individual i receives treatment k, else zero). The steps are:
+For k treatments this "naive" multivariate-grf proceeeds by fitting k separate causal forests
+where in forest i the treatment assignment vector is one-hot encoded for treament i. The steps are:
 \enumerate{
-\item Estimate propensities \eqn{e_k(x)} for each action 1..K:. This is done with K separate regression forests
+\item Estimate propensities for each action 1..k: \eqn{e_k}. This is done with k separate regression forests
 with propensities normalized to sum to 1 at the final step.
 \item Estimate the expected response m(x) = E(Y | Xi) marginalizing over treatment. This is done with one
 regression forest.
-\item Estimate each \eqn{\tau_k(x)} with a causal forest.
+\item Estimate each \eqn{\tau_i} with a causal forest
 }
-
-The resulting treatment estimate will be the difference between an action k and the weighted average of
-all the other actions. In particular, if the model is (mutually exclusive treatment assignment, \eqn{w_1 + w_2 + w_3 = 1}):
-\deqn{y(x) = g(x) + \tau_1(x) w_1 + \tau_2(x) w_2 + \tau_3(x) w_3 + \varepsilon}
-then \code{multi_causal_forest} will estimate
-\deqn{y(x) = g_1(x) + T_1(x) w_1 + \varepsilon}
-for treatment 1, where \eqn{T_1(x) = \tau_1(x) - \tau_2(x) - \tau_3(x)} (and \eqn{g_1(x) = g(x) - \tau_2(x) - \tau_3(x)}).
-
-For treatment 2:
-\deqn{y(x) = g_2(x) + T_2(x) w_2 + \varepsilon}
-with \eqn{T_2 = \tau_2(x) - \tau_1(x) - \tau_3(x)}.
-
-This means that estimated contrasts, for example, \eqn{\hat T_2(x)  - \hat T_1(x)} will be proportional to the
-contrast \eqn{\tau_2(x) - \tau_1(x)}. In practice the weighting (K-1) / K is an appropriate adjustment, though this
-will not always be the case. For example, instances where the signal is dominated by a single treatment
-arm may cause all the forests to excessively favor splits according to this target.
 }
 \examples{
 \donttest{
-# `multi_causal_forest` returns treatment estimates as a linear combination of all actions. Scaling the
-# contrasts by the (K - 1) / K where K is the number actions is usually an appropriate adjustment.
-n <- 5000
-p <- 5
+n <- 500
+p <- 10
+d <- 3
 X <- matrix(rnorm(n * p), n, p)
+W <- sample(1:d, n, replace = TRUE)
+Y <- X[, 1] + X[, 2] * (W == 2) + X[, 3] * (W == 3) + runif(n)
+mcf <- multi_causal_forest(X = X, Y = Y, W = W)
+mcf
+
+# Treaments may be labled arbitrarily
 W <- sample(c("A", "B", "C"), n, replace = TRUE)
-tauA <- 0.5 * X[, 1]
-tauB <- X[, 1]
-tauC <- 1.5 * X[, 1]
-Y <- rowMeans(X[, 3:5]) + tauA * (W == "A") + tauB * (W == "B") + tauC * (W == "C") + runif(n)
-
-mcf <- multi_causal_forest(X, Y, W)
-tau.mcf <- predict(mcf)$predictions
-
-contrast <- tauC - tauB
-contrastCB.hat <- tau.mcf[, "C"] - tau.mcf[, "B"]
-
-reg <- lm(tauC - tauB ~ tau.mcf[, "C"] + tau.mcf[, "B"] - 1)
-contrastCB.hat.infeasible <- coef(reg)[1] * tau.mcf[, "C"] + coef(reg)[2] * tau.mcf[, "B"]
-
-plot(X[, 1], contrastCB.hat)
-points(X[, 1], 2/3 * contrastCB.hat, col = "red")
-points(X[, 1], contrastCB.hat.infeasible, col = "green")
-lines(X[, 1], contrast, col = "blue")
-legend("topleft", c("unscaled", "(K-1)/K", "infeasible weights", "tauC - tauB"), col = 1:4, pch = 19)
+Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
+mcf.named <- multi_causal_forest(X = X, Y = Y, W = W)
+mcf.named
 }
 }
