@@ -107,10 +107,18 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
 #' predict(tree, features)
 #' }
 predict.policy_tree <- function(object, newdata, ...) {
-  # if nrow = 1:
-  if (is.null(dim(newdata))) {
-    newdata <- matrix(newdata, nrow = 1)
+  valid.classes <- c("matrix", "data.frame")
+  if (!inherits(newdata, valid.classes)) {
+    stop(paste("Currently the only supported data input types are:",
+               "`matrix`, `data.frame`"))
   }
+  if (!is.numeric(as.matrix(newdata))) {
+    stop("The feature matrix X must be numeric")
+  }
+  if (any(is.na(newdata))) {
+    stop("Covariate matrix X contains missing values.")
+  }
+
   tree <- object
   if (tree$n.features != ncol(newdata)) {
     stop("This tree was trained with ", tree$n.features, " variables. Provided: ", ncol(newdata))
