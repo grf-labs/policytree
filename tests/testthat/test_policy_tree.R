@@ -67,7 +67,7 @@ test_that("solver bindings run", {
   p <- capture.output(print(pt))
 
   p1 <- predict(pt, X)
-  p2 <- predict(pt, X[1, ])
+  p2 <- predict(pt, X[1, , drop = FALSE])
 
   p <- capture.output(print(pt))
   plot(pt)
