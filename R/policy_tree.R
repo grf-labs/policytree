@@ -32,24 +32,30 @@
 #' @importFrom Rcpp evalCpp
 #' @importFrom utils type.convert
 policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
-  X <- as.matrix(X)
-  Gamma <- as.matrix(Gamma)
   n.features <- ncol(X)
   n.actions <- ncol(Gamma)
   n.obs <- nrow(X)
+  valid.classes <- c("matrix", "data.frame")
 
+  if (!inherits(X, valid.classes) || !inherits(Gamma, valid.classes)) {
+    stop(paste("Currently the only supported data input types are:",
+               "`matrix`, `data.frame`"))
+  }
+  if (!is.numeric(as.matrix(X))) {
+    stop("The feature matrix X must be numeric")
+  }
+  if (!is.numeric(as.matrix(Gamma))) {
+    stop("The reward matrix Gamma must be numeric")
+  }
   if (any(is.na(X))) {
     stop("Covariate matrix X contains missing values.")
   }
-
   if (any(is.na(Gamma))) {
     stop("Gamma matrix contains missing values.")
   }
-
   if (depth < 0 ) {
     stop("`depth` cannot be negative.")
   }
-
   if (n.obs != nrow(Gamma)) {
     stop("X and Gamma does not have the same number of rows")
   }
@@ -64,7 +70,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
     columns <- make.names(1:ncol(X))
   }
 
-  nodes <- tree_search_rcpp(X, Gamma, depth, split.step)
+  nodes <- tree_search_rcpp(as.matrix(X), as.matrix(Gamma), depth, split.step)
   tree = list(nodes = nodes)
 
   tree[["depth"]] <- depth
