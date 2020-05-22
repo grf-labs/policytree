@@ -85,20 +85,18 @@
 #'
 #' @examples
 #' \donttest{
-#' n <- 500
+#' # Train a multi causal forest.
+#' n <- 250
 #' p <- 10
 #' d <- 3
 #' X <- matrix(rnorm(n * p), n, p)
-#' W <- sample(1:d, n, replace = TRUE)
-#' Y <- X[, 1] + X[, 2] * (W == 2) + X[, 3] * (W == 3) + runif(n)
-#' mcf <- multi_causal_forest(X = X, Y = Y, W = W)
-#' mcf
-#'
-#' # Treaments may be labled arbitrarily
 #' W <- sample(c("A", "B", "C"), n, replace = TRUE)
 #' Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
-#' mcf.named <- multi_causal_forest(X = X, Y = Y, W = W)
-#' mcf.named
+#' multi.forest <- multi_causal_forest(X = X, Y = Y, W = W)
+#'
+#' # Predict using the forest.
+#' multi.forest.pred <- predict(multi.forest)
+#' head(multi.forest.pred$predictions)
 #' }
 #' @export
 multi_causal_forest <- function(X, Y, W,
@@ -242,13 +240,18 @@ multi_causal_forest <- function(X, Y, W,
 #'
 #' @examples
 #' \donttest{
+#' # Train a multi causal forest.
 #' n <- 250
 #' p <- 10
+#' d <- 3
 #' X <- matrix(rnorm(n * p), n, p)
 #' W <- sample(c("A", "B", "C"), n, replace = TRUE)
 #' Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
-#' mcf <- multi_causal_forest(X = X, Y = Y, W = W)
-#' head(predict(mcf)$predictions)
+#' multi.forest <- multi_causal_forest(X = X, Y = Y, W = W)
+#'
+#' # Predict using the forest.
+#' multi.forest.pred <- predict(multi.forest)
+#' head(multi.forest.pred$predictions)
 #' }
 #' @method predict multi_causal_forest
 #' @export
