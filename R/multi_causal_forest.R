@@ -7,7 +7,7 @@
 #' with propensities normalized to sum to 1 at the final step.
 #' 2) Estimate the expected response m(x) = E(Y | Xi) marginalizing over treatment. This is done with one
 #' regression forest.
-#' 3) Estimate each \eqn{\tau_k(x)} with a causal forest.
+#' 3) Estimate the treatment effect \eqn{\tau_k(x) = \frac{\mu_k(x) - m(x)}{1 - e_k(x)}} with a causal forest (where \eqn{\mu_k(x) = E[Y | X, W=W_k]})
 #'
 #' @param X The covariates used in the causal regression.
 #' @param Y The outcome (must be a numeric vector with no NAs).

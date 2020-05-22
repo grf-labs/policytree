@@ -145,7 +145,7 @@ where in forest k the treatment assignment vector is one-hot encoded for treamen
 with propensities normalized to sum to 1 at the final step.
 \item Estimate the expected response m(x) = E(Y | Xi) marginalizing over treatment. This is done with one
 regression forest.
-\item Estimate each \eqn{\tau_k(x)} with a causal forest.
+\item Estimate the treatment effect \eqn{\tau_k(x) = \frac{\mu_k(x) - m(x)}{1 - e_k(x)}} with a causal forest (where \eqn{\mu_k(x) = E[Y | X, W=W_k]})
 }
 }
 \examples{
