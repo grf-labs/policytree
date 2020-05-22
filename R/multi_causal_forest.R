@@ -1,12 +1,13 @@
 #' One vs. all causal forest for multiple treatment effect estimation
 #'
-#' For k treatments this "naive" multivariate-grf proceeeds by fitting k separate causal forests
-#' where in forest i the treatment assignment vector is one-hot encoded for treament i. The steps are:
-#' 1) Estimate propensities for each action 1..k: \eqn{e_k}. This is done with k separate regression forests
+#' For K treatments this "naive" multivariate-grf proceeeds by fitting K separate causal forests
+#' where in forest k the treatment assignment vector is one-hot encoded for treament k
+#' (i.e. treatment vector  w_k entry i is one where individual i receives treatment k, else zero). The steps are:
+#' 1) Estimate propensities \eqn{e_k(x)} for each action 1..K: This is done with k separate regression forests
 #' with propensities normalized to sum to 1 at the final step.
 #' 2) Estimate the expected response m(x) = E(Y | Xi) marginalizing over treatment. This is done with one
 #' regression forest.
-#' 3) Estimate each \eqn{\tau_i} with a causal forest
+#' 3) Estimate each \eqn{\tau_k(x)} with a causal forest.
 #'
 #' @param X The covariates used in the causal regression.
 #' @param Y The outcome (must be a numeric vector with no NAs).

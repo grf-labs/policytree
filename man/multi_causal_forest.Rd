@@ -137,14 +137,15 @@ A trained multi causal forest object (collection of causal forests). If tune.par
 then tuning information will be included through the \code{tuning.output} attribute of each forest.
 }
 \description{
-For k treatments this "naive" multivariate-grf proceeeds by fitting k separate causal forests
-where in forest i the treatment assignment vector is one-hot encoded for treament i. The steps are:
+For K treatments this "naive" multivariate-grf proceeeds by fitting K separate causal forests
+where in forest k the treatment assignment vector is one-hot encoded for treament k
+(i.e. treatment vector  w_k entry i is one where individual i receives treatment k, else zero). The steps are:
 \enumerate{
-\item Estimate propensities for each action 1..k: \eqn{e_k}. This is done with k separate regression forests
+\item Estimate propensities \eqn{e_k(x)} for each action 1..K: This is done with k separate regression forests
 with propensities normalized to sum to 1 at the final step.
 \item Estimate the expected response m(x) = E(Y | Xi) marginalizing over treatment. This is done with one
 regression forest.
-\item Estimate each \eqn{\tau_i} with a causal forest
+\item Estimate each \eqn{\tau_k(x)} with a causal forest.
 }
 }
 \examples{
