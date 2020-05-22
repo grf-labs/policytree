@@ -5,7 +5,7 @@
 #' (i.e. treatment vector  w_k entry i is one where individual i receives treatment k, else zero). The steps are:
 #' 1) Estimate propensities \eqn{e_k(x)} for each action 1..K: This is done with k separate regression forests
 #' with propensities normalized to sum to 1 at the final step.
-#' 2) Estimate the expected response m(x) = E(Y | Xi) marginalizing over treatment. This is done with one
+#' 2) Estimate the expected response m(x) = E(Y | X) marginalizing over treatment. This is done with one
 #' regression forest.
 #' 3) Estimate the treatment effect \eqn{\tau_k(x) = \frac{\mu_k(x) - m(x)}{1 - e_k(x)}} with a causal forest (where \eqn{\mu_k(x) = E[Y | X, W=W_k]})
 #'
