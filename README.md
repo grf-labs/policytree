@@ -9,10 +9,11 @@ Learn optimal policies via doubly robust empirical welfare maximization over tre
 * Calculate statistics such as double robust scores (support for a subset of _grf_ forest types)
 * Fit optimal policies with exact tree search
 
-### Documentation
-https://grf-labs.github.io/policytree/
-* [Get started](https://grf-labs.github.io/policytree/articles/policytree.html)
-* [Reference](https://grf-labs.github.io/policytree/reference/index.html)
+Some helpful links for getting started:
+
+* The [R package documentation](https://grf-labs.github.io/policytree/) contains usage examples and method reference.
+* For community questions and answers around usage, see the GitHub [issues page](https://github.com/grf-labs/policytree/issues).
+
 
 ### Installation
 
