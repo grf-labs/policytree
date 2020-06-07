@@ -53,7 +53,7 @@ plot(tr)
 ```
 
 The core tree search functionality is built in C++ using the ``Rcpp`` interface [@eddelbuettel2011rcpp].
-This approach to tree search is discussed further by @zhou2018offline, who find it to scale better to large sample size problems than an alternative based on mixed-integer programming. We also note an existing ``R`` package, ``evtree`` by @JSSv061i01, which can be used to heuristically optimize over decision trees via evolutionary search.
+This approach to tree search is discussed further by @zhou2018offline, who find it to scale better to large sample size problems than an alternative based on mixed-integer programming. We also note the ``R`` package ``evtree`` by @JSSv061i01, which can be used to heuristically optimize over decision trees via evolutionary search, and ``tmle3mopttx`` by @tmle3, for estimating optimal individual treatments.
 
 # Appendix:
 
