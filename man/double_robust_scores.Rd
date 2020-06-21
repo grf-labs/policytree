@@ -50,13 +50,24 @@ is the double robust estimator of the treatment effect as in eqn. (52) in Athey 
 }
 \examples{
 \donttest{
+# Compute double robust scores for a multi_causal forest
 n <- 500
 p <- 10
 X <- matrix(rnorm(n * p), n, p)
 W <- sample(c("A", "B", "C"), n, replace = TRUE)
 Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
 forests <- multi_causal_forest(X = X, Y = Y, W = W)
-head(double_robust_scores(forests))
+scores <- double_robust_scores(forests)
+head(scores)
+
+# Compute double robust scores for a causal forest
+n <- 500
+p <- 10
+X <- matrix(rnorm(n * p), n, p)
+W <- rbinom(n, 1, 0.5)
+Y <- pmax(X[, 1], 0) * W + X[, 2] + pmin(X[, 3], 0) + rnorm(n)
+c.forest <- grf::causal_forest(X, Y, W)
+scores <- double_robust_scores(c.forest)
 }
 }
 \references{
