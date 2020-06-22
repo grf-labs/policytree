@@ -2,6 +2,7 @@ language: R
 cache: packages
 warnings_are_errors: true
 r_check_args: --as-cran --run-donttest
+before_install: cd r-package
 
 branches:
   only:
