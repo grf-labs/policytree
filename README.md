@@ -99,10 +99,18 @@ Contributions are welcome, please consult the [development guide](https://github
 
 ### References
 
-Athey, Susan, and Stefan Wager. "Efficient policy learning." [arXiv](https://arxiv.org/abs/1702.02896) preprint arXiv:1702.02896 (2017).
+Susan Athey and Stefan Wager.
+<b>Efficient Policy Learning.</b> 2017.
+[<a href="https://arxiv.org/abs/1702.02896">arxiv</a>]
 
-Kitagawa, Toru, and Aleksey Tetenov. "Who should be treated? empirical welfare maximization methods for treatment choice." Econometrica 86.2 (2018): 591-616.
+Toru Kitagawa and Aleksey Tetenov.
+<b>Who Should be Treated? Empirical Welfare Maximization Methods for Treatment Choice.</b> <i>Econometrica 86.2 (2018): 591-616.</i>
+[<a href="https://onlinelibrary.wiley.com/doi/abs/10.3982/ECTA13288">paper</a>]
 
-Sverdrup, Erik, Ayush Kanodia, Zhengyuan Zhou, Susan Athey, and Stefan Wager. "policytree: Policy learning via doubly robust empirical welfare maximization over trees". Journal of Open Source Software, 5(50), 2232. [[paper](https://joss.theoj.org/papers/10.21105/joss.02232)]
+Erik Sverdrup, Ayush Kanodia, Zhengyuan Zhou, Susan Athey, and Stefan Wager.
+<b>policytree: Policy learning via doubly robust empirical welfare maximization over trees.</b> <i>Journal of Open Source Software, 5(50), 2232.</i>
+[<a href="https://joss.theoj.org/papers/10.21105/joss.02232">paper</a>]
 
-Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning: Generalization and optimization." [arXiv](https://arxiv.org/abs/1810.04778) preprint arXiv:1810.04778 (2018).
+Zhengyuan Zhou, Susan Athey, and Stefan Wager.
+<b>Offline multi-action policy learning: Generalization and optimization.</b>
+[<a href="https://arxiv.org/abs/1810.04778">arxiv</a>]
