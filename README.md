@@ -104,5 +104,3 @@ Athey, Susan, and Stefan Wager. "Efficient policy learning." [arXiv](https://arx
 Kitagawa, Toru, and Aleksey Tetenov. "Who should be treated? empirical welfare maximization methods for treatment choice." Econometrica 86.2 (2018): 591-616.
 
 Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning: Generalization and optimization." [arXiv](https://arxiv.org/abs/1810.04778) preprint arXiv:1810.04778 (2018).
-
-TO ADD: OSS reference
