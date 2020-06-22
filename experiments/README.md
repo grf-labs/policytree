@@ -7,6 +7,10 @@ This directory contains replication code for
 
 ### References
 
-Athey, Susan, and Stefan Wager. "Efficient policy learning." [arXiv](https://arxiv.org/abs/1702.02896) preprint arXiv:1702.02896 (2017).
+Susan Athey and Stefan Wager.
+<b>Efficient Policy Learning.</b> 2017.
+[<a href="https://arxiv.org/abs/1702.02896">arxiv</a>]
 
-Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning: Generalization and optimization." [arXiv](https://arxiv.org/abs/1810.04778) preprint arXiv:1810.04778 (2018).
+Zhengyuan Zhou, Susan Athey, and Stefan Wager.
+<b>Offline multi-action policy learning: Generalization and optimization.</b>
+[<a href="https://arxiv.org/abs/1810.04778">arxiv</a>]
