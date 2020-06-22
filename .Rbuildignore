@@ -5,7 +5,7 @@
 ^docs$
 ^pkgdown$
 ^vignettes
-^tests/checks
+^experiments
 ^CHANGELOG.md
 ^.github
 ^releases

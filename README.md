@@ -3,16 +3,13 @@
 
 # policytree
 
-Learn optimal policies via doubly robust empirical welfare maximization over trees
+A package for learning optimal policies via doubly robust empirical welfare maximization over trees. This package implements the multi-action doubly robust approach of Zhou et al. (2018) in the case where we want to learn policies that belong to the class of depth _k_ decision trees. Many practical policy applications require interpretable predictions. For example, a drug prescription guide that follows a simple 2-question Yes/No checklist can be encoded as a depth 2 decision tree (does the patient have a heart condition - etc.). `policytree` currently has support for estimating multi-action treatment effects with one vs. all [grf](https://github.com/grf-labs/grf), calculating statistics such as double robust scores (support for a subset of _grf_ forest types) and fitting optimal policies with exact tree search.
 
-* Estimate multi-action treatment effects with one vs. all [grf](https://github.com/grf-labs/grf)
-* Calculate statistics such as double robust scores (support for a subset of _grf_ forest types)
-* Fit optimal policies with exact tree search
+Some helpful links for getting started:
 
-### Documentation
-https://grf-labs.github.io/policytree/
-* [Get started](https://grf-labs.github.io/policytree/articles/policytree.html)
-* [Reference](https://grf-labs.github.io/policytree/reference/index.html)
+* The [R package documentation](https://grf-labs.github.io/policytree/) contains usage examples and method reference.
+* For community questions and answers around usage, see the GitHub [issues page](https://github.com/grf-labs/policytree/issues).
+
 
 ### Installation
 
@@ -98,7 +95,7 @@ Treatment effects
 
 ### Contributing
 
-Mimic build/test/checks through RStudio's build menu. To build the online documentation locally run _pkgdown::build_site()_.
+Contributions are welcome, please consult the [development guide](https://github.com/grf-labs/policytree/blob/master/DEVELOPING.md) for details.
 
 ### References
 

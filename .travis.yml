@@ -3,23 +3,23 @@ cache: packages
 warnings_are_errors: true
 r_check_args: --as-cran --run-donttest
 
-r_binary_packages:
-  - knitr
-  - rmarkdown
-
-r_packages:
-  - pkgdown
-  - BH # Boost header files
-
 branches:
   only:
     - master
 
-before_deploy:
-  - cp releases/CHANGELOG.md .
-  - Rscript -e 'install.packages(getwd(), repos = NULL, type = "source"); pkgdown::build_site()'
-deploy:
-  provider: pages
-  local_dir: docs/
-  skip_cleanup: true
-  github-token: $GH_TOKEN
+jobs:
+  include:
+    - r: oldrel
+    - r: devel
+    - r: release
+      before_deploy:
+        - cp releases/CHANGELOG.md .
+        - Rscript -e 'install.packages("pkgdown")'
+        - Rscript -e 'install.packages(getwd(), repos = NULL, type = "source")'
+        - Rscript -e 'pkgdown::build_site()'
+        - cp pkgdown/favicon/* docs/
+      deploy:
+        provider: pages
+        local_dir: docs/
+        skip_cleanup: true
+        github-token: $GH_TOKEN

@@ -137,31 +137,30 @@ A trained multi causal forest object (collection of causal forests). If tune.par
 then tuning information will be included through the \code{tuning.output} attribute of each forest.
 }
 \description{
-For k treatments this "naive" multivariate-grf proceeeds by fitting k separate causal forests
-where in forest i the treatment assignment vector is one-hot encoded for treament i. The steps are:
+For K treatments this "naive" multivariate-grf proceeeds by fitting K separate causal forests
+where in forest k the treatment assignment vector is one-hot encoded for treament k
+(i.e. treatment vector  w_k entry i is one where individual i receives treatment k, else zero). The steps are:
 \enumerate{
-\item Estimate propensities for each action 1..k: \eqn{e_k}. This is done with k separate regression forests
+\item Estimate propensities \eqn{e_k(x)} for each action 1..K: This is done with k separate regression forests
 with propensities normalized to sum to 1 at the final step.
-\item Estimate the expected response m(x) = E(Y | Xi) marginalizing over treatment. This is done with one
+\item Estimate the expected response m(x) = E(Y | X) marginalizing over treatment. This is done with one
 regression forest.
-\item Estimate each \eqn{\tau_i} with a causal forest
+\item Estimate the treatment effect \eqn{\tau_k(x) = \frac{\mu_k(x) - m(x)}{1 - e_k(x)}} with a causal forest (where \eqn{\mu_k(x) = E[Y | X, W=W_k]})
 }
 }
 \examples{
 \donttest{
-n <- 500
+# Train a multi causal forest.
+n <- 250
 p <- 10
 d <- 3
 X <- matrix(rnorm(n * p), n, p)
-W <- sample(1:d, n, replace = TRUE)
-Y <- X[, 1] + X[, 2] * (W == 2) + X[, 3] * (W == 3) + runif(n)
-mcf <- multi_causal_forest(X = X, Y = Y, W = W)
-mcf
-
-# Treaments may be labled arbitrarily
 W <- sample(c("A", "B", "C"), n, replace = TRUE)
 Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
-mcf.named <- multi_causal_forest(X = X, Y = Y, W = W)
-mcf.named
+multi.forest <- multi_causal_forest(X = X, Y = Y, W = W)
+
+# Predict using the forest.
+multi.forest.pred <- predict(multi.forest)
+head(multi.forest.pred$predictions)
 }
 }

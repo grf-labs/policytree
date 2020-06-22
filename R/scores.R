@@ -8,13 +8,24 @@
 #' @return A matrix of estimated mean rewards
 #' @examples
 #' \donttest{
+#' # Compute conditional means for a multi_causal forest
 #' n <- 500
 #' p <- 10
 #' X <- matrix(rnorm(n * p), n, p)
 #' W <- sample(c("A", "B", "C"), n, replace = TRUE)
 #' Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
 #' forests <- multi_causal_forest(X = X, Y = Y, W = W)
-#' head(conditional_means(forests))
+#' mu.hats <- conditional_means(forests)
+#' head(mu.hats)
+#'
+#' # Compute conditional means for a causal forest
+#' n <- 500
+#' p <- 10
+#' X <- matrix(rnorm(n * p), n, p)
+#' W <- rbinom(n, 1, 0.5)
+#' Y <- pmax(X[, 1], 0) * W + X[, 2] + pmin(X[, 3], 0) + rnorm(n)
+#' c.forest <- grf::causal_forest(X, Y, W)
+#' mu.hats <- conditional_means(c.forest)
 #' }
 #' @importFrom stats predict
 #' @export
@@ -35,13 +46,24 @@ conditional_means <- function(object, ...) {
 #' @return A matrix of scores for each treatment
 #' @examples
 #' \donttest{
+#' # Compute double robust scores for a multi_causal forest
 #' n <- 500
 #' p <- 10
 #' X <- matrix(rnorm(n * p), n, p)
 #' W <- sample(c("A", "B", "C"), n, replace = TRUE)
 #' Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
 #' forests <- multi_causal_forest(X = X, Y = Y, W = W)
-#' head(double_robust_scores(forests))
+#' scores <- double_robust_scores(forests)
+#' head(scores)
+#'
+#' # Compute double robust scores for a causal forest
+#' n <- 500
+#' p <- 10
+#' X <- matrix(rnorm(n * p), n, p)
+#' W <- rbinom(n, 1, 0.5)
+#' Y <- pmax(X[, 1], 0) * W + X[, 2] + pmin(X[, 3], 0) + rnorm(n)
+#' c.forest <- grf::causal_forest(X, Y, W)
+#' scores <- double_robust_scores(c.forest)
 #' }
 #' @export
 double_robust_scores <- function(object, ...) {

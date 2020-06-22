@@ -7,6 +7,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+This document provides a short introduction to the `policytree` package, with examples from Zhou, Athey and Wager (2018), and Wager and Athey (2017). The last section addresses details, such as treatment estimates with one-vs-all grf, and the runtime of `policy_tree`.
+
 ```{r, echo = FALSE, message = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 set.seed(42)
@@ -17,7 +19,7 @@ library(policytree)
 library(grf)
 ```
 
-# Binary treatment effect estimation and policy learning
+# Ex. 1: Binary treatment effect estimation and policy learning
 ```{r}
 n <- 10000
 p <- 10
@@ -43,7 +45,7 @@ plot(X[, 1], X[, 2], col = pp)
 abline(0, -1, lwd = 4, col = 4)
 ```
 
-# Multi-action treatment effect estimation (Zhou, Athey and Wager, 2018)
+# Ex. 2: Multi-action treatment effect estimation
 
 The following example is from the 3-action DGP from section 6.4.1 in [Zhou, Athey and Wager (2018)](https://arxiv.org/abs/1810.04778)
 
@@ -96,7 +98,7 @@ leg <- sort(unique(pp))
 legend("topleft", legend = leg - 1, col = leg, pch = 10)
 ```
 
-# Efficient Policy Learning - Binary Treatment and Instrumental Variables (Wager and Athey, 2017)
+# Ex. 3: Efficient Policy Learning - Binary Treatment and Instrumental Variables
 
 The following example is from section 5.2 in [Wager and Athey (2017)](https://arxiv.org/abs/1702.02896).
 
@@ -127,6 +129,64 @@ head(piX)
 
 reward.policy <- mean((2 * piX - 1) * data$tau[-train])
 reward.policy
+```
+
+# Multi causal forest treatment estimates and baselines
+
+This is a worked example of how `multi_causal_forest` treatment estimates can be decomposed (and interpreted) to target the parameter you are interested in. Consider the following DGP:
+
+
+```{r}
+n <- 10000
+p <- 5
+X <- matrix(rnorm(n * p), n, p)
+W <- sample(c("A", "B", "C"), n, replace = TRUE)
+tauB <- X[, 2]
+tauC <- 2 * X[, 2]
+Y <- X[, 1] + tauB * (W == "B") + tauC * (W == "C") + rnorm(n)
+mcf <- multi_causal_forest(X, Y, W)
+tau.mcf <- predict(mcf)$predictions
+```
+
+Recall that `multi_causal_forest` simply fits one `causal_forest` per treament, with the same nuisance component $Y.hat = m(x) = E[Y | X]$ for each forest. Each forest returns a treatment estimate  $\tau_k(x) = \frac{\mu_k(x) - m(x)}{1 - e_k(x)}$, where $\mu_k(x) = E[Y | X, W=W_k]$ is the conditional mean of arm $k$ and $e_k(x)$ is the assignment probability of arm $k$.
+
+In the above DGP
+
+$m(x) = X1 + 1/3 X2 + 1/3 \cdot 2X2 = X1 + X2$
+
+$\mu_B = X1 + X2$
+
+$\mu_C = X1 + 2X2$
+
+$e_B(x) = e_C(x) = 1/3$
+
+Which gives the multi causal forest predictions:
+
+$\tau_B(X) = (X1 + X2 - (X1 + X2)) / (1 - 1/3) = 0$
+
+$\tau_C(X) = (X1 + X2 - (X1 + 2X2)) / (1 - 1/3) = 3/2 X2$
+
+I.e, the estimated $\tau_B(x)$ will be zero because of the centering step. The estimate for $\tau_C(X)$ should be scaled by $4/3$ in order to be compared with ground truth ($2 X2)$:
+
+```{r}
+plot(X[, 2], tauB, type = "l", lwd = 1)
+points(X[, 2], tau.mcf[, "B"], col = 2, cex = 0.1)
+lines(X[, 2], tauC, lwd = 3)
+points(X[, 2], tau.mcf[, "C"], col = 3, cex = 0.1)
+points(X[, 2], 4/3 * tau.mcf[, "C"], col = 4, cex = 0.1)
+legend = c("treatment B", "tau.mcf[,'B']",
+           "treatment C", "tau.mcf[,'C']", "4/3 tau.mcf[,'C'] ")
+legend("topleft", legend = legend,
+       col = c(1, 2, 1, 3, 4),
+       pch = c(NA, 19, NA, 19, 19),
+       bg = "transparent",
+       bty = "n",
+       lwd = c(1, NA, 3, NA, NA))
+```
+
+Naturally the following regression coefficient is close to $4/3$
+```{r}
+lm(tauC ~ tau.mcf[, "C"] - 1)
 ```
 
 # Gauging the runtime of tree search
