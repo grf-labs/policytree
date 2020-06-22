@@ -108,9 +108,9 @@ Toru Kitagawa and Aleksey Tetenov.
 [<a href="https://onlinelibrary.wiley.com/doi/abs/10.3982/ECTA13288">paper</a>]
 
 Erik Sverdrup, Ayush Kanodia, Zhengyuan Zhou, Susan Athey, and Stefan Wager.
-<b>policytree: Policy learning via doubly robust empirical welfare maximization over trees.</b> <i>Journal of Open Source Software, 5(50), 2232.</i>
+<b>policytree: Policy learning via doubly robust empirical welfare maximization over trees.</b> <i>Journal of Open Source Software, 5(50), 2020.</i>
 [<a href="https://joss.theoj.org/papers/10.21105/joss.02232">paper</a>]
 
 Zhengyuan Zhou, Susan Athey, and Stefan Wager.
-<b>Offline multi-action policy learning: Generalization and optimization.</b>
+<b>Offline multi-action policy learning: Generalization and optimization.</b> 2018.
 [<a href="https://arxiv.org/abs/1810.04778">arxiv</a>]
