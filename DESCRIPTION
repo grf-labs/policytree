@@ -8,8 +8,10 @@ Authors@R: c(
     person("Ayush", "Kanodia", role = "aut"),
     person("Erik", "Sverdrup", role = "cre", email = "erikcs@stanford.edu")
     )
-Description: Multi-action treatment effect estimation and policy learning
- as in Zhou, Athey and Wager (2018) <arXiv:1810.04778>.
+Description: Learn optimal policies via doubly robust empirical
+ welfare maximization over trees. This package implements the multi-action doubly
+ robust approach of Zhou, Athey and Wager (2018) <arXiv:1810.04778> in the case where
+ we want to learn policies that belong to the class of depth k decision trees.
 Depends:
     R (>= 3.5.0)
 License: GPL-3
