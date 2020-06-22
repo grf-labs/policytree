@@ -1,3 +1,4 @@
 # This line is to prevent GitHub from indexing .TeX files
 # and attributing the wrong language classification to the repository.
 *.tex -linguist-detectable
+*.sty -linguist-detectable
