@@ -14,7 +14,8 @@ jobs:
     - r: devel
     - r: release
       before_deploy:
-        - cp releases/CHANGELOG.md .
+        - cp ../README.md .
+        - cp ../releases/CHANGELOG.md .
         - Rscript -e 'install.packages("pkgdown")'
         - Rscript -e 'install.packages(getwd(), repos = NULL, type = "source")'
         - Rscript -e 'pkgdown::build_site()'
