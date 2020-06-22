@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [1.0] - 2020-06-22
 
-Release 1.0 has been reviewed by the Journal of Open Source Software. See https://github.com/openjournals/joss-reviews/issues/2232 for improvements.
+### Added
+- Release 1.0 has been reviewed by the Journal of Open Source Software. [review](https://github.com/openjournals/joss-reviews/issues/2232), [paper](https://joss.theoj.org/papers/10.21105/joss.02232).
 
 ### Fixed
 - Fix treatment vector categories bug. [#22](https://github.com/grf-labs/policytree/pull/22)
