@@ -5,10 +5,3 @@
 ^docs$
 ^pkgdown$
 ^vignettes
-^experiments
-^CHANGELOG.md
-^DEVELOPING.md
-^.github
-^releases
-^tmp_
-^paper
