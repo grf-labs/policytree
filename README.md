@@ -7,7 +7,7 @@ A package for learning optimal policies via doubly robust empirical welfare maxi
 
 Some helpful links for getting started:
 
-* The [R package documentation](https://grf-labs.github.io/policytree/) contains usage examples and method reference.
+* The [R package documentation](https://grf-labs.github.io/policytree/) contains usage examples and method references.
 * For community questions and answers around usage, see the GitHub [issues page](https://github.com/grf-labs/policytree/issues).
 
 
