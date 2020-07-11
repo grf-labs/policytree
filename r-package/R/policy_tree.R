@@ -28,8 +28,6 @@
 #' tree
 #' }
 #' @export
-#' @useDynLib policytree
-#' @importFrom Rcpp evalCpp
 #' @importFrom utils type.convert
 policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
   n.features <- ncol(X)
