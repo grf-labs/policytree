@@ -15,6 +15,7 @@
   along with policytree. If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------*/
 #include <queue>
+#include <Rcpp.h>
 
 #include "tree_search.h"
 
@@ -44,7 +45,7 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
   size_t num_rows = X.rows();
   size_t num_cols_x = X.cols();
   size_t num_cols_y = Y.cols();
-  const Data* data = new Data(X, Y, num_rows, num_cols_x, num_cols_y);
+  const Data* data = new Data(X.begin(), Y.begin(), num_rows, num_cols_x, num_cols_y);
 
   std::unique_ptr<Node> root = tree_search(depth, split_step, data);
 

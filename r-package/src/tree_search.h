@@ -21,24 +21,20 @@
 #include <stdexcept>
 #include <vector>
 
-#include <Rcpp.h>
-
 // #define DEBUG
 
 const double INF = std::numeric_limits<double>::infinity();
 
-
 // Data class for column major storage
 class Data {
 public:
-  Data(const Rcpp::NumericMatrix& data_x,
-       const Rcpp::NumericMatrix& data_y,
+  Data(const double* data_x,
+       const double* data_y,
        size_t num_rows,
        size_t num_cols_x,
        size_t num_cols_y) :
-  num_rows(num_rows), num_cols_x(num_cols_x), num_cols_y(num_cols_y) {
-    this->data_x = data_x.begin();
-    this->data_y = data_y.begin();
+  num_rows(num_rows), data_x(data_x), data_y(data_y),
+  num_cols_x(num_cols_x), num_cols_y(num_cols_y) {
   }
 
   double get_x(size_t row, size_t col) const {
