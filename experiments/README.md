@@ -12,5 +12,5 @@ Susan Athey and Stefan Wager.
 [<a href="https://arxiv.org/abs/1702.02896">arxiv</a>]
 
 Zhengyuan Zhou, Susan Athey, and Stefan Wager.
-<b>Offline multi-action policy learning: Generalization and optimization.</b> 2018.
+<b>Offline Multi-Action Policy Learning: Generalization and Optimization.</b> 2018.
 [<a href="https://arxiv.org/abs/1810.04778">arxiv</a>]
