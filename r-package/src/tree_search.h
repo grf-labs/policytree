@@ -17,6 +17,7 @@
 #ifndef TREE_SEARCH_H
 #define TREE_SEARCH_H
 
+#include <limits>
 #include <memory>
 #include <stdexcept>
 #include <vector>
