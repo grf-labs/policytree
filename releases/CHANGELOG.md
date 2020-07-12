@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [1.0.1] - 2020-07-13
 
-### Fixed
+### Added
 - Add support for `help(<package-name>)` in the R package. [#41](https://github.com/grf-labs/policytree/pull/41)
 
 ## [1.0] - 2020-06-22
