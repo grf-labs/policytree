@@ -127,7 +127,6 @@ t.test(W[X[, which(x.nms == "white")] == 0],
 # 0.7647639 0.8096121 
 
 
-
 n = length(W)
 nfold = 10
 foldid = sample(rep(1:nfold, floor(n/nfold)))
@@ -217,8 +216,6 @@ for(fold in 1:nfold) {
   policy.oob.dr.1[test] = po.dr.1
   
   print("depth 1")
-  #print(oracle_ate(test[po.dr.1 == 1]))
-  #print(oracle_ate(test[po.dr.1 == 0]))
   
   tr.dr.2 = policy_tree(X.safe[idx,], cbind(-Gamma.dr[idx], Gamma.dr[idx]), depth = 2)
   po.dr.2 = predict(tr.dr.2, X.safe[test,]) - 1
@@ -226,8 +223,6 @@ for(fold in 1:nfold) {
   policy.oob.dr.2[test] = po.dr.2
   
   print("depth 2")
-  #print(oracle_ate(test[po.dr.2 == 1]))
-  #print(oracle_ate(test[po.dr.2 == 0]))
   
   tr.ipw.1 = policy_tree(X.safe[idx,], cbind(-Gamma.ipw[idx], Gamma.ipw[idx]), depth = 1)
   po.ipw.1 = predict(tr.ipw.1, X.safe[test,]) - 1
@@ -235,8 +230,6 @@ for(fold in 1:nfold) {
   policy.oob.ipw.1[test] = po.ipw.1
   
   print("depth 1 IPW")
-  #print(oracle_ate(test[po.ipw.1 == 1]))
-  #print(oracle_ate(test[po.ipw.1 == 0]))
   
   tr.ipw.2 = policy_tree(X.safe[idx,], cbind(-Gamma.ipw[idx], Gamma.ipw[idx]), depth = 2)
   po.ipw.2 = predict(tr.ipw.2, X.safe[test,]) - 1
@@ -244,9 +237,6 @@ for(fold in 1:nfold) {
   policy.oob.ipw.2[test] = po.ipw.2
   
   print("depth 2 IPW")
-  #print(oracle_ate(test[po.ipw.2 == 1]))
-  #print(oracle_ate(test[po.ipw.2 == 0]))
-  
 }
 
 

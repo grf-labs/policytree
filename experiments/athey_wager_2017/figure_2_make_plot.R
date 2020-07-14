@@ -1,4 +1,3 @@
-library(ggplot2)
 library(policytree)
 
 df <- read.csv("figure_2_raw_output.csv")

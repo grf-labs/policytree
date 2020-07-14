@@ -75,14 +75,11 @@ setups = 1:2
 nvals = c(600, 1800, 5400, 16200)
 NREP = 40
 
-#setup = 1
-#n.samples = 80
 n.eval = 11111
 p = 6
 eps = 0.01
 K = 2
 COST = 0.2
-
 
 W.breaks = seq(-5, 7, by = 0.5)
 W.mids = (W.breaks[-1] + W.breaks[-length(W.breaks)])/2
@@ -153,7 +150,6 @@ for (setup in setups) {
         XWgrid = expand.grid(1:n.train, 1:length(W.mids))
         
         BX.0 = cbind(10, generate.basis(rbind(X, X.test), 3))
-        #BX.0 = cbind(10, rbind(X[,1:2], X.test[,1:2]))
         
         Wvec = c(W.mids, W.test, W.test + eps)
         if (setup == 1) {
@@ -190,17 +186,6 @@ for (setup in setups) {
         mu.hat.all[foldid == k] = Y.hat
         g.hat.all[foldid == k] = g.hat
         deriv.all[foldid == k] = deriv.test
-        
-        #mean(Gamma)
-        #mean(deriv.hat)
-        #mean(g.hat * Y.test)
-        #mean(deriv.test)
-        
-        #plot(W.test, fW.hat)
-        #plot(W.test, g.hat)
-        
-        #ppp = predict(W.fit, BF[XWgrid[,1] == 14,], type = "response")
-        #plot(W.mids, ppp)
       }
       
       Delta.hat = Gamma.hat.all - COST

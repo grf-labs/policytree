@@ -1,4 +1,3 @@
-set.seed(1234)
 library(xtable)
 
 rm(list = ls())
