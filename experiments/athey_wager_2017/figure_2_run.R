@@ -1,6 +1,34 @@
-# Test that figure 2 from EPL matches https://arxiv.org/abs/1702.02896
-# Usage: `Rscript check_replication_epl.R` (time with 20 cores: ~ 6 hours)
-# policytree varsion: 1.0.0   grf version: 1.2.0
+# > sessionInfo()
+# R version 3.6.1 (2019-07-05)
+# Platform: x86_64-pc-linux-gnu (64-bit)
+# Running under: Ubuntu 18.04.4 LTS
+# 
+# Matrix products: default
+# BLAS:   /software/free/R/R-3.6.1/lib/R/lib/libRblas.so
+# LAPACK: /software/free/R/R-3.6.1/lib/R/lib/libRlapack.so
+# 
+# locale:
+# [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+# [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+# [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+# [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+# 
+# attached base packages:
+# [1] parallel  stats     graphics  grDevices utils     datasets  methods  
+# [8] base     
+# 
+# other attached packages:
+# [1] grf_1.2.0        EQL_1.0-1        ttutils_1.0-1    doMC_1.3.6      
+# [5] iterators_1.0.12 foreach_1.5.0    policytree_1.0   glmnet_4.0-2    
+# [9] Matrix_1.2-17   
+# 
+# loaded via a namespace (and not attached):
+# [1] Rcpp_1.0.3        lattice_0.20-38   codetools_0.2-16  grid_3.6.1       
+# [5] splines_3.6.1     survival_2.44-1.1 compiler_3.6.1    shape_1.4.4   
+#
+# Replicate figure 2 from AW17 https://arxiv.org/abs/1702.02896
+# Time with 20 cores: ~ 6 hours
+
 library(policytree)
 
 nsim <- 200
