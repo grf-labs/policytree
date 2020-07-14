@@ -36,7 +36,7 @@ n <- c(500, 1000, 2000, 4000, 8000, 16000)
 dgp <- c("continuous", "jump")
 params <- expand.grid(n = n, dgp = dgp, stringsAsFactors = FALSE)
 params$mc.cores <- 1
-params[params$n == max(n), "mc.cores"] <- 4
+params[params$n == max(n), "mc.cores"] <- 6
 
 res <- parallel::mclapply(1:nrow(params), function(i) {
   n <- params$n[i]
