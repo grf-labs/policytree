@@ -2,8 +2,8 @@
 
 This directory contains replication code for
 
-* Athey and Wager (2017): `check_replication_epl*`
-* Zhou, Athey, and Wager (2018): `check_replication_mapl*`
+* Athey and Wager (2017): `athey_wager_2017`
+* Zhou, Athey, and Wager (2018): `zhou_athey_wager_2018`
 
 ### References
 
