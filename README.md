@@ -97,6 +97,10 @@ Treatment effects
 
 Contributions are welcome, please consult the [development guide](https://github.com/grf-labs/policytree/blob/master/DEVELOPING.md) for details.
 
+### Funding
+
+Development of policytree is supported by the National Science Foundation, the Sloan Foundation, the Office of Naval Research (Grant N00014-17-1-2131) and Schmidt Futures.
+
 ### References
 
 Susan Athey and Stefan Wager.
