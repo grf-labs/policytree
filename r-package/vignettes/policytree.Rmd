@@ -199,3 +199,5 @@ For a depth three tree it is $O(p^3 n^3 (log n + d))$. If a depth two tree with 
 
 The runtime above is with continuous features. There are considerable time savings when the features are
 discrete. In the extreme case with all binary observations, the runtime will be practically linear in n.
+
+The optional approximation parameter `split.step` emulates rounding the data and is recommended to experiment with in order to reduce the runtime.
