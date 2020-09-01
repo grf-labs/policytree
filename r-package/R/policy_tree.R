@@ -24,6 +24,9 @@
 #'
 #' @return A policy_tree object.
 #'
+#' @references Sverdrup, Erik, Ayush Kanodia, Zhengyuan Zhou, Susan Athey, and Stefan Wager.
+#'  "policytree: Policy learning via doubly robust empirical welfare maximization over trees."
+#'   Journal of Open Source Software 5, no. 50 (2020): 2232.
 #' @references Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning:
 #'  Generalization and optimization." arXiv preprint arXiv:1810.04778 (2018).
 #'
