@@ -1,8 +1,18 @@
 #' Fit a policy with exact tree search
 #'
 #' Finds the optimal (maximizing the sum of rewards) depth L tree by exhaustive search. If the optimal
-#'  action is the same in both the left and right leaf of a node, the node is pruned.
+#' action is the same in both the left and right leaf of a node, the node is pruned.
 #'
+#' The amortized runtime of the exact tree search is \eqn{O(p^k n^k (log n + d) + pnlog n)} where p is the number of features, d the number of treatments, n the number of observations, and \eqn{k \geq 1} the tree depth.
+#'
+#' For a depth two tree this is \eqn{O(p^2 n^2 (log n + d))} (ignoring the last term which is a global sort done at the beginning) meaning that it scales quadratically with the number of observations, i.e. if you double the number of observations, the search will take at least four times as long.
+#'
+#' For a depth three tree it is \eqn{O(p^3 n^3 (log n + d))}. If a depth two tree with 1000 observations, 4 features and 3 actions took around t seconds, you can expect the level three tree to take approximately \eqn{1000\cdot 4} times as long (\eqn{\approx\frac{p^3n^2}{p^2n^2}=pn})
+#'
+#' The runtime above is with continuous features. There are considerable time savings when the features are
+#' discrete. In the extreme case with all binary observations, the runtime will be practically linear in n.
+#'
+#' The optional approximation parameter `split.step` emulates rounding the data and is recommended to experiment with in order to reduce the runtime.
 #'
 #' @param X The covariates used. Dimension \eqn{Np} where \eqn{p} is the number of features.
 #' @param Gamma The rewards for each action. Dimension \eqn{Nd} where \eqn{d} is the number of actions.
