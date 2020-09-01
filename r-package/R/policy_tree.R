@@ -1,8 +1,18 @@
 #' Fit a policy with exact tree search
 #'
 #' Finds the optimal (maximizing the sum of rewards) depth L tree by exhaustive search. If the optimal
-#'  action is the same in both the left and right leaf of a node, the node is pruned.
+#' action is the same in both the left and right leaf of a node, the node is pruned.
 #'
+#' The amortized runtime of the exact tree search is \eqn{O(p^k n^k (log n + d) + pnlog n)} where p is the number of features, d the number of treatments, n the number of observations, and \eqn{k \geq 1} the tree depth.
+#'
+#' For a depth two tree this is \eqn{O(p^2 n^2 (log n + d))} (ignoring the last term which is a global sort done at the beginning) meaning that it scales quadratically with the number of observations, i.e. if you double the number of observations, the search will take at least four times as long.
+#'
+#' For a depth three tree it is \eqn{O(p^3 n^3 (log n + d))}. If a depth two tree with 1000 observations, 4 features and 3 actions took around t seconds, you can expect the level three tree to take approximately \eqn{1000\cdot 4} times as long (\eqn{\approx\frac{p^3n^2}{p^2n^2}=pn})
+#'
+#' The runtime above is with continuous features. There are considerable time savings when the features are
+#' discrete. In the extreme case with all binary observations, the runtime will be practically linear in n.
+#'
+#' The optional approximation parameter `split.step` emulates rounding the data and is recommended to experiment with in order to reduce the runtime.
 #'
 #' @param X The covariates used. Dimension \eqn{Np} where \eqn{p} is the number of features.
 #' @param Gamma The rewards for each action. Dimension \eqn{Nd} where \eqn{d} is the number of actions.
@@ -14,18 +24,34 @@
 #'
 #' @return A policy_tree object.
 #'
+#' @references Sverdrup, Erik, Ayush Kanodia, Zhengyuan Zhou, Susan Athey, and Stefan Wager.
+#'  "policytree: Policy learning via doubly robust empirical welfare maximization over trees."
+#'   Journal of Open Source Software 5, no. 50 (2020): 2232.
 #' @references Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning:
 #'  Generalization and optimization." arXiv preprint arXiv:1810.04778 (2018).
 #'
 #' @examples
 #' \donttest{
-#' n <- 50
-#' p <- 10
-#' d <- 3
-#' features <- matrix(rnorm(n * p), n, p)
-#' rewards <- matrix(rnorm(n * d), n, d)
-#' tree <- policy_tree(features, rewards, depth = 2)
+#' # Fit a depth two tree on doubly robust treatment effect estimates
+#' # from a causal forest.
+#' n <- 10000
+#' p <- 5
+#' X <- round(matrix(rnorm(n * p), n, p), 2)
+#' W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
+#' tau <- 1 / (1 + exp((X[, 1] + X[, 2]) / 2)) - 0.5
+#' Y <- X[, 3] + W * tau + rnorm(n)
+#' c.forest <- grf::causal_forest(X, Y, W)
+#' dr.scores <- double_robust_scores(c.forest)
+#'
+#' tree <- policy_tree(X, dr.scores, 2)
 #' tree
+#'
+#' # Predict treatment assignment.
+#' predicted <- predict(tree, X)
+#'
+#' plot(X[, 1], X[, 2], col = predicted)
+#' legend("topright", c("control", "treat"), col = c(1, 2), pch = 19)
+#' abline(0, -1, lty = 2)
 #' }
 #' @export
 #' @importFrom utils type.convert
@@ -95,14 +121,26 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
 #' @method predict policy_tree
 #' @examples
 #' \donttest{
-#' n <- 50
-#' p <- 10
-#' d <- 3
-#' features <- matrix(rnorm(n * p), n, p)
-#' rewards <- matrix(rnorm(n * d), n, d)
-#' tree <- policy_tree(features, rewards, depth = 2)
-#' print(tree)
-#' predict(tree, features)
+#' # Fit a depth two tree on doubly robust treatment effect estimates
+#' # from a causal forest.
+#' n <- 10000
+#' p <- 5
+#' X <- round(matrix(rnorm(n * p), n, p), 2)
+#' W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
+#' tau <- 1 / (1 + exp((X[, 1] + X[, 2]) / 2)) - 0.5
+#' Y <- X[, 3] + W * tau + rnorm(n)
+#' c.forest <- grf::causal_forest(X, Y, W)
+#' dr.scores <- double_robust_scores(c.forest)
+#'
+#' tree <- policy_tree(X, dr.scores, 2)
+#' tree
+#'
+#' # Predict treatment assignment.
+#' predicted <- predict(tree, X)
+#'
+#' plot(X[, 1], X[, 2], col = predicted)
+#' legend("topright", c("control", "treat"), col = c(1, 2), pch = 19)
+#' abline(0, -1, lty = 2)
 #' }
 predict.policy_tree <- function(object, newdata, ...) {
   valid.classes <- c("matrix", "data.frame")

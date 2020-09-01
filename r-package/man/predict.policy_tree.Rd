@@ -22,13 +22,25 @@ Predict values based on fitted policy_tree object.
 }
 \examples{
 \donttest{
-n <- 50
-p <- 10
-d <- 3
-features <- matrix(rnorm(n * p), n, p)
-rewards <- matrix(rnorm(n * d), n, d)
-tree <- policy_tree(features, rewards, depth = 2)
-print(tree)
-predict(tree, features)
+# Fit a depth two tree on doubly robust treatment effect estimates
+# from a causal forest.
+n <- 10000
+p <- 5
+X <- round(matrix(rnorm(n * p), n, p), 2)
+W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
+tau <- 1 / (1 + exp((X[, 1] + X[, 2]) / 2)) - 0.5
+Y <- X[, 3] + W * tau + rnorm(n)
+c.forest <- grf::causal_forest(X, Y, W)
+dr.scores <- double_robust_scores(c.forest)
+
+tree <- policy_tree(X, dr.scores, 2)
+tree
+
+# Predict treatment assignment.
+predicted <- predict(tree, X)
+
+plot(X[, 1], X[, 2], col = predicted)
+legend("topright", c("control", "treat"), col = c(1, 2), pch = 19)
+abline(0, -1, lty = 2)
 }
 }
