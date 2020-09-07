@@ -160,32 +160,5 @@ predict.policy_tree <- function(object, newdata, ...) {
     stop("This tree was trained with ", tree$n.features, " variables. Provided: ", ncol(newdata))
   }
 
-  leaf.nodes <- apply(newdata, 1, function(sample) find_leaf_node(tree, sample))
-  out <- sapply(leaf.nodes, function(node) tree$nodes[[node]]$action)
-
-  out
-}
-
-#' Query a tree with a sample
-#'
-#' @param tree policy_tree tree object
-#' @param sample A vector of observations \eqn{X_i}
-#'
-#' @return The leaf node the sample falls in to.
-#'
-#' @keywords internal
-find_leaf_node <- function(tree, sample) {
-  node <- 1
-  while (TRUE) {
-    if (tree$nodes[[node]]$is_leaf) {
-      return(node)
-    }
-    split_var <- tree$nodes[[node]]$split_variable
-    split_value <- tree$nodes[[node]]$split_value
-    if (sample[split_var] <= split_value) {
-      node <- tree$nodes[[node]]$left_child
-    } else {
-      node <- tree$nodes[[node]]$right_child
-    }
-  }
+  tree_search_rcpp_predict(tree[["nodes"]], as.matrix(newdata))
 }

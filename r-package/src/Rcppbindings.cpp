@@ -76,3 +76,42 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
   delete data;
   return nodes;
 }
+
+/**
+  * Return the action index for query samples.
+  *
+  * @param nodes The tree.
+  * @param X The query samples.
+  * @return A vector of action IDs.
+  *
+  */
+// [[Rcpp::export]]
+Rcpp::NumericVector tree_search_rcpp_predict(const Rcpp::List& nodes,
+                                             const Rcpp::NumericMatrix& X) {
+  size_t num_samples = X.rows();
+  Rcpp::NumericVector result(num_samples);
+  for (size_t sample = 0; sample < num_samples; sample++) {
+    size_t node = 0;
+    while (true) {
+      const Rcpp::List& list_node = nodes[node];
+      bool is_leaf = list_node["is_leaf"];
+      if (is_leaf) {
+        size_t action = list_node["action"];
+        result(sample) = action;
+        break;
+      }
+      size_t split_var = list_node["split_variable"];
+      split_var = split_var - 1; // Convert back to C++ index
+      double split_value = list_node["split_value"];
+      double value = X(sample, split_var);
+      if (value <= split_value) {
+        node = list_node["left_child"];
+      } else {
+        node = list_node["right_child"];
+      }
+      node = node - 1; // Convert back to C++ index
+    }
+  }
+
+  return result;
+}
