@@ -45,7 +45,7 @@ make_tree <- function(X, depth, d) {
   tree
 }
 
-# Predict with the above test tree. 
+# Predict with the above test tree.
 predict_test_tree <- function(tree, newdata) {
   find_leaf_node <- function(tree, sample) {
     node <- 1
@@ -286,6 +286,7 @@ test_that("all equal rewards are pruned", {
   ptn <- policy_tree(X, Y, depth = 2)
 
   expect_equal(ptn$nodes[[1]]$action, 2)
+  expect_equal(predict(ptn, X), rep(2, n))
 })
 
 
