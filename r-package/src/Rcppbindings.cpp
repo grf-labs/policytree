@@ -53,8 +53,9 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
 
   std::unique_ptr<Node> root = tree_search(depth, split_step, data);
 
-  // Also store the tree as an array for faster lookups. This will make a difference
-  // for a very large amount of lookups, like n = 1 000 000.
+  // We store the tree as the same list data structure (`nodes`) as GRF for seamless integration with
+  // the plot and print methods. We also store the tree as an array (`tree_array`) for faster lookups.
+  // This will make a difference for a very large amount of lookups, like n = 1 000 000.
   // The columns 0 to 3 are:
   // split_variable (-1 if leaf) | split_value (action_id if leaf) | left_child | right_child
   int num_nodes = pow(2, depth + 1) - 1;
