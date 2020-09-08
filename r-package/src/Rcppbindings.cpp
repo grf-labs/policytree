@@ -53,7 +53,9 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
 
   std::unique_ptr<Node> root = tree_search(depth, split_step, data);
 
-  // Also store the tree as an array for faster lookups, columns are:
+  // Also store the tree as an array for faster lookups. This will make a difference
+  // for a very large amount of lookups, like n = 1 000 000.
+  // The columns 0 to 3 are:
   // split_variable (-1 if leaf) | split_value (action_id if leaf) | left_child | right_child
   int num_nodes = pow(2, depth + 1) - 1;
   Rcpp::NumericMatrix tree_array(num_nodes, 4);
@@ -80,8 +82,8 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
       nodes.push_back(list_node);
       tree_array(j, 0) = node->index + 1;
       tree_array(j, 1) = node->value;
-      tree_array(j, 2) = i + 1;
-      tree_array(j, 3) = i + 2;
+      tree_array(j, 2) = i + 1; // left child
+      tree_array(j, 3) = i + 2; // right child
       frontier.push(std::move(node->left_child));
       frontier.push(std::move(node->right_child));
       i += 2;
