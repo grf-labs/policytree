@@ -94,9 +94,10 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
     columns <- make.names(1:ncol(X))
   }
 
-  nodes <- tree_search_rcpp(as.matrix(X), as.matrix(Gamma), depth, split.step)
-  tree = list(nodes = nodes)
+  result <- tree_search_rcpp(as.matrix(X), as.matrix(Gamma), depth, split.step)
+  tree <- list(nodes = result[[1]])
 
+  tree[["_tree_array"]] <- result[[2]]
   tree[["depth"]] <- depth
   tree[["n.actions"]] <- n.actions
   tree[["n.features"]] <- n.features
@@ -160,5 +161,5 @@ predict.policy_tree <- function(object, newdata, ...) {
     stop("This tree was trained with ", tree$n.features, " variables. Provided: ", ncol(newdata))
   }
 
-  tree_search_rcpp_predict(tree[["nodes"]], as.matrix(newdata))
+  tree_search_rcpp_predict(tree[["_tree_array"]], as.matrix(newdata))
 }

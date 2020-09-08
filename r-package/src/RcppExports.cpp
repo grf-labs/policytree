@@ -20,14 +20,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // tree_search_rcpp_predict
-Rcpp::NumericVector tree_search_rcpp_predict(const Rcpp::List& nodes, const Rcpp::NumericMatrix& X);
-RcppExport SEXP _policytree_tree_search_rcpp_predict(SEXP nodesSEXP, SEXP XSEXP) {
+Rcpp::NumericVector tree_search_rcpp_predict(const Rcpp::NumericMatrix& tree_array, const Rcpp::NumericMatrix& X);
+RcppExport SEXP _policytree_tree_search_rcpp_predict(SEXP tree_arraySEXP, SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type nodes(nodesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type tree_array(tree_arraySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(tree_search_rcpp_predict(nodes, X));
+    rcpp_result_gen = Rcpp::wrap(tree_search_rcpp_predict(tree_array, X));
     return rcpp_result_gen;
 END_RCPP
 }

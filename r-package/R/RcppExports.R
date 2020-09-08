@@ -5,7 +5,7 @@ tree_search_rcpp <- function(X, Y, depth, split_step) {
     .Call('_policytree_tree_search_rcpp', PACKAGE = 'policytree', X, Y, depth, split_step)
 }
 
-tree_search_rcpp_predict <- function(nodes, X) {
-    .Call('_policytree_tree_search_rcpp_predict', PACKAGE = 'policytree', nodes, X)
+tree_search_rcpp_predict <- function(tree_array, X) {
+    .Call('_policytree_tree_search_rcpp_predict', PACKAGE = 'policytree', tree_array, X)
 }
 
