@@ -45,6 +45,28 @@ make_tree <- function(X, depth, d) {
   tree
 }
 
+# Predict with the above test tree. 
+predict_test_tree <- function(tree, newdata) {
+  find_leaf_node <- function(tree, sample) {
+    node <- 1
+    while (TRUE) {
+      if (tree$nodes[[node]]$is_leaf) {
+        return(node)
+      }
+      split_var <- tree$nodes[[node]]$split_variable
+      split_value <- tree$nodes[[node]]$split_value
+      if (sample[split_var] <= split_value) {
+        node <- tree$nodes[[node]]$left_child
+      } else {
+        node <- tree$nodes[[node]]$right_child
+      }
+    }
+  }
+  leaf.nodes <- apply(newdata, 1, function(sample) find_leaf_node(tree, sample))
+  out <- sapply(leaf.nodes, function(node) tree$nodes[[node]]$action)
+
+  out
+}
 
 test_that("predictions have not changed from first vetted version", {
   X <- read.csv("data_clf_X.csv")
@@ -116,7 +138,7 @@ test_that("exact tree search finds the correct depth 1 tree", {
   Y <- matrix(0, n, d)
 
   best.tree <- make_tree(X, depth = depth, d = d)
-  best.action <- predict(best.tree, X)
+  best.action <- predict_test_tree(best.tree, X)
   Y[cbind(1:n, best.action)] <- 100 * runif(n)
   best.reward <- mean(Y[cbind(1:n, best.action)])
   tree <- policy_tree(X, Y, depth = depth)
@@ -130,7 +152,7 @@ test_that("exact tree search finds the correct depth 1 tree", {
   Y <- matrix(0, n, d)
 
   best.tree.discrete <- make_tree(X, depth = depth, d = d)
-  best.action <- predict(best.tree.discrete, X)
+  best.action <- predict_test_tree(best.tree.discrete, X)
   Y[cbind(1:n, best.action)] <- 100 * runif(n)
   best.reward <- mean(Y[cbind(1:n, best.action)])
   tree.discrete <- policy_tree(X, Y, depth = depth)
@@ -151,7 +173,7 @@ test_that("exact tree search finds the correct depth 2 tree", {
   Y <- matrix(0, n, d)
 
   best.tree <- make_tree(X, depth = depth, d = d)
-  best.action <- predict(best.tree, X)
+  best.action <- predict_test_tree(best.tree, X)
   Y[cbind(1:n, best.action)] <- 100 * runif(n)
   best.reward <- mean(Y[cbind(1:n, best.action)])
   tree <- policy_tree(X, Y, depth = depth)
@@ -165,7 +187,7 @@ test_that("exact tree search finds the correct depth 2 tree", {
   Y <- matrix(0, n, d)
 
   best.tree.discrete <- make_tree(X, depth = depth, d = d)
-  best.action <- predict(best.tree.discrete, X)
+  best.action <- predict_test_tree(best.tree.discrete, X)
   Y[cbind(1:n, best.action)] <- 100 * runif(n)
   best.reward <- mean(Y[cbind(1:n, best.action)])
   tree.discrete <- policy_tree(X, Y, depth = depth)
@@ -186,7 +208,7 @@ test_that("exact tree search finds the correct depth 3 tree", {
   Y <- matrix(0, n, d)
 
   best.tree <- make_tree(X, depth = depth, d = d)
-  best.action <- predict(best.tree, X)
+  best.action <- predict_test_tree(best.tree, X)
   Y[cbind(1:n, best.action)] <- 100 * runif(n)
   best.reward <- mean(Y[cbind(1:n, best.action)])
   tree <- policy_tree(X, Y, depth = depth)
@@ -200,7 +222,7 @@ test_that("exact tree search finds the correct depth 3 tree", {
   Y <- matrix(0, n, d)
 
   best.tree.discrete <- make_tree(X, depth = depth, d = d)
-  best.action <- predict(best.tree.discrete, X)
+  best.action <- predict_test_tree(best.tree.discrete, X)
   Y[cbind(1:n, best.action)] <- 100 * runif(n)
   best.reward <- mean(Y[cbind(1:n, best.action)])
   tree.discrete <- policy_tree(X, Y, depth = depth)
