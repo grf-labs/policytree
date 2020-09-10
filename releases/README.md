@@ -27,6 +27,8 @@
 3. Pre-check then submit
 
   https://win-builder.r-project.org/upload.aspx
+  
+  https://builder.r-hub.io/ (to check on all builds, including Solaris)
 
   https://cran.r-project.org/submit.html
 
