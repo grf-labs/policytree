@@ -4,6 +4,11 @@ All notable changes to policytree will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2020-09-13
+
+### Fixed
+- Minor modification to C++ `pow` call to retain CRAN compatibility. [#54](https://github.com/grf-labs/policytree/pull/54)
+
 ## [1.0.2] - 2020-09-09
 
 ### Fixed

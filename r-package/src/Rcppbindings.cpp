@@ -58,7 +58,7 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
   // This will make a difference for a very large amount of lookups, like n = 1 000 000.
   // The columns 0 to 3 are:
   // split_variable (-1 if leaf) | split_value (action_id if leaf) | left_child | right_child
-  int num_nodes = pow(2, depth + 1) - 1;
+  int num_nodes = pow(2.0, depth + 1.0) - 1;
   Rcpp::NumericMatrix tree_array(num_nodes, 4);
   Rcpp::List nodes;
   int i = 1;
