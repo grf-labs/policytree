@@ -14,3 +14,22 @@
 \description{
 Plot a policy_tree tree object.
 }
+\examples{
+Plot a policy_tree object
+\dontrun{
+n <- 250
+p <- 10
+X <- matrix(rnorm(n * p), n, p)
+W <- sample(c("A", "B", "C"), n, replace = TRUE)
+Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
+multi.forest <- multi_causal_forest(X = X, Y = Y, W = W)
+Gamma.matrix <- double_robust_scores(multi.forest)
+tree <- policy_tree(X, Gamma.matrix, depth = 2)
+plot(tree)
+
+# Saving a plot in a vectorized SVG format can be done with the `DiagrammeRsvg` package.
+install.packages("DiagrammeRsvg")
+tree.plot = plot(tree)
+cat(DiagrammeRsvg::export_svg(tree.plot), file = 'plot.svg')
+}
+}
