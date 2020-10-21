@@ -4,10 +4,12 @@
 \alias{plot.policy_tree}
 \title{Plot a policy_tree tree object.}
 \usage{
-\method{plot}{policy_tree}(x, ...)
+\method{plot}{policy_tree}(x, leaf.labels = NULL, ...)
 }
 \arguments{
-\item{x}{The tree to plot}
+\item{x}{The tree to plot.}
+
+\item{leaf.labels}{An optional character vector of leaf labels for each treatment.}
 
 \item{...}{Additional arguments (currently ignored).}
 }
@@ -26,6 +28,12 @@ multi.forest <- multi_causal_forest(X = X, Y = Y, W = W)
 Gamma.matrix <- double_robust_scores(multi.forest)
 tree <- policy_tree(X, Gamma.matrix, depth = 2)
 plot(tree)
+
+# Provide optional names for the treatment names in each leaf node
+# `action.names` is by default the column names of the reward matrix
+plot(tree, leaf.labels = tree$action.names)
+# Providing a custom character vector
+plot(tree, leaf.labels = c("treatment A", "treatment B", "placebo C"))
 
 # Saving a plot in a vectorized SVG format can be done with the `DiagrammeRsvg` package.
 install.packages("DiagrammeRsvg")

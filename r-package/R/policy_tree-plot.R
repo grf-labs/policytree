@@ -10,8 +10,10 @@ create_dot_body <- function(tree, index = 1) {
   # Leaf case: print label only
   if (node$is_leaf) {
     action <- node$action
-    line_label <- paste(index - 1, ' [shape=box,style=filled,color=".7 .3 1.0" , label="leaf node', "
-      action = ", action, '"];')
+    line_label <- paste(index - 1,
+                        ' [shape=box,style=filled,color=".7 .3 1.0" , label="',
+                        tree$leaf.labels[action],
+                        '"];')
     return(line_label)
   }
 
@@ -80,7 +82,8 @@ export_graphviz <- function(tree) {
 }
 
 #' Plot a policy_tree tree object.
-#' @param x The tree to plot
+#' @param x The tree to plot.
+#' @param leaf.labels An optional character vector of leaf labels for each treatment.
 #' @param ... Additional arguments (currently ignored).
 #'
 #' @method plot policy_tree
@@ -97,16 +100,30 @@ export_graphviz <- function(tree) {
 #' tree <- policy_tree(X, Gamma.matrix, depth = 2)
 #' plot(tree)
 #'
+#' # Provide optional names for the treatment names in each leaf node
+#' # `action.names` is by default the column names of the reward matrix
+#' plot(tree, leaf.labels = tree$action.names)
+#' # Providing a custom character vector
+#' plot(tree, leaf.labels = c("treatment A", "treatment B", "placebo C"))
+#'
 #' # Saving a plot in a vectorized SVG format can be done with the `DiagrammeRsvg` package.
 #' install.packages("DiagrammeRsvg")
 #' tree.plot = plot(tree)
 #' cat(DiagrammeRsvg::export_svg(tree.plot), file = 'plot.svg')
 #' }
 #' @export
-plot.policy_tree <- function(x, ...) {
+plot.policy_tree <- function(x, leaf.labels = NULL, ...) {
   if (!requireNamespace("DiagrammeR", quietly = TRUE)) {
     stop("Package \"DiagrammeR\" must be installed to plot trees.")
   }
+
+  n.actions <- x$n.actions
+  if (is.null(leaf.labels)) {
+    leaf.labels <- paste("leaf node\n action =", 1:n.actions)
+  } else if (length(leaf.labels) != n.actions) {
+    stop("If provided, `leaf.labels` should be a vector with leaf labels for each treatment 1,..,K")
+  }
+  x$leaf.labels <- leaf.labels
 
   dot_file <- export_graphviz(x)
   DiagrammeR::grViz(dot_file)
