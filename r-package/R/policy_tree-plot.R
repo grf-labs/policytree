@@ -85,7 +85,7 @@ export_graphviz <- function(tree) {
 #'
 #' @method plot policy_tree
 #' @examples
-#' Plot a policy_tree object
+#' # Plot a policy_tree object
 #' \dontrun{
 #' n <- 250
 #' p <- 10

@@ -15,7 +15,7 @@
 Plot a policy_tree tree object.
 }
 \examples{
-Plot a policy_tree object
+# Plot a policy_tree object
 \dontrun{
 n <- 250
 p <- 10
