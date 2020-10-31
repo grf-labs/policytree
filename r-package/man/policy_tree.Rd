@@ -16,7 +16,9 @@ policy_tree(X, Gamma, depth = 2, split.step = 1)
 \item{split.step}{An optional approximation parameter (integer above zero), the number of possible splits
 to consider when performing tree search. split.step = 1 (default) considers every possible split, split.step = 10
 considers splitting at every 10'th distinct value and will yield a substantial speedup for densely packed
-continuous data.}
+continuous data. Manually rounding or re-encoding continuous covariates with very high cardinality in a
+problem specific manner allows for finer-grained control of the accuracy/runtime tradeoff and may in some cases
+be the preferred approach over this option.}
 }
 \value{
 A policy_tree object.
