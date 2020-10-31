@@ -14,6 +14,7 @@ jobs:
     - r: devel
     - r: release
       # before_deploy:
+      script:
         - cp ../README.md .
         - cp ../releases/CHANGELOG.md .
         - Rscript -e 'install.packages(c("fs", "highlight", "httr", "memoise", "openssl", "rmarkdown", "whisker", "xml2"))'
