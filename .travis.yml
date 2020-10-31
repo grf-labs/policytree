@@ -8,22 +8,11 @@ branches:
   only:
     - master
 
-jobs:
-  include:
-    - r: oldrel
-    - r: devel
-    - r: release
-      # before_deploy:
-      script:
-        - cp ../README.md .
-        - cp ../releases/CHANGELOG.md .
-        - Rscript -e 'install.packages(c("fs", "highlight", "httr", "memoise", "openssl", "rmarkdown", "whisker", "xml2"))'
-        - Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/pkgdown/pkgdown_1.5.1.tar.gz", repos = NULL, type = "source", dependencies = TRUE)'
-        - Rscript -e 'install.packages(getwd(), repos = NULL, type = "source")'
-        - Rscript -e 'pkgdown::build_site()'
-        - cp pkgdown/favicon/* docs/
-      deploy:
-        provider: pages
-        local_dir: r-package/docs/
-        skip_cleanup: true
-        github-token: $GH_TOKEN
+script:
+- cp ../README.md .
+- cp ../releases/CHANGELOG.md .
+- Rscript -e 'install.packages(c("fs", "highlight", "httr", "memoise", "openssl", "rmarkdown", "whisker", "xml2"))'
+- Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/pkgdown/pkgdown_1.5.1.tar.gz", repos = NULL, type = "source", dependencies = TRUE)'
+- Rscript -e 'install.packages(getwd(), repos = NULL, type = "source")'
+- Rscript -e 'pkgdown::build_site()'
+- cp pkgdown/favicon/* docs/
