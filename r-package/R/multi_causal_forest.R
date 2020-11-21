@@ -123,7 +123,13 @@ multi_causal_forest <- function(X, Y, W,
                                 orthog.boosting = FALSE,
                                 num.threads = NULL,
                                 seed = runif(1, 0, .Machine$integer.max)) {
-
+  if (!inherits(X, c("matrix", "data.frame", "dgCMatrix"))) {
+    stop(paste("Currently the only supported data input types are:",
+               "`matrix`, `data.frame`, `dgCMatrix`"))
+  }
+  if (length(W) != nrow(X) || any(is.na(W))) {
+    stop("Invalid W input.")
+  }
   # All parameters except W.hat (and W) is the same for each grf::causal_forest
   treatments <- sort(unique(W))
   treatment.names <- as.character(treatments)
