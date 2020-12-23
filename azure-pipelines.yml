@@ -1,5 +1,7 @@
+# The following pipeline tests policytree in the following way:
+# 1. With the latest R release (4.0) on Ubuntu.
 # The R setup here is based on https://eddelbuettel.github.io/r-ci/
-name: "R package check (ubuntu-latest)"
+name: "R (release) package check (ubuntu-latest)"
 
 trigger:
 - master
@@ -13,10 +15,10 @@ variables:
   value: 'https://cloud.r-project.org'
 - name: _R_CHECK_FORCE_SUGGESTS_
   value: false
+- name: _R_CHECK_DONTTEST_EXAMPLES_
+  value: false
 - name: USE_BSPM
   value: true
-- name: R_CHECK_ARGS
-  value: "--no-vignettes --no-manual --as-cran --run-donttest"
 - name: WARNINGS_ARE_ERRORS
   value: true
 
@@ -25,12 +27,16 @@ steps:
       curl -OLs https://eddelbuettel.github.io/r-ci/run.sh && chmod 0755 run.sh
       ./run.sh bootstrap
       ./run.sh install_deps
-    workingDirectory: r-package
-    displayName: Setup R (release)
-  - bash: ./run.sh run_tests
-    workingDirectory: r-package
+    workingDirectory: r-package/grf
+    displayName: Setup R
+  - script: ./run.sh run_tests
+    workingDirectory: r-package/grf
     displayName: Test R package
-
+  - script: ./run.sh dump_logs_by_extension "fail"
+    condition: failed()
+    workingDirectory: r-package/grf
+    displayName: Print test failures
+  # Final deploy step
   # Build the online docs and deploy to gh-pages - only done on master branch.
   # `GITHUB_PAT` is a GitHub access token stored on Azure Pipelines.
   - script: |
