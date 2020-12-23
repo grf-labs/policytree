@@ -92,7 +92,9 @@ test_that("solver bindings run", {
   p2 <- predict(pt, X[1, , drop = FALSE])
 
   p <- capture.output(print(pt))
-  plot(pt)
+  if (requireNamespace("DiagrammeR", quietly = TRUE)) {
+    plot(pt)
+  }
 
   expect_equal(1, 1)
 })
@@ -270,7 +272,9 @@ test_that("tiny n compared to depth does not break", {
   Y <- matrix(rnorm(n*d), n, d)
   ptn <- policy_tree(X, Y, depth = 2)
   p <- capture.output(print(ptn))
-  plot(ptn)
+  if (requireNamespace("DiagrammeR", quietly = TRUE)) {
+    plot(ptn)
+  }
 
   expect_equal(1, 1)
 })
