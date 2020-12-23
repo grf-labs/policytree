@@ -1,5 +1,5 @@
 [![CRANstatus](https://www.r-pkg.org/badges/version/policytree)](https://cran.r-project.org/package=policytree)
-[![Build Status](https://travis-ci.com/grf-labs/policytree.svg?branch=master)](https://travis-ci.com/grf-labs/policytree)
+[![Build Status](https://dev.azure.com/grf-labs/grf/_apis/build/status/grf-labs.policytree?branchName=master)](https://dev.azure.com/grf-labs/grf/_build/latest?definitionId=1&branchName=master)
 
 # policytree
 

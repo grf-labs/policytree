@@ -18,7 +18,7 @@
   R CMD build .
   ```
 
-2. Test the package (this is done on Travis as well)
+2. Test the package
 
   ```
   R CMD check --as-cran --run-donttest policytree_*.tar.gz
@@ -27,7 +27,7 @@
 3. Pre-check then submit
 
   https://win-builder.r-project.org/upload.aspx
-  
+
   https://builder.r-hub.io/ (to check on all builds, including Solaris)
 
   https://cran.r-project.org/submit.html
