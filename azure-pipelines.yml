@@ -6,9 +6,10 @@ name: "R (release) - Ubuntu-latest"
 trigger:
 - master
 
+pool:
+  vmImage: "ubuntu-latest"
+
 variables:
-- name: imageName
-  value: "ubuntu-latest"
 - name: R_LIBS_USER
   value: '$(Agent.BuildDirectory)/R/library'
 - name: CRAN
