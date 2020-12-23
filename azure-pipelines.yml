@@ -27,14 +27,14 @@ steps:
       curl -OLs https://eddelbuettel.github.io/r-ci/run.sh && chmod 0755 run.sh
       ./run.sh bootstrap
       ./run.sh install_deps
-    workingDirectory: r-package/grf
+    workingDirectory: r-package
     displayName: Setup R
   - script: ./run.sh run_tests
-    workingDirectory: r-package/grf
+    workingDirectory: r-package
     displayName: Test R package
   - script: ./run.sh dump_logs_by_extension "fail"
     condition: failed()
-    workingDirectory: r-package/grf
+    workingDirectory: r-package
     displayName: Print test failures
   # Final deploy step
   # Build the online docs and deploy to gh-pages - only done on master branch.
