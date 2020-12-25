@@ -4,11 +4,11 @@
 // This fix is from: https://github.com/r-lib/pkgdown/issues/1152
 $(function() {
     if(window.location.pathname.toLocaleLowerCase().indexOf('/reference') != -1) {
-        /* Replace '/R/' with '/r-package/R/' in all external links to .R files of the GitHub repo */
-        $('a[href^="https://github.com/grf-labs/policytree/blob/master/R"][href*=".R"]').attr('href', (i, val) => { return val.replace('/R/', '/r-package/R/'); });
+        /* Replace '/R/' with '/r-package/policytree/R/' in all external links to .R files of the GitHub repo */
+        $('a[href^="https://github.com/grf-labs/policytree/blob/master/R"][href*=".R"]').attr('href', (i, val) => { return val.replace('/R/', '/r-package/policytree/R/'); });
     }
     if(window.location.pathname.toLocaleLowerCase().indexOf('/articles') != -1) {
-        /* Replace '/vignettes/' with '/r-package/vignettes/' in all external links to .Rmd files of grf GitHub repo */
-        $('a[href^="https://github.com/grf-labs/policytree/blob/master/vignettes"][href*=".Rmd"]').attr('href', (i, val) => { return val.replace('/vignettes/', '/r-package/vignettes/'); });
+        /* Replace '/vignettes/' with '/r-package/policytree/vignettes/' in all external links to .Rmd files of grf GitHub repo */
+        $('a[href^="https://github.com/grf-labs/policytree/blob/master/vignettes"][href*=".Rmd"]').attr('href', (i, val) => { return val.replace('/vignettes/', '/r-package/policytree/vignettes/'); });
     }
 });
