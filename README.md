@@ -3,7 +3,7 @@
 
 # policytree
 
-A package for learning optimal policies via doubly robust empirical welfare maximization over trees. This package implements the multi-action doubly robust approach of Zhou et al. (2018) in the case where we want to learn policies that belong to the class of depth _k_ decision trees. Many practical policy applications require interpretable predictions. For example, a drug prescription guide that follows a simple 2-question Yes/No checklist can be encoded as a depth 2 decision tree (does the patient have a heart condition - etc.). `policytree` currently has support for estimating multi-action treatment effects with one vs. all [grf](https://github.com/grf-labs/grf), calculating statistics such as double robust scores (support for a subset of _grf_ forest types) and fitting optimal policies with exact tree search.
+A package for learning optimal policies via doubly robust empirical welfare maximization over trees. Many practical policy applications require interpretable predictions. For example, a drug prescription guide that follows a simple 2-question Yes/No checklist can be encoded as a depth 2 decision tree (does the patient have a heart condition - etc.). This package implements the multi-action doubly robust approach of Zhou et al. (2018) in the case where we want to learn policies that belong to the class of depth _k_ decision trees.
 
 Some helpful links for getting started:
 
