@@ -22,11 +22,11 @@ install.packages("policytree")
 To install the latest development version from source:
 
 ```
-git clone https://github.com/grf-labs/policytree.git
-Rscript -e 'install.packages("policytree/r-package", repos = NULL, type = "source")'
+git clone https://github.com/grf-labs/policytree.git && cd policytree
+Rscript -e 'install.packages("r-package/policytree", repos = NULL, type = "source")'
 
 # or
-devtools::install_github("grf-labs/policytree", subdir = "r-package")
+devtools::install_github("grf-labs/policytree", subdir = "r-package/policytree")
 ```
 
 Installing from source requires a C++ 11 compiler (on Windows Rtools is required as well) together with the R packages
