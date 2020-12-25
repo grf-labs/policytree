@@ -3,7 +3,7 @@
 
 # policytree
 
-A package for learning optimal policies via doubly robust empirical welfare maximization over trees. This package implements the multi-action doubly robust approach of Zhou et al. (2018) in the case where we want to learn policies that belong to the class of depth _k_ decision trees. Many practical policy applications require interpretable predictions. For example, a drug prescription guide that follows a simple 2-question Yes/No checklist can be encoded as a depth 2 decision tree (does the patient have a heart condition - etc.). `policytree` currently has support for estimating multi-action treatment effects with one vs. all [grf](https://github.com/grf-labs/grf), calculating statistics such as double robust scores (support for a subset of _grf_ forest types) and fitting optimal policies with exact tree search.
+A package for learning optimal policies via doubly robust empirical welfare maximization over trees. Many practical policy applications require interpretable predictions. For example, a drug prescription guide that follows a simple 2-question Yes/No checklist can be encoded as a depth 2 decision tree (does the patient have a heart condition - etc.). This package implements the multi-action doubly robust approach of Zhou et al. (2018) in the case where we want to learn policies that belong to the class of depth _k_ decision trees.
 
 Some helpful links for getting started:
 
@@ -22,11 +22,11 @@ install.packages("policytree")
 To install the latest development version from source:
 
 ```
-git clone https://github.com/grf-labs/policytree.git
-Rscript -e 'install.packages("policytree/r-package", repos = NULL, type = "source")'
+git clone https://github.com/grf-labs/policytree.git && cd policytree
+Rscript -e 'install.packages("r-package/policytree", repos = NULL, type = "source")'
 
 # or
-devtools::install_github("grf-labs/policytree", subdir = "r-package")
+devtools::install_github("grf-labs/policytree", subdir = "r-package/policytree")
 ```
 
 Installing from source requires a C++ 11 compiler (on Windows Rtools is required as well) together with the R packages
@@ -91,7 +91,7 @@ Tree search
 
 Treatment effects
 * `multi_causal_forest()`: fits one causal forest for each treatment. Operates similarly to _grf_: `predict()` returns treatment estimates.
-* `double_robust_scores()`: generic function dispatching on appropriate forest type. By the OOB nature of forest estimates these have cross-fitting "baked in".
+* `double_robust_scores()`: generic function dispatching on the appropriate _grf_ forest type.
 
 ### Contributing
 
