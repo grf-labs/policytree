@@ -91,7 +91,7 @@ Tree search
 
 Treatment effects
 * `multi_causal_forest()`: fits one causal forest for each treatment. Operates similarly to _grf_: `predict()` returns treatment estimates.
-* `double_robust_scores()`: generic function dispatching on appropriate forest type. By the OOB nature of forest estimates these have cross-fitting "baked in".
+* `double_robust_scores()`: generic function dispatching on the appropriate _grf_ forest type.
 
 ### Contributing
 
