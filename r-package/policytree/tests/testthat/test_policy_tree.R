@@ -318,15 +318,27 @@ test_that("tree search with approximate splitting works as expected", {
   expect_true(reward.skip2 > reward.colmax)
   expect_true(reward.skip2 > reward.halved)
 
-  # split.step <= 0 or greater than the number of distinct values is meaningless
+  # split.step greater than the number of distinct values is meaningless
   # but passes through and just implies no splits:
   # Setting split.step to a number greater than the number of distinct features
   tree.all <- policy_tree(X, Y, depth = depth, split.step = n + 100)
   expect_true(all(predict(tree.all, X) == colmax))
+})
 
-  # Which is the same as setting split.step to 0 or smaller
-  tree.all <- policy_tree(X, Y, depth = depth, split.step = 0)
-  expect_true(all(predict(tree.all, X) == colmax))
-  tree.all <- policy_tree(X, Y, depth = depth, split.step = -n)
-  expect_true(all(predict(tree.all, X) == colmax))
+test_that("tree search with approximate splitting on data with low cardinality works as expected", {
+  depth <- 2
+  n <- 500
+  p <- 1
+  d <- 4
+  X <- round(matrix(abs(rnorm(n * p)), n, p), 1)
+  Y <- matrix(rnorm(n * d), n, d)
+  best.tree <- make_tree(X, depth = depth, d = d)
+  best.action <- predict_test_tree(best.tree, X)
+  Y[cbind(1:n, best.action)] <- 100 * runif(n)
+
+  tree <- policy_tree(X, Y, depth = depth, split.step = 10)
+  best.reward <- mean(Y[cbind(1:n, best.action)])
+  reward <- mean(Y[cbind(1:n, predict(tree, X))])
+
+  expect_equal(reward, best.reward, tol = 0.05)
 })
