@@ -104,8 +104,9 @@ Development of policytree is supported by the National Science Foundation, the S
 ### References
 
 Susan Athey and Stefan Wager.
-<b>Efficient Policy Learning.</b> 2017.
-[<a href="https://arxiv.org/abs/1702.02896">arxiv</a>]
+<b>Policy Learning With Observational Data.</b> <i>Econometrica 89.1 (2021): 133-161.</i>
+[<a href="https://onlinelibrary.wiley.com/doi/abs/10.3982/ECTA15732">paper</a>,
+<a href="https://arxiv.org/abs/1702.02896">arxiv</a>]
 
 Toru Kitagawa and Aleksey Tetenov.
 <b>Who Should be Treated? Empirical Welfare Maximization Methods for Treatment Choice.</b> <i>Econometrica 86.2 (2018): 591-616.</i>
