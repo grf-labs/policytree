@@ -15,8 +15,8 @@ gen_data_epl(n, type = c("continuous", "jump"))
 A list
 }
 \description{
-The DGP from section 5.2 in Athey and Wager (2020)
+The DGP from section 5.2 in Athey and Wager (2021)
 }
 \references{
-Athey, Susan, and Stefan Wager. "Policy Learning With Observational Data." Econometrica 89.1 (2020): 133-161.
+Athey, Susan, and Stefan Wager. "Policy Learning With Observational Data." Econometrica 89.1 (2021): 133-161.
 }

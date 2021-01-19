@@ -60,13 +60,13 @@ gen_data_mapl <- function(n, p = 10, sigma2 = 4) {
 
 #' Example data generating process from Policy Learning With Observational Data
 #'
-#' The DGP from section 5.2 in Athey and Wager (2020)
+#' The DGP from section 5.2 in Athey and Wager (2021)
 #'
 #' @param n Number of observations
 #' @param type tau is "continuous" (default - equation 46) or exhibits "jumps" (equation 47)
 #'
 #' @return A list
-#' @references Athey, Susan, and Stefan Wager. "Policy Learning With Observational Data." Econometrica 89.1 (2020): 133-161.
+#' @references Athey, Susan, and Stefan Wager. "Policy Learning With Observational Data." Econometrica 89.1 (2021): 133-161.
 #' @export
 #' @importFrom stats rbinom
 gen_data_epl <- function(n, type = c("continuous", "jump")) {

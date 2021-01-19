@@ -38,7 +38,7 @@ library(xtable)
 
 #
 # This script replicates the analysis of the California GAIN program reported in
-# Section 5.1 of Athey & Wager (2020). The data itself, however, cannot be made
+# Section 5.1 of Athey & Wager (2021). The data itself, however, cannot be made
 # publicly available at this time due to potential privacy conerns.
 #
 

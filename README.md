@@ -104,7 +104,7 @@ Development of policytree is supported by the National Science Foundation, the S
 ### References
 
 Susan Athey and Stefan Wager.
-<b>Policy Learning With Observational Data.</b> <i>Econometrica 89.1 (2020): 133-161.</i>
+<b>Policy Learning With Observational Data.</b> <i>Econometrica 89.1 (2021): 133-161.</i>
 [<a href="https://onlinelibrary.wiley.com/doi/abs/10.3982/ECTA15732">paper</a>,
 <a href="https://arxiv.org/abs/1702.02896">arxiv</a>]
 
