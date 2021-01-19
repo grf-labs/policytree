@@ -12,13 +12,13 @@ conditional_means.instrumental_forest <- function(object, ...) {
 
 #' @describeIn double_robust_scores Scores \eqn{(-\Gamma, \Gamma)}
 #' @note For instrumental_forest this method returns \eqn{(-\Gamma_i, \Gamma_i)} where \eqn{\Gamma_i}
-#'  is the double robust estimator of the treatment effect as in eqn. (52) in Athey and Wager (2017).
+#'  is the double robust estimator of the treatment effect as in eqn. (44) in Athey and Wager (2020).
 #'
 #' @param compliance.score An estimate of the causal effect of Z on W.
 #'  i.e., Delta(X) = E(W | X, Z = 1) - E(W | X, Z = 0), for each sample i = 1, ..., n. If NULL (default)
 #'  then this is estimated with a causal forest.
 #'
-#' @references Athey, Susan, and Stefan Wager. "Efficient policy learning." arXiv preprint arXiv:1702.02896 (2017).
+#' @references Athey, Susan, and Stefan Wager. "Policy Learning With Observational Data." Econometrica 89.1 (2020): 133-161.
 #'
 #' @method double_robust_scores instrumental_forest
 #' @export

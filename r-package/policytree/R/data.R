@@ -58,15 +58,15 @@ gen_data_mapl <- function(n, p = 10, sigma2 = 4) {
 }
 
 
-#' Example data generating process from Efficient Policy Learning
+#' Example data generating process from Policy Learning With Observational Data
 #'
-#' The DGP from section 5.2 in Athey and Wager (2017)
+#' The DGP from section 5.2 in Athey and Wager (2020)
 #'
 #' @param n Number of observations
-#' @param type tau is "continuous" (default - equation 54) or exhibits "jumps" (equation 55)
+#' @param type tau is "continuous" (default - equation 46) or exhibits "jumps" (equation 47)
 #'
 #' @return A list
-#' @references Athey, Susan, and Stefan Wager. "Efficient policy learning." arXiv preprint arXiv:1702.02896 (2017).
+#' @references Athey, Susan, and Stefan Wager. "Policy Learning With Observational Data." Econometrica 89.1 (2020): 133-161.
 #' @export
 #' @importFrom stats rbinom
 gen_data_epl <- function(n, type = c("continuous", "jump")) {
@@ -78,9 +78,9 @@ gen_data_epl <- function(n, type = c("continuous", "jump")) {
   Q <- rbinom(n = n, size = 1, prob = 1 / (1 + exp(-eps - X[, 4])))
   W <- as.integer(Q & Z)
   if (type == "continuous") {
-    tau <- (pmax(0, X[, 1]) + pmax(0, X[, 2]) - 1) / 2 # (54)
+    tau <- (pmax(0, X[, 1]) + pmax(0, X[, 2]) - 1) / 2 # (46)
   } else {
-    tau <- sign(X[, 1] * X[, 2]) / 2 # (55)
+    tau <- sign(X[, 1] * X[, 2]) / 2 # (47)
   }
   Y <- pmax(0, X[, 3] + X[, 4]) + W * tau + eps
 

@@ -46,7 +46,7 @@ This is the matrix used for CAIPWL (Cross-fitted Augmented Inverse Propensity We
 
 \note{
 For instrumental_forest this method returns \eqn{(-\Gamma_i, \Gamma_i)} where \eqn{\Gamma_i}
-is the double robust estimator of the treatment effect as in eqn. (52) in Athey and Wager (2017).
+is the double robust estimator of the treatment effect as in eqn. (44) in Athey and Wager (2020).
 }
 \examples{
 \donttest{
@@ -71,5 +71,5 @@ scores <- double_robust_scores(c.forest)
 }
 }
 \references{
-Athey, Susan, and Stefan Wager. "Efficient policy learning." arXiv preprint arXiv:1702.02896 (2017).
+Athey, Susan, and Stefan Wager. "Policy Learning With Observational Data." Econometrica 89.1 (2020): 133-161.
 }

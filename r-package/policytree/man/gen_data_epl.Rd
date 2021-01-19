@@ -2,21 +2,21 @@
 % Please edit documentation in R/data.R
 \name{gen_data_epl}
 \alias{gen_data_epl}
-\title{Example data generating process from Efficient Policy Learning}
+\title{Example data generating process from Policy Learning With Observational Data}
 \usage{
 gen_data_epl(n, type = c("continuous", "jump"))
 }
 \arguments{
 \item{n}{Number of observations}
 
-\item{type}{tau is "continuous" (default - equation 54) or exhibits "jumps" (equation 55)}
+\item{type}{tau is "continuous" (default - equation 46) or exhibits "jumps" (equation 47)}
 }
 \value{
 A list
 }
 \description{
-The DGP from section 5.2 in Athey and Wager (2017)
+The DGP from section 5.2 in Athey and Wager (2020)
 }
 \references{
-Athey, Susan, and Stefan Wager. "Efficient policy learning." arXiv preprint arXiv:1702.02896 (2017).
+Athey, Susan, and Stefan Wager. "Policy Learning With Observational Data." Econometrica 89.1 (2020): 133-161.
 }

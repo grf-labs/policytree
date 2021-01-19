@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This document provides a short introduction to the `policytree` package, with examples from Zhou, Athey and Wager (2018), and Athey and Wager (2017). The last section addresses details, such as treatment estimates with one-vs-all grf, and the runtime of `policy_tree`.
+This document provides a short introduction to the `policytree` package, with examples from Zhou, Athey and Wager (2018), and Athey and Wager (2020). The last section addresses details, such as treatment estimates with one-vs-all grf, and the runtime of `policy_tree`.
 
 ```{r, echo = FALSE, message = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
@@ -100,7 +100,7 @@ legend("topleft", legend = leg - 1, col = leg, pch = 10)
 
 # Ex. 3: Efficient Policy Learning - Binary Treatment and Instrumental Variables
 
-The following example is from section 5.2 in [Wager and Athey (2017)](https://arxiv.org/abs/1702.02896).
+The following example is from section 5.2 in [Wager and Athey (2020)](https://arxiv.org/abs/1702.02896).
 
 ```{r}
 n <- 500
