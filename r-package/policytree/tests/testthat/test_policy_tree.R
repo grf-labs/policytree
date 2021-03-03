@@ -342,3 +342,17 @@ test_that("tree search with approximate splitting on data with low cardinality w
 
   expect_equal(reward, best.reward, tol = 0.05)
 })
+
+test_that("leaf id predictions work as expected", {
+  depth <- 2
+  n <- 250
+  p <- 5
+  d <- 3
+  X <- matrix(rnorm(n * p), n, p)
+  Y <- matrix(0, n, d)
+
+  tree <- policy_tree(X, Y, depth = depth)
+  leaf.id <- predict(tree, X, type = "node.id")
+
+  expect_equal(leaf.id, rep(0, n))
+})
