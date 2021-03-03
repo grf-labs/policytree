@@ -325,6 +325,7 @@ test_that("tree search with approximate splitting works as expected", {
   expect_true(all(predict(tree.all, X) == colmax))
 })
 
+
 test_that("tree search with approximate splitting on data with low cardinality works as expected", {
   depth <- 2
   n <- 500
@@ -342,6 +343,7 @@ test_that("tree search with approximate splitting on data with low cardinality w
 
   expect_equal(reward, best.reward, tol = 0.05)
 })
+
 
 test_that("leaf id predictions work as expected", {
   depth <- 2
