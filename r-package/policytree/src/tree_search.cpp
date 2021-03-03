@@ -162,7 +162,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
         continue;
       }
       if (samples_counter < min_node_size || num_points - samples_counter < min_node_size) {
-	      continue;
+        continue;
       }
       if (split_counter >= split_step) { // only split at every `split_step`th sample
         split_counter = 0;
@@ -330,7 +330,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
           continue;
         }
         if (samples_counter < min_node_size || num_points - samples_counter < min_node_size) {
-	      continue;
+          continue;
         }
         if (split_counter >= split_step) { // only split at every `split_step`th sample
           split_counter = 0;
