@@ -145,9 +145,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
     }
     auto it = sorted_sets[p].cbegin();
     int split_counter = 0;
-    size_t n = 0;
     for (;;) {
-      ++n;
       auto value = it->get_value(p);
       ++it;
       if (it == sorted_sets[p].end()) {
