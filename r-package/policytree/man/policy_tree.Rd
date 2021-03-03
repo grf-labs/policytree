@@ -25,7 +25,7 @@ A policy_tree object.
 }
 \description{
 Finds the optimal (maximizing the sum of rewards) depth L tree by exhaustive search. If the optimal
-action is the same in both the left and right leaf of a node, the node is pruned.
+action is the same in both the left and right node.id of a node, the node is pruned.
 }
 \details{
 The amortized runtime of the exact tree search is \eqn{O(p^k n^k (log n + d) + pnlog n)} where p is the number of features, d the number of treatments, n the number of observations, and \eqn{k \geq 1} the tree depth.

@@ -1,7 +1,7 @@
 #' Fit a policy with exact tree search
 #'
 #' Finds the optimal (maximizing the sum of rewards) depth L tree by exhaustive search. If the optimal
-#' action is the same in both the left and right leaf of a node, the node is pruned.
+#' action is the same in both the left and right node.id of a node, the node is pruned.
 #'
 #' The amortized runtime of the exact tree search is \eqn{O(p^k n^k (log n + d) + pnlog n)} where p is the number of features, d the number of treatments, n the number of observations, and \eqn{k \geq 1} the tree depth.
 #'
@@ -120,12 +120,12 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
 #' @param object policy_tree object
 #' @param newdata A data frame with features
 #' @param type The type of prediction required, "action" is the action id and
-#'  "leaf" is the integer id of the leaf node the samples falls into. Default is "action".
+#'  "node.id" is the integer id of the leaf node the samples falls into. Default is "action".
 #' @param ... Additional arguments (currently ignored).
 #'
-#' @return A vector of predictions. For type = "action" each element is an integer from 1 to d where d is
-#'  the number of columns in the reward matrix. For type = "leaf" each element is an integer corresponding
-#'  to the node id the sample falls into.
+#' @return A vector of predictions. For type = "action.id" each element is an integer from 1 to d where d is
+#'  the number of columns in the reward matrix. For type = "node.id" each element is an integer corresponding
+#'  to the node the sample falls into.
 #' @export
 #'
 #' @method predict policy_tree
@@ -149,15 +149,15 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
 #' predicted <- predict(tree, X)
 #'
 #' # Predict the leaf assigned to each sample.
-#' leaf.id <- predict(tree, X, type = "leaf")
+#' node.id <- predict(tree, X, type = "node.id")
 #' # Reshape to a list of samples per leaf node with `split`.
-#' samples.per.leaf <- split(1:n, leaf.id)
+#' samples.per.leaf <- split(1:n, node.id)
 #'
 #' plot(X[, 1], X[, 2], col = predicted)
 #' legend("topright", c("control", "treat"), col = c(1, 2), pch = 19)
 #' abline(0, -1, lty = 2)
 #' }
-predict.policy_tree <- function(object, newdata, type = c("action", "leaf"), ...) {
+predict.policy_tree <- function(object, newdata, type = c("action.id", "node.id"), ...) {
   type <- match.arg(type)
   valid.classes <- c("matrix", "data.frame")
   if (!inherits(newdata, valid.classes)) {
@@ -178,7 +178,7 @@ predict.policy_tree <- function(object, newdata, type = c("action", "leaf"), ...
 
   ret <- tree_search_rcpp_predict(tree[["_tree_array"]], as.matrix(newdata))
 
-  if (type == "action") {
+  if (type == "action.id") {
     return (ret[, 1])
   } else {
     return (ret[, 2])
