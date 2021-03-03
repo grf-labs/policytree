@@ -125,6 +125,6 @@ struct Node {
 };
 
 
-std::unique_ptr<Node> tree_search(int, int, const Data*);
+std::unique_ptr<Node> tree_search(int, int, size_t, const Data*);
 
 #endif // TREE_SEARCH_H
