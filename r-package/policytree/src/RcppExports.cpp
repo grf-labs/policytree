@@ -20,7 +20,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // tree_search_rcpp_predict
-Rcpp::NumericVector tree_search_rcpp_predict(const Rcpp::NumericMatrix& tree_array, const Rcpp::NumericMatrix& X);
+Rcpp::NumericMatrix tree_search_rcpp_predict(const Rcpp::NumericMatrix& tree_array, const Rcpp::NumericMatrix& X);
 RcppExport SEXP _policytree_tree_search_rcpp_predict(SEXP tree_arraySEXP, SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
