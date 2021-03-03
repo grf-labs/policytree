@@ -354,5 +354,5 @@ test_that("leaf id predictions work as expected", {
   tree <- policy_tree(X, Y, depth = depth)
   leaf.id <- predict(tree, X, type = "leaf")
 
-  expect_equal(leaf.id, rep(1, n))
+  expect_equal(leaf.id, rep(0, n))
 })

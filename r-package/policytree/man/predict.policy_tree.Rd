@@ -18,8 +18,8 @@
 }
 \value{
 A vector of predictions. For type = "action" each element is an integer from 1 to d where d is
-the number of columns in the reward matrix. For type = "leaf" each element is an integer from
-1 to the number of leaves.
+the number of columns in the reward matrix. For type = "leaf" each element is an integer corresponding
+to the node id the sample falls into.
 }
 \description{
 Predict values based on fitted policy_tree object.
