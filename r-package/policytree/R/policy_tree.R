@@ -119,8 +119,8 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
 #' Predict values based on fitted policy_tree object.
 #' @param object policy_tree object
 #' @param newdata A data frame with features
-#' @param type The type of prediction required, "action" is the action id and
-#'  "node.id" is the integer id of the leaf node the samples falls into. Default is "action".
+#' @param type The type of prediction required, "action.id" is the action id and
+#'  "node.id" is the integer id of the leaf node the samples falls into. Default is "action.id".
 #' @param ... Additional arguments (currently ignored).
 #'
 #' @return A vector of predictions. For type = "action.id" each element is an integer from 1 to d where d is

@@ -11,8 +11,8 @@
 
 \item{newdata}{A data frame with features}
 
-\item{type}{The type of prediction required, "action" is the action id and
-"node.id" is the integer id of the leaf node the samples falls into. Default is "action".}
+\item{type}{The type of prediction required, "action.id" is the action id and
+"node.id" is the integer id of the leaf node the samples falls into. Default is "action.id".}
 
 \item{...}{Additional arguments (currently ignored).}
 }
