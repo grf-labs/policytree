@@ -21,6 +21,7 @@
 
 typedef boost::container::flat_set<Point, std::function<bool(const Point&, const Point&)>> flat_set;
 
+size_t min_node_size = 5;
 /**
  * Create a vector of sorted sets
  *
@@ -145,6 +146,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
     }
     auto it = sorted_sets[p].cbegin();
     int split_counter = 0;
+    size_t samples_counter = 0;
     size_t n = 0;
     for (;;) {
       ++n;
@@ -155,8 +157,12 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       }
       auto next_value = it->get_value(p);
       split_counter += 1;
+      samples_counter += 1;
       if (value == next_value) {
         continue;
+      }
+      if (samples_counter < min_node_size || num_points - samples_counter < min_node_size) {
+	      continue;
       }
       if (split_counter >= split_step) { // only split at every `split_step`th sample
         split_counter = 0;
@@ -297,6 +303,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
       auto right_sorted_sets = sorted_sets; // copy operator
       auto left_sorted_sets = create_sorted_sets(data, true); // empty
       int split_counter = 0;
+      size_t samples_counter = 0;
       for (size_t n = 0; n < num_points - 1; n++) {
         auto point = right_sorted_sets[p].cbegin(); // O(1)
         Point point_bk = *point; // store the Point instance since the iterator will be invalid after erase
@@ -318,8 +325,12 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         }
         auto next = right_sorted_sets[p].cbegin(); // O(1)
         split_counter += 1;
+        samples_counter += 1;
         if (point_bk.get_value(p) >= next->get_value(p)) { // are the values the same then skip
           continue;
+        }
+        if (samples_counter < min_node_size || num_points - samples_counter < min_node_size) {
+	      continue;
         }
         if (split_counter >= split_step) { // only split at every `split_step`th sample
           split_counter = 0;
