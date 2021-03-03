@@ -119,10 +119,13 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
 #' Predict values based on fitted policy_tree object.
 #' @param object policy_tree object
 #' @param newdata A data frame with features
+#' @param type The type of prediction required, "action" is the action id and
+#'  "leaf" is the integer id of the leaf node the samples falls into. Default is "action".
 #' @param ... Additional arguments (currently ignored).
 #'
-#' @return A vector of predictions. Each element is an integer from 1 to d where d is
-#'  the number of columns in the reward matrix.
+#' @return A vector of predictions. For type = "action" each element is an integer from 1 to d where d is
+#'  the number of columns in the reward matrix. For type = "leaf" each element is an integer from
+#'  1 to the number of leaves.
 #' @export
 #'
 #' @method predict policy_tree
@@ -145,11 +148,17 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
 #' # Predict treatment assignment.
 #' predicted <- predict(tree, X)
 #'
+#' # Predict the leaf assigned to each sample.
+#' leaf.id <- predict(tree, X, type = "leaf")
+#' # Reshape to a list of samples per leaf node with `split`.
+#' samples.per.leaf <- split(1:n, leaf.id)
+#'
 #' plot(X[, 1], X[, 2], col = predicted)
 #' legend("topright", c("control", "treat"), col = c(1, 2), pch = 19)
 #' abline(0, -1, lty = 2)
 #' }
-predict.policy_tree <- function(object, newdata, ...) {
+predict.policy_tree <- function(object, newdata, type = c("action", "leaf"), ...) {
+  type <- match.arg(type)
   valid.classes <- c("matrix", "data.frame")
   if (!inherits(newdata, valid.classes)) {
     stop(paste("Currently the only supported data input types are:",
@@ -167,5 +176,13 @@ predict.policy_tree <- function(object, newdata, ...) {
     stop("This tree was trained with ", tree$n.features, " variables. Provided: ", ncol(newdata))
   }
 
-  tree_search_rcpp_predict(tree[["_tree_array"]], as.matrix(newdata))
+  ret <- tree_search_rcpp_predict(tree[["_tree_array"]], as.matrix(newdata))
+
+  if (type == "action") {
+    return (ret[, 1])
+  } else {
+    # Relabel the node ids to consecutive integers 1 to num.leaves
+    return (as.numeric(as.factor(ret[, 2])))
+  }
+
 }

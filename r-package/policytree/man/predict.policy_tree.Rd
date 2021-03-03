@@ -4,18 +4,22 @@
 \alias{predict.policy_tree}
 \title{Predict method for policy_tree}
 \usage{
-\method{predict}{policy_tree}(object, newdata, ...)
+\method{predict}{policy_tree}(object, newdata, type = c("action", "leaf"), ...)
 }
 \arguments{
 \item{object}{policy_tree object}
 
 \item{newdata}{A data frame with features}
 
+\item{type}{The type of prediction required, "action" is the action id and
+"leaf" is the integer id of the leaf node the samples falls into. Default is "action".}
+
 \item{...}{Additional arguments (currently ignored).}
 }
 \value{
-A vector of predictions. Each element is an integer from 1 to d where d is
-the number of columns in the reward matrix.
+A vector of predictions. For type = "action" each element is an integer from 1 to d where d is
+the number of columns in the reward matrix. For type = "leaf" each element is an integer from
+1 to the number of leaves.
 }
 \description{
 Predict values based on fitted policy_tree object.
@@ -38,6 +42,11 @@ tree
 
 # Predict treatment assignment.
 predicted <- predict(tree, X)
+
+# Predict the leaf assigned to each sample.
+leaf.id <- predict(tree, X, type = "leaf")
+# Reshape to a list of samples per leaf node with `split`.
+samples.per.leaf <- split(1:n, leaf.id)
 
 plot(X[, 1], X[, 2], col = predicted)
 legend("topright", c("control", "treat"), col = c(1, 2), pch = 19)
