@@ -23,6 +23,7 @@
 #'  Manually rounding or re-encoding continuous covariates with very high cardinality in a
 #'  problem specific manner allows for finer-grained control of the accuracy/runtime tradeoff and may in some cases
 #'  be the preferred approach over this option.
+#' @param min.node.size An integer indicating the smallest terminal node size permitted. Default is 1.
 #'
 #'
 #' @return A policy_tree object.
@@ -58,7 +59,7 @@
 #' }
 #' @export
 #' @importFrom utils type.convert
-policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
+policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) {
   n.features <- ncol(X)
   n.actions <- ncol(Gamma)
   n.obs <- nrow(X)
@@ -89,6 +90,9 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
   if (as.integer(split.step) != split.step || split.step < 1) {
     stop("`split.step` should be an integer greater than or equal to 1.")
   }
+  if (as.integer(min.node.size) != min.node.size || min.node.size < 1) {
+    stop("min.node.size should be an integer greater than or equal to 1.")
+  }
 
   action.names <- colnames(Gamma)
   if (is.null(action.names)) {
@@ -100,7 +104,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1) {
     columns <- make.names(1:ncol(X))
   }
 
-  result <- tree_search_rcpp(as.matrix(X), as.matrix(Gamma), depth, split.step)
+  result <- tree_search_rcpp(as.matrix(X), as.matrix(Gamma), depth, split.step, min.node.size)
   tree <- list(nodes = result[[1]])
 
   tree[["_tree_array"]] <- result[[2]]

@@ -325,6 +325,7 @@ test_that("tree search with approximate splitting works as expected", {
   expect_true(all(predict(tree.all, X) == colmax))
 })
 
+
 test_that("tree search with approximate splitting on data with low cardinality works as expected", {
   depth <- 2
   n <- 500
@@ -343,6 +344,7 @@ test_that("tree search with approximate splitting on data with low cardinality w
   expect_equal(reward, best.reward, tol = 0.05)
 })
 
+
 test_that("leaf id predictions work as expected", {
   depth <- 2
   n <- 250
@@ -355,4 +357,29 @@ test_that("leaf id predictions work as expected", {
   leaf.id <- predict(tree, X, type = "node.id")
 
   expect_equal(leaf.id, rep(0, n))
+})
+
+test_that("min.node.size works as expected", {
+  depth <- 2
+  n <- 100
+  p <- 5
+  d <- 3
+  # Continuous X
+  X <- matrix(runif(n * p), n, p)
+  Y <- matrix(rnorm(n * d), n, d)
+  tree <- policy_tree(X, Y, depth = depth)
+  smallest.leaf <- min(summary(as.factor(predict(tree, X, type = "node.id"))))
+
+  tree.min <- policy_tree(X, Y, depth = depth, min.node.size = smallest.leaf + 5)
+  leaf.sizes.min <- summary(as.factor(predict(tree.min, X, type = "node.id")))
+  expect_true(all(leaf.sizes.min >= smallest.leaf + 5))
+
+  # Discrete X
+  X <- matrix(sample(1:5, n, TRUE), n, p)
+  tree <- policy_tree(X, Y, depth = depth)
+  smallest.leaf <- min(summary(as.factor(predict(tree, X, type = "node.id"))))
+
+  tree.min <- policy_tree(X, Y, depth = depth, min.node.size = smallest.leaf + 5)
+  leaf.sizes.min <- summary(as.factor(predict(tree.min, X, type = "node.id")))
+  expect_true(all(leaf.sizes.min >= smallest.leaf + 5))
 })

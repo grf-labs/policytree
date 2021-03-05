@@ -4,7 +4,7 @@
 \alias{policy_tree}
 \title{Fit a policy with exact tree search}
 \usage{
-policy_tree(X, Gamma, depth = 2, split.step = 1)
+policy_tree(X, Gamma, depth = 2, split.step = 1, min.node.size = 1)
 }
 \arguments{
 \item{X}{The covariates used. Dimension \eqn{Np} where \eqn{p} is the number of features.}
@@ -19,6 +19,8 @@ considers splitting at every 10'th sample and may yield a substantial speedup fo
 Manually rounding or re-encoding continuous covariates with very high cardinality in a
 problem specific manner allows for finer-grained control of the accuracy/runtime tradeoff and may in some cases
 be the preferred approach over this option.}
+
+\item{min.node.size}{An integer indicating the smallest terminal node size permitted. Default is 1.}
 }
 \value{
 A policy_tree object.
