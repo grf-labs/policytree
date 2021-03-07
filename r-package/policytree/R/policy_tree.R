@@ -200,7 +200,7 @@ predict.policy_tree <- function(object, newdata, type = c("action.id", "node.id"
   if (type == "action.id") {
     return (ret[, 1])
   } else {
-    return (ret[, 2])
+    return (ret[, 2] + 1) # + 1 for R-index.
   }
 
 }
