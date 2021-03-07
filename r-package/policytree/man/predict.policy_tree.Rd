@@ -19,7 +19,7 @@
 \value{
 A vector of predictions. For type = "action.id" each element is an integer from 1 to d where d is
 the number of columns in the reward matrix. For type = "node.id" each element is an integer corresponding
-to the node the sample falls into.
+to the node the sample falls into (level-ordered).
 }
 \description{
 Predict values based on fitted policy_tree object.

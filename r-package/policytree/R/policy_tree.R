@@ -139,7 +139,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) 
 #'
 #' @return A vector of predictions. For type = "action.id" each element is an integer from 1 to d where d is
 #'  the number of columns in the reward matrix. For type = "node.id" each element is an integer corresponding
-#'  to the node the sample falls into.
+#'  to the node the sample falls into (level-ordered).
 #' @export
 #'
 #' @method predict policy_tree
@@ -200,7 +200,7 @@ predict.policy_tree <- function(object, newdata, type = c("action.id", "node.id"
   if (type == "action.id") {
     return (ret[, 1])
   } else {
-    return (ret[, 2])
+    return (ret[, 2] + 1) # + 1 for R-index.
   }
 
 }
