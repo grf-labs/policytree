@@ -49,7 +49,7 @@ abline(0, -1, lty = 2)
 
 # Predict the leaf assigned to each sample.
 node.id <- predict(tree, X, type = "node.id")
-# Can be reshape to a list of samples per leaf node with `split`.
+# Can be reshaped to a list of samples per leaf node with `split`.
 samples.per.leaf <- split(1:n, node.id)
 
 # The value of all arms (along with SEs) by each leaf node.
