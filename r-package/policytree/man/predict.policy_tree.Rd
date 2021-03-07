@@ -43,13 +43,18 @@ tree
 # Predict treatment assignment.
 predicted <- predict(tree, X)
 
-# Predict the leaf assigned to each sample.
-node.id <- predict(tree, X, type = "node.id")
-# Reshape to a list of samples per leaf node with `split`.
-samples.per.leaf <- split(1:n, node.id)
-
 plot(X[, 1], X[, 2], col = predicted)
 legend("topright", c("control", "treat"), col = c(1, 2), pch = 19)
 abline(0, -1, lty = 2)
+
+# Predict the leaf assigned to each sample.
+node.id <- predict(tree, X, type = "node.id")
+# Can be reshape to a list of samples per leaf node with `split`.
+samples.per.leaf <- split(1:n, node.id)
+
+# The value of all arms (along with SEs) by each leaf node.
+values <- aggregate(dr.scores, by = list(leaf.node = node.id),
+                    FUN = function(x) c(mean = mean(x), se = sd(x) / sqrt(length(x))))
+print(values, digits = 2)
 }
 }

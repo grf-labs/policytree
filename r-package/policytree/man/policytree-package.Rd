@@ -43,6 +43,7 @@ predict(opt.tree, X[-train, ])
 Useful links:
 \itemize{
   \item \url{https://github.com/grf-labs/policytree}
+  \item Report bugs at \url{https://github.com/grf-labs/policytree/issues}
 }
 
 }
