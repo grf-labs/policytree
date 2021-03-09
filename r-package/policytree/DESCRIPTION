@@ -2,11 +2,11 @@ Package: policytree
 Title: Policy Learning via Doubly Robust Empirical Welfare Maximization over Trees
 Version: 1.0.4
 Authors@R: c(
+    person("Erik", "Sverdrup", role = c("aut", "cre"), email = "erikcs@stanford.edu"),
+    person("Ayush", "Kanodia", role = "aut"),
     person("Zhengyuan", "Zhou", role = "aut"),
     person("Susan", "Athey", role = "aut"),
-    person("Stefan", "Wager", role = "aut"),
-    person("Ayush", "Kanodia", role = "aut"),
-    person("Erik", "Sverdrup", role = "cre", email = "erikcs@stanford.edu")
+    person("Stefan", "Wager", role = "aut")
     )
 Description: Learn optimal policies via doubly robust empirical
  welfare maximization over trees. This package implements the multi-action doubly
