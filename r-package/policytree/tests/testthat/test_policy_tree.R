@@ -345,7 +345,7 @@ test_that("tree search with approximate splitting on data with low cardinality w
 })
 
 
-test_that("leaf id predictions work as expected", {
+test_that("leaf node predictions work as expected", {
   depth <- 2
   n <- 250
   p <- 5
@@ -355,8 +355,37 @@ test_that("leaf id predictions work as expected", {
 
   tree <- policy_tree(X, Y, depth = depth)
   leaf.id <- predict(tree, X, type = "node.id")
-
   expect_equal(leaf.id, rep(1, n))
+
+  # Leaf node and action predictions are internally consistent
+
+  # Continuous X tree
+  X <- matrix(rnorm(n * p), n, p)
+  Y <- matrix(0, n, d)
+  best.tree <- make_tree(X, depth = depth, d = d)
+  best.action <- predict_test_tree(best.tree, X)
+  Y[cbind(1:n, best.action)] <- 100 * runif(n)
+  tree <- policy_tree(X, Y, depth = depth)
+
+  pp <- predict(tree, X)
+  pp.node <- predict(tree, X, type = "node.id")
+  values <- aggregate(Y, by = list(leaf.node = pp.node), FUN = mean)
+  best <- apply(values[, -1], 1, FUN = which.max)
+  expect_equal(best[match(pp.node, values[, 1])], pp)
+
+  # Discrete X
+  X <- matrix(sample(10:20, n * p, replace = TRUE), n, p)
+  Y <- matrix(0, n, d)
+  best.tree.discrete <- make_tree(X, depth = depth, d = d)
+  best.action <- predict_test_tree(best.tree.discrete, X)
+  Y[cbind(1:n, best.action)] <- 100 * runif(n)
+  tree.discrete <- policy_tree(X, Y, depth = depth)
+
+  pp.discrete <- predict(tree.discrete, X)
+  pp.node.discrete <- predict(tree.discrete, X, type = "node.id")
+  values.discrete <- aggregate(Y, by = list(leaf.node = pp.node.discrete), FUN = mean)
+  best.discrete <- apply(values.discrete[, -1], 1, FUN = which.max)
+  expect_equal(best.discrete[match(pp.node.discrete, values.discrete[, 1])], pp.discrete)
 })
 
 test_that("min.node.size works as expected", {
