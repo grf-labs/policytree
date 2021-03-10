@@ -4,6 +4,16 @@ All notable changes to policytree will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2021-03-10
+
+### Added
+- Add optional `leaf.label` argument to `plot.policy_tree` allowing custom treatment names. [#60](https://github.com/grf-labs/policytree/pull/60)
+- Add optional `"type = node.id"` argument to `predict.policy_tree` returning the leaf node the test sample falls into. [#78](https://github.com/grf-labs/policytree/pull/78).
+- Add optional `min.node.size` to `policy_tree` specifying the smallest permissible node size. [#77](https://github.com/grf-labs/policytree/pull/77)
+
+### Fixed
+- Fix `split.step` approximation for discrete covariates by redefining to skip observations instead of unique values. Note: this may cause small differences in results compared to previous releases when using the `split.step` approximation parameter. [#73](https://github.com/grf-labs/policytree/pull/73)
+
 ## [1.0.3] - 2020-09-13
 
 ### Fixed

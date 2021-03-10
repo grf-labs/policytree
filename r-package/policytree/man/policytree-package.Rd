@@ -52,10 +52,10 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Ayush Kanodia
   \item Zhengyuan Zhou
   \item Susan Athey
   \item Stefan Wager
-  \item Ayush Kanodia
 }
 
 }
