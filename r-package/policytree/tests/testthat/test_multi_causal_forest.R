@@ -7,17 +7,17 @@ test_that("everything runs", {
   W <- sample(1:d, n, replace = TRUE)
 
   # Some simple smoke tests
-  mcf <- multi_causal_forest(X, Y, W)
+  expect_warning(mcf <- multi_causal_forest(X, Y, W))
   predict(mcf)
   conditional_means(mcf)
   double_robust_scores(mcf)
   p <- capture.output(print(mcf))
 
-  multi_causal_forest(X, Y, W, orthog.boosting = TRUE)
+  expect_warning(multi_causal_forest(X, Y, W, orthog.boosting = TRUE))
 
-  multi_causal_forest(X, Y, W, W.hat = c(1 / 3, 1 / 3, 1 / 3))
+  expect_warning(multi_causal_forest(X, Y, W, W.hat = c(1 / 3, 1 / 3, 1 / 3)))
 
-  multi_causal_forest(X, Y, W, W.hat = matrix(1 / 3, n, d))
+  expect_warning(multi_causal_forest(X, Y, W, W.hat = matrix(1 / 3, n, d)))
 
   #
   predictions.oob <- predict(mcf)
@@ -41,7 +41,7 @@ test_that("predictions have not changed", {
   X <- matrix(runif(n * p), n, p)
   Y <- runif(n)
   W <- sample(1:d, n, replace = TRUE)
-  mcf <- multi_causal_forest(X = X, Y = Y, W = W, seed = 123)
+  expect_warning(mcf <- multi_causal_forest(X = X, Y = Y, W = W, seed = 123))
   tau <- predict(mcf)$predictions
 
   expect_equal(mean(colMeans(tau)), -0.001, tolerance = 1e-3)

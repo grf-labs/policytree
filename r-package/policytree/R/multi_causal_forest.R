@@ -123,6 +123,10 @@ multi_causal_forest <- function(X, Y, W,
                                 orthog.boosting = FALSE,
                                 num.threads = NULL,
                                 seed = runif(1, 0, .Machine$integer.max)) {
+  warning(paste0("\nDeprecation warning:\n",
+                 "This forest is going to be removed in an upcoming major version in favor of ",
+                 "the new estimator `multi_arm_causal_forest` available in GRF 2.0. ",
+                 "(details: https://grf-labs.github.io/grf/reference/multi_arm_causal_forest.html)."))
   if (!inherits(X, c("matrix", "data.frame", "dgCMatrix"))) {
     stop(paste("Currently the only supported data input types are:",
                "`matrix`, `data.frame`, `dgCMatrix`"))

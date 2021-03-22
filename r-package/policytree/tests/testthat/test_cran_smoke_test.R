@@ -7,7 +7,7 @@ test_that("a simple workflow works on CRAN", {
   W <- sample(1:d, n, replace = TRUE)
 
   # Some simple smoke tests
-  mcf <- multi_causal_forest(X, Y, W)
+  expect_warning(mcf <- multi_causal_forest(X, Y, W))
   tau.hat <- predict(mcf)
   mu.hat <- conditional_means(mcf)
   gamma.hat <- double_robust_scores(mcf)
