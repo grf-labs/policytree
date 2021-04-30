@@ -22,8 +22,6 @@
 #include <stdexcept>
 #include <vector>
 
-// #define DEBUG
-
 const double INF = std::numeric_limits<double>::infinity();
 
 // Data class for column major storage
@@ -39,20 +37,10 @@ public:
   }
 
   double get_x(size_t row, size_t col) const {
-#ifdef DEBUG
-  if (row >= num_rows) throw std::runtime_error("get x oob row");
-  if (col >= num_cols_x) throw std::runtime_error("get x oob col");
-  if (data_x == nullptr) throw std::runtime_error("get x nullptr");
-#endif
     return data_x[col * num_rows + row];
   }
 
   double get_y(size_t row, size_t col) const {
-#ifdef DEBUG
-  if (row >= num_rows) throw std::runtime_error("get y oob row");
-  if (col >= num_cols_y) throw std::runtime_error("get y oob col");
-  if (data_y == nullptr) throw std::runtime_error("get y nullptr");
-#endif
     return data_y[col * num_rows + row];
   }
 
@@ -82,17 +70,11 @@ public:
 
   // i is the column index of the feature matrix
   double get_value(size_t i) const {
-#ifdef DEBUG
-    if (data == nullptr) throw std::runtime_error("point get value: data nullptr");
-#endif
     return data->get_x(sample, i);
   }
 
   // j is the column index of the reward
   double get_reward(size_t j) const {
-#ifdef DEBUG
-    if (data == nullptr) throw std::runtime_error("point get reward: data nullptr");
-#endif
     return data->get_y(sample, j);
   }
 
