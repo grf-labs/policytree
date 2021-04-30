@@ -9,7 +9,7 @@ d <- 4
 # 1/2 continuous/discrete X
 X.c <- matrix(rnorm(n * p), n, p)
 X.d <- matrix(sample(10:15, n * p, replace = TRUE), n, p)
-X <- cbind(X.c, X.d)
+X <- cbind(X.c, X.d, rbinom(n, 1, 0.5))
 Y <- matrix(rnorm(n * d), n, d)
 
 tree <- policy_tree(X, Y, depth = depth)
