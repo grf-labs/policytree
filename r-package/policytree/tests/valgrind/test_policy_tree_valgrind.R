@@ -3,7 +3,7 @@
 # R -d "valgrind --tool=memcheck --leak-check=full" --vanilla  < test_policy_tree_valgrind.R
 library(policytree)
 depth <- 3
-n <- 75
+n <- 65
 p <- 5
 d <- 4
 # 1/2 continuous/discrete X
