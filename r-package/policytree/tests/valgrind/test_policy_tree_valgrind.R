@@ -3,12 +3,12 @@
 # R -d "valgrind --tool=memcheck --leak-check=full" --vanilla  < test_policy_tree_valgrind.R
 library(policytree)
 depth <- 3
-n <- 50
+n <- 75
 p <- 5
 d <- 4
 # 1/2 continuous/discrete X
 X.c <- matrix(rnorm(n * p), n, p)
-X.d <- matrix(sample(10:20, n * p, replace = TRUE), n, p)
+X.d <- matrix(sample(10:15, n * p, replace = TRUE), n, p)
 X <- cbind(X.c, X.d)
 Y <- matrix(rnorm(n * d), n, d)
 
