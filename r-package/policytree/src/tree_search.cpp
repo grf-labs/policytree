@@ -293,10 +293,6 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
     size_t num_features = data->num_features();
     size_t best_split_var;
     double best_split_val;
-#ifdef DEBUG
-    if (sorted_sets.size() <= 0) throw std::runtime_error("recursion start: sorted_sets size 0");
-    if (num_points <= 0) throw std::runtime_error("num_points size 0");
-#endif
     std::unique_ptr<Node> best_left_child = nullptr;
     std::unique_ptr<Node> best_right_child = nullptr;
     std::unique_ptr<Node> best_ans_as_leaf = nullptr;
@@ -310,9 +306,6 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         auto point = right_sorted_sets[p].cbegin(); // O(1)
         Point point_bk = *point; // store the Point instance since the iterator will be invalid after erase
         right_sorted_sets[p].erase(point); // O(1)
-#ifdef DEBUG
-        if (right_sorted_sets[p].size() <= 0) throw std::runtime_error("first right_sorted_sets size 0");
-#endif
         left_sorted_sets[p].insert(point_bk); // O(log n)
         for (size_t j = 0; j < num_features; j++) {
           if (j == p) {
@@ -320,9 +313,6 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
           }
           auto to_erase = right_sorted_sets[j].find(point_bk); // O(log n)
           right_sorted_sets[j].erase(to_erase); // O(1)
-#ifdef DEBUG
-          if (right_sorted_sets[j].size() <= 0) throw std::runtime_error("second right_sorted_sets size 0");
-#endif
           left_sorted_sets[j].insert(point_bk); // O(log n)
         }
         auto next = right_sorted_sets[p].cbegin(); // O(1)
