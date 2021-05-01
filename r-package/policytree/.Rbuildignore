@@ -3,3 +3,4 @@
 ^docs$
 ^pkgdown$
 ^vignettes
+^tests/valgrind
