@@ -116,7 +116,7 @@ test_that("exact tree search finds the correct depth 0 tree", {
   reward.tree <- mean(Y[cbind(1:n, action.tree)])
 
   expect_equal(reward.tree, best.reward)
-  expect_true(all(best.action == action.tree))
+  expect_equal(rep(best.action, n), action.tree)
 
   # Discrete X
   X <- matrix(sample(10:20, n * p, replace = TRUE), n, p)
@@ -126,7 +126,7 @@ test_that("exact tree search finds the correct depth 0 tree", {
   reward.tree <- mean(Y[cbind(1:n, action.tree)])
 
   expect_equal(reward.tree, best.reward)
-  expect_true(all(best.action == action.tree))
+  expect_equal(rep(best.action, n), action.tree)
 })
 
 
@@ -147,7 +147,7 @@ test_that("exact tree search finds the correct depth 1 tree", {
   reward.tree <- mean(Y[cbind(1:n, predict(tree, X))])
 
   expect_equal(reward.tree, best.reward)
-  expect_true(all(best.action == predict(tree, X)))
+  expect_equal(best.action, predict(tree, X))
 
   # Discrete X
   X <- matrix(sample(10:20, n * p, replace = TRUE), n, p)
@@ -161,7 +161,7 @@ test_that("exact tree search finds the correct depth 1 tree", {
   reward.tree <- mean(Y[cbind(1:n, predict(tree.discrete, X))])
 
   expect_equal(reward.tree, best.reward)
-  expect_true(all(best.action == predict(tree.discrete, X)))
+  expect_equal(best.action, predict(tree.discrete, X))
 })
 
 
@@ -182,7 +182,7 @@ test_that("exact tree search finds the correct depth 2 tree", {
   reward.tree <- mean(Y[cbind(1:n, predict(tree, X))])
 
   expect_equal(reward.tree, best.reward)
-  expect_true(all(best.action == predict(tree, X)))
+  expect_equal(best.action, predict(tree, X))
 
   # Discrete X
   X <- matrix(sample(10:20, n * p, replace = TRUE), n, p)
@@ -196,7 +196,7 @@ test_that("exact tree search finds the correct depth 2 tree", {
   reward.tree <- mean(Y[cbind(1:n, predict(tree.discrete, X))])
 
   expect_equal(reward.tree, best.reward)
-  expect_true(all(best.action == predict(tree.discrete, X)))
+  expect_equal(best.action, predict(tree.discrete, X))
 })
 
 
@@ -217,7 +217,7 @@ test_that("exact tree search finds the correct depth 3 tree", {
   reward.tree <- mean(Y[cbind(1:n, predict(tree, X))])
 
   expect_equal(reward.tree, best.reward)
-  expect_true(all(best.action == predict(tree, X)))
+  expect_equal(best.action, predict(tree, X))
 
   # Discrete X
   X <- matrix(sample(10:20, n * p, replace = TRUE), n, p)
@@ -231,7 +231,7 @@ test_that("exact tree search finds the correct depth 3 tree", {
   reward.tree <- mean(Y[cbind(1:n, predict(tree.discrete, X))])
 
   expect_equal(reward.tree, best.reward)
-  expect_true(all(best.action == predict(tree.discrete, X)))
+  expect_equal(best.action, predict(tree.discrete, X))
 })
 
 
@@ -255,12 +255,12 @@ test_that("solver does not break with all identical X's or Y's", {
   X <- matrix(0, n, p)
   Y <- matrix(rnorm(n*d), n, d)
   ptn.equalX <- policy_tree(X, Y, depth = 2)
-  expect_true(all(predict(ptn.equalX, X) == which.max(colSums(Y))))
+  expect_equal(predict(ptn.equalX, X), rep(which.max(colSums(Y)), n))
 
   X <- matrix(rnorm(n*p), n, p)
   Y <- matrix(0, n, d)
   ptn.equalY <- policy_tree(X, Y, depth = 2)
-  expect_true(all(predict(ptn.equalY, X) == 1))
+  expect_equal(predict(ptn.equalY, X), rep(1, n))
 })
 
 
@@ -314,15 +314,15 @@ test_that("tree search with approximate splitting works as expected", {
   colmax <- which.max(colMeans(Y))
   reward.colmax <- max(colMeans(Y))
 
-  expect_true(reward.skip2 > 0.95 * reward.full)
-  expect_true(reward.skip2 > reward.colmax)
-  expect_true(reward.skip2 > reward.halved)
+  expect_gt(reward.skip2, 0.95 * reward.full)
+  expect_gt(reward.skip2, reward.colmax)
+  expect_gt(reward.skip2, reward.halved)
 
   # split.step greater than the number of distinct values is meaningless
   # but passes through and just implies no splits:
   # Setting split.step to a number greater than the number of distinct features
   tree.all <- policy_tree(X, Y, depth = depth, split.step = n + 100)
-  expect_true(all(predict(tree.all, X) == colmax))
+  expect_equal(predict(tree.all, X), rep(colmax, n))
 })
 
 
