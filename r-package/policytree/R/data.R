@@ -14,7 +14,6 @@
 #' @references Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning:
 #'  Generalization and optimization." arXiv preprint arXiv:1810.04778 (2018).
 #' @export
-#' @importFrom stats rnorm runif
 gen_data_mapl <- function(n, p = 10, sigma2 = 4) {
   if (p < 7) {
     stop("This DGP requires more than 7 features. Supplied: ", p)
@@ -68,7 +67,6 @@ gen_data_mapl <- function(n, p = 10, sigma2 = 4) {
 #' @return A list
 #' @references Athey, Susan, and Stefan Wager. "Policy Learning With Observational Data." Econometrica 89.1 (2021): 133-161.
 #' @export
-#' @importFrom stats rbinom
 gen_data_epl <- function(n, type = c("continuous", "jump")) {
   p <- 10
   type <- match.arg(type)
