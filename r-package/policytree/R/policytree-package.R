@@ -32,5 +32,7 @@
 #'
 #' @useDynLib policytree
 #' @importFrom Rcpp evalCpp
+#' @importFrom stats predict
+#' @importFrom stats rbinom rnorm runif
 #' @keywords internal
 "_PACKAGE"

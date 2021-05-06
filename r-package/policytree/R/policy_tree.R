@@ -68,7 +68,6 @@
 #' print(values, digits = 2)
 #' }
 #' @export
-#' @importFrom utils type.convert
 policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) {
   n.features <- ncol(X)
   n.actions <- ncol(Gamma)
@@ -108,7 +107,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) 
   if (is.null(action.names)) {
     action.names <- as.character(1:ncol(Gamma))
   }
-  action.names <- type.convert(action.names, as.is = TRUE) # TRUE to not convert character to factor
+  action.names <- utils::type.convert(action.names, as.is = TRUE) # TRUE to not convert character to factor
   columns <- colnames(X)
   if (is.null(columns)) {
     columns <- make.names(1:ncol(X))

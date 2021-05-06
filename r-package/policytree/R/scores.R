@@ -27,7 +27,6 @@
 #' c.forest <- grf::causal_forest(X, Y, W)
 #' mu.hats <- conditional_means(c.forest)
 #' }
-#' @importFrom stats predict
 #' @export
 conditional_means <- function(object, ...) {
   UseMethod("conditional_means")
