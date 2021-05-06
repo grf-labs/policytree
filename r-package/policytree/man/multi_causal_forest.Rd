@@ -29,6 +29,7 @@ multi_causal_forest(
   tune.num.reps = 50,
   tune.num.draws = 1000,
   compute.oob.predictions = TRUE,
+  orthog.boosting = FALSE,
   num.threads = NULL,
   seed = runif(1, 0, .Machine$integer.max)
 )
@@ -121,6 +122,8 @@ Default is "none" (no parameters are tuned).}
 to select the optimal parameters. Default is 1000.}
 
 \item{compute.oob.predictions}{Whether OOB predictions on training set should be precomputed. Default is TRUE.}
+
+\item{orthog.boosting}{Deprecated and unused after version 1.0.4.}
 
 \item{num.threads}{Number of threads used in training. By default, the number of threads is set
 to the maximum hardware concurrency.}
