@@ -73,9 +73,6 @@
 #' @param tune.num.draws The number of random parameter values considered when using the model
 #'                          to select the optimal parameters. Default is 1000.
 #' @param compute.oob.predictions Whether OOB predictions on training set should be precomputed. Default is TRUE.
-#' @param orthog.boosting (experimental) If TRUE, then when Y.hat = NULL or W.hat is NULL,
-#'                 the missing quantities are estimated using boosted regression forests.
-#'                 The number of boosting steps is selected automatically. Default is FALSE.
 #' @param num.threads Number of threads used in training. By default, the number of threads is set
 #'                    to the maximum hardware concurrency.
 #' @param seed The seed of the C++ random number generator.
@@ -120,7 +117,6 @@ multi_causal_forest <- function(X, Y, W,
                                 tune.num.reps = 50,
                                 tune.num.draws = 1000,
                                 compute.oob.predictions = TRUE,
-                                orthog.boosting = FALSE,
                                 num.threads = NULL,
                                 seed = runif(1, 0, .Machine$integer.max)) {
   warning(paste0("\nDeprecation warning:\n",
@@ -158,11 +154,8 @@ multi_causal_forest <- function(X, Y, W,
                      num.threads = num.threads,
                      seed = seed)
 
-  if (is.null(Y.hat) && !orthog.boosting) {
+  if (is.null(Y.hat)) {
     forest.Y <- do.call(grf::regression_forest, c(Y = list(Y), args.orthog))
-    Y.hat <- predict(forest.Y)$predictions
-  } else if (is.null(Y.hat) && orthog.boosting) {
-    forest.Y <- do.call(grf::boosted_regression_forest, c(Y = list(Y), args.orthog))
     Y.hat <- predict(forest.Y)$predictions
   } else if (length(Y.hat) == 1) {
     Y.hat <- rep(Y.hat, nrow(X))
@@ -173,17 +166,10 @@ multi_causal_forest <- function(X, Y, W,
   # Propensities
   W.onevsall <- sapply(treatments, function(treatment) as.integer(W == treatment))
   if (is.null(W.hat)) {
-    if (!orthog.boosting) {
-      W.hat <- apply(W.onevsall, 2, function(Wi) {
-        forest.W <- do.call(grf::regression_forest, c(Y = list(Wi), args.orthog))
-        predict(forest.W)$predictions
-      })
-    } else if (orthog.boosting) {
-      W.hat <- apply(W.onevsall, 2, function(Wi) {
-        forest.W <- do.call(grf::boosted_regression_forest, c(Y = list(Wi), args.orthog))
-        predict(forest.W)$predictions
-      })
-    }
+    W.hat <- apply(W.onevsall, 2, function(Wi) {
+      forest.W <- do.call(grf::regression_forest, c(Y = list(Wi), args.orthog))
+      predict(forest.W)$predictions
+    })
     # Normalize to sum to 1
     W.hat <- sweep(W.hat, 1, rowSums(W.hat), `/`)
   } else if (length(W.hat) == n.treatments) {
@@ -214,7 +200,6 @@ multi_causal_forest <- function(X, Y, W,
                        tune.num.trees = tune.num.trees,
                        tune.num.reps = tune.num.reps,
                        compute.oob.predictions = compute.oob.predictions,
-                       orthog.boosting = FALSE,
                        num.threads = num.threads,
                        seed = seed)
   })
