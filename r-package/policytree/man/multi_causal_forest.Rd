@@ -123,9 +123,7 @@ to select the optimal parameters. Default is 1000.}
 
 \item{compute.oob.predictions}{Whether OOB predictions on training set should be precomputed. Default is TRUE.}
 
-\item{orthog.boosting}{(experimental) If TRUE, then when Y.hat = NULL or W.hat is NULL,
-the missing quantities are estimated using boosted regression forests.
-The number of boosting steps is selected automatically. Default is FALSE.}
+\item{orthog.boosting}{Deprecated and unused after version 1.0.4.}
 
 \item{num.threads}{Number of threads used in training. By default, the number of threads is set
 to the maximum hardware concurrency.}
