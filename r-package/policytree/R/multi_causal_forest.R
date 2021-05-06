@@ -123,9 +123,9 @@ multi_causal_forest <- function(X, Y, W,
                  "This forest is going to be removed in an upcoming major version in favor of ",
                  "the new estimator `multi_arm_causal_forest` available in GRF 2.0. ",
                  "(details: https://grf-labs.github.io/grf/reference/multi_arm_causal_forest.html)."))
-  if (!inherits(X, c("matrix", "data.frame", "dgCMatrix"))) {
+  if (!inherits(X, c("matrix", "data.frame"))) {
     stop(paste("Currently the only supported data input types are:",
-               "`matrix`, `data.frame`, `dgCMatrix`"))
+               "`matrix`, `data.frame`"))
   }
   if (length(W) != nrow(X) || any(is.na(W))) {
     stop("Invalid W input.")
