@@ -10,8 +10,8 @@ A package for learning optimal policies via doubly robust empirical welfare maxi
 
 Some helpful links for getting started:
 \itemize{
-\item The \href{https://grf-labs.github.io/policytree/}{R package documentation} contains usage examples and method references.
-\item For community questions and answers around usage, see the GitHub \href{https://github.com/grf-labs/policytree/issues}{issues page}.
+\item The R package documentation contains usage examples and method references (\url{https://grf-labs.github.io/policytree/}).
+\item For community questions and answers around usage, see the GitHub issues page (\url{https://github.com/grf-labs/policytree/issues}).
 }
 }
 \examples{
