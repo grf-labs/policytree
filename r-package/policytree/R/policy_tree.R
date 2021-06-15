@@ -30,6 +30,8 @@
 #'
 #' @return A policy_tree object.
 #'
+#' @references Athey, Susan, and Stefan Wager. "Policy Learning With Observational Data."
+#'  Econometrica 89.1 (2021): 133-161.
 #' @references Sverdrup, Erik, Ayush Kanodia, Zhengyuan Zhou, Susan Athey, and Stefan Wager.
 #'  "policytree: Policy learning via doubly robust empirical welfare maximization over trees."
 #'   Journal of Open Source Software 5, no. 50 (2020): 2232.
@@ -38,11 +40,12 @@
 #'
 #' @examples
 #' \donttest{
-#' # Fit a depth two tree on doubly robust treatment effect estimates
-#' # from a causal forest.
+#' # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 #' n <- 10000
-#' p <- 5
+#' p <- 10
+#' # Rounding down continuous covariates decreases runtime.
 #' X <- round(matrix(rnorm(n * p), n, p), 2)
+#' colnames(X) <- make.names(1:p)
 #' W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
 #' tau <- 1 / (1 + exp((X[, 1] + X[, 2]) / 2)) - 0.5
 #' Y <- X[, 3] + W * tau + rnorm(n)
@@ -68,6 +71,20 @@
 #' values <- aggregate(dr.scores, by = list(leaf.node = node.id),
 #'                     FUN = function(x) c(mean = mean(x), se = sd(x) / sqrt(length(x))))
 #' print(values, digits = 2)
+#'
+#' # Take cost of treatment into account by offsetting the objective
+#' # with an estimate of the average treatment effect.
+#' # See section 5.1 in Athey and Wager (2021) for more details, including
+#' # suggestions on using cross-validation to assess the accuracy of the learned policy.
+#' ate <- grf::average_treatment_effect(c.forest)
+#' cost.offset <- ate[["estimate"]]
+#' tree.cost <- policy_tree(X, dr.scores - cost.offset, 2)
+#'
+#' # If there are too many covariates to make tree search computationally feasible,
+#' # one can consider for example only the top 5 features according to GRF's variable importance.
+#' var.imp <- grf::variable_importance(c.forest)
+#' top.5 <- order(var.imp, decreasing = TRUE)[1:5]
+#' tree.top5 <- policy_tree(X[, top.5], dr.scores, 2, split.step = 50)
 #' }
 #' @export
 policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) {
@@ -146,11 +163,12 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) 
 #' @method predict policy_tree
 #' @examples
 #' \donttest{
-#' # Fit a depth two tree on doubly robust treatment effect estimates
-#' # from a causal forest.
+#' # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 #' n <- 10000
-#' p <- 5
+#' p <- 10
+#' # Rounding down continuous covariates decreases runtime.
 #' X <- round(matrix(rnorm(n * p), n, p), 2)
+#' colnames(X) <- make.names(1:p)
 #' W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
 #' tau <- 1 / (1 + exp((X[, 1] + X[, 2]) / 2)) - 0.5
 #' Y <- X[, 3] + W * tau + rnorm(n)
@@ -176,6 +194,20 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) 
 #' values <- aggregate(dr.scores, by = list(leaf.node = node.id),
 #'                     FUN = function(x) c(mean = mean(x), se = sd(x) / sqrt(length(x))))
 #' print(values, digits = 2)
+#'
+#' # Take cost of treatment into account by offsetting the objective
+#' # with an estimate of the average treatment effect.
+#' # See section 5.1 in Athey and Wager (2021) for more details, including
+#' # suggestions on using cross-validation to assess the accuracy of the learned policy.
+#' ate <- grf::average_treatment_effect(c.forest)
+#' cost.offset <- ate[["estimate"]]
+#' tree.cost <- policy_tree(X, dr.scores - cost.offset, 2)
+#'
+#' # If there are too many covariates to make tree search computationally feasible,
+#' # one can consider for example only the top 5 features according to GRF's variable importance.
+#' var.imp <- grf::variable_importance(c.forest)
+#' top.5 <- order(var.imp, decreasing = TRUE)[1:5]
+#' tree.top5 <- policy_tree(X[, top.5], dr.scores, 2, split.step = 50)
 #' }
 predict.policy_tree <- function(object, newdata, type = c("action.id", "node.id"), ...) {
   type <- match.arg(type)
