@@ -7,18 +7,18 @@
 policy_tree(X, Gamma, depth = 2, split.step = 1, min.node.size = 1)
 }
 \arguments{
-\item{X}{The covariates used. Dimension \eqn{Np} where \eqn{p} is the number of features.}
+\item{X}{The covariates used. Dimension \eqn{N*p} where \eqn{p} is the number of features.}
 
-\item{Gamma}{The rewards for each action. Dimension \eqn{Nd} where \eqn{d} is the number of actions.}
+\item{Gamma}{The rewards for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.}
 
 \item{depth}{The depth of the fitted tree. Default is 2.}
 
-\item{split.step}{An optional approximation parameter (integer above zero), the number of possible splits
+\item{split.step}{An optional approximation parameter, the number of possible splits
 to consider when performing tree search. split.step = 1 (default) considers every possible split, split.step = 10
 considers splitting at every 10'th sample and may yield a substantial speedup for dense features.
 Manually rounding or re-encoding continuous covariates with very high cardinality in a
 problem specific manner allows for finer-grained control of the accuracy/runtime tradeoff and may in some cases
-be the preferred approach over this option.}
+be the preferred approach.}
 
 \item{min.node.size}{An integer indicating the smallest terminal node size permitted. Default is 1.}
 }
@@ -26,28 +26,32 @@ be the preferred approach over this option.}
 A policy_tree object.
 }
 \description{
-Finds the optimal (maximizing the sum of rewards) depth L tree by exhaustive search. If the optimal
+Finds the optimal (maximizing the sum of rewards) depth k tree by exhaustive search. If the optimal
 action is the same in both the left and right leaf of a node, the node is pruned.
 }
 \details{
-The amortized runtime of the exact tree search is \eqn{O(p^k n^k (log n + d) + pnlog n)} where p is the number of features, d the number of treatments, n the number of observations, and \eqn{k \geq 1} the tree depth.
+Exact tree search is intended as a way to find shallow (i.e. depth 2 or 3) globally optimal
+tree-based polices on datasets of "moderate" size.
+The amortized runtime of exact tree search is \eqn{O(p^k n^k (log n + d) + pnlog n)} where p is
+the number of features, n the number of distinct observations, d the number of treatments, and k >= 1
+the tree depth. Due to the exponents in this expression, exact tree search will not scale to datasets
+of arbitrary size.
 
-For a depth two tree this is \eqn{O(p^2 n^2 (log n + d))} (ignoring the last term which is a global sort done at the beginning) meaning that it scales quadratically with the number of observations, i.e. if you double the number of observations, the search will take at least four times as long.
-
-For a depth three tree it is \eqn{O(p^3 n^3 (log n + d))}. If a depth two tree with 1000 observations, 4 features and 3 actions took around t seconds, you can expect the level three tree to take approximately \eqn{1000\cdot 4} times as long (\eqn{\approx\frac{p^3n^2}{p^2n^2}=pn})
-
-The runtime above is with continuous features. There are considerable time savings when the features are
-discrete. In the extreme case with all binary observations, the runtime will be practically linear in n.
-
-The optional approximation parameter \code{split.step} emulates rounding the data and is recommended to experiment with in order to reduce the runtime.
+As an example, the runtime of a depth two tree scales quadratically with the number of observations, implying
+that doubling the number of samples will quadruple the runtime.
+n refers to the number of distinct observations, substantial speedups can be grained
+when the features are discrete (with all binary features, the runtime will be ~ linear in n),
+and it is often beneficial to round down very dense data to a lower cardinality
+(the optional parameter \code{split.step} emulates this, though rounding/re-encoding allow for finer-grained control).
 }
 \examples{
 \donttest{
-# Fit a depth two tree on doubly robust treatment effect estimates
-# from a causal forest.
+# Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 n <- 10000
-p <- 5
+p <- 10
+# Rounding down continuous covariates decreases runtime.
 X <- round(matrix(rnorm(n * p), n, p), 2)
+colnames(X) <- make.names(1:p)
 W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
 tau <- 1 / (1 + exp((X[, 1] + X[, 2]) / 2)) - 0.5
 Y <- X[, 3] + W * tau + rnorm(n)
@@ -73,9 +77,26 @@ samples.per.leaf <- split(1:n, node.id)
 values <- aggregate(dr.scores, by = list(leaf.node = node.id),
                     FUN = function(x) c(mean = mean(x), se = sd(x) / sqrt(length(x))))
 print(values, digits = 2)
+
+# Take cost of treatment into account by offsetting the objective
+# with an estimate of the average treatment effect.
+# See section 5.1 in Athey and Wager (2021) for more details, including
+# suggestions on using cross-validation to assess the accuracy of the learned policy.
+ate <- grf::average_treatment_effect(c.forest)
+cost.offset <- ate[["estimate"]]
+tree.cost <- policy_tree(X, dr.scores - cost.offset, 2)
+
+# If there are too many covariates to make tree search computationally feasible,
+# one can consider for example only the top 5 features according to GRF's variable importance.
+var.imp <- grf::variable_importance(c.forest)
+top.5 <- order(var.imp, decreasing = TRUE)[1:5]
+tree.top5 <- policy_tree(X[, top.5], dr.scores, 2, split.step = 50)
 }
 }
 \references{
+Athey, Susan, and Stefan Wager. "Policy Learning With Observational Data."
+Econometrica 89.1 (2021): 133-161.
+
 Sverdrup, Erik, Ayush Kanodia, Zhengyuan Zhou, Susan Athey, and Stefan Wager.
 "policytree: Policy learning via doubly robust empirical welfare maximization over trees."
 Journal of Open Source Software 5, no. 50 (2020): 2232.

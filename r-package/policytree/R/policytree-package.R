@@ -3,8 +3,8 @@
 #'
 #' Some helpful links for getting started:
 #'
-#' * The [R package documentation](https://grf-labs.github.io/policytree/) contains usage examples and method references.
-#' * For community questions and answers around usage, see the GitHub [issues page](https://github.com/grf-labs/policytree/issues).
+#' * The R package documentation contains usage examples and method references (\url{https://grf-labs.github.io/policytree/}).
+#' * For community questions and answers around usage, see the GitHub issues page (\url{https://github.com/grf-labs/policytree/issues}).
 #'
 #' @examples
 #' \donttest{

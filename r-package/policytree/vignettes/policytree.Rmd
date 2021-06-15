@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This document provides a short introduction to the `policytree` package, with examples from Zhou, Athey and Wager (2018), and Athey and Wager (2021. The last section addresses details, such as treatment estimates with one-vs-all grf, and the runtime of `policy_tree`.
+This document provides a short introduction to the `policytree` package, with examples from Zhou, Athey and Wager (2018), and Athey and Wager (2021). The last section addresses details, such as treatment estimates with one-vs-all grf, and the runtime of `policy_tree`.
 
 ```{r, echo = FALSE, message = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
@@ -191,13 +191,20 @@ lm(tauC ~ tau.mcf[, "C"] - 1)
 
 # Gauging the runtime of tree search
 
-The amortized runtime of the exact tree search is $O(p^k n^k (log n + d) + pnlog n)$ where $p$ is the number of features, $d$ the number of treatments, $n$ the number of observations, and $k \geq 1$ the tree depth.
+Exact tree search is intended as a way to find shallow (i.e. depth 2 or 3) globally optimal tree-based polices on datasets of "moderate" size. The amortized runtime of the exact tree search is $O(p^k n^k (log n + d) + pnlog n)$ where $p$ is the number of features, $n$ the number of observations, $d$ the number of treatments, and $k \geq 1$ the tree depth. Due to the exponents in this expression, exact tree search will not scale to datasets of arbitrary size.
 
-For a depth two tree this is $O(p^2 n^2 (log n + d))$ (ignoring the last term which is a global sort done at the beginning) meaning that it scales quadratically with the number of observations, i.e. if you double the number of observations, the search will take at least four times as long.
+As an example, the runtime of a depth two tree scales quadratically with the number of observations, implying that doubling the number of samples will quadruple the runtime. n refers to the number of distinct observations, substantial speedups can be grained when the features are discrete (with all binary features, the runtime will be ~ linear in n), and it is often beneficial to round down very dense data to a lower cardinality (the optional parameter split.step emulates this, though rounding/re-encoding allow for finer-grained control).
 
-For a depth three tree it is $O(p^3 n^3 (log n + d))$. If a depth two tree with 1000 observations, 4 features and 3 actions took around t seconds, you can expect the level three tree to take approximately $1000\cdot 4$ times as long ($\approx\frac{p^3n^2}{p^2n^2}=pn$)
+As a point of reference, the following table presents runtimes for some example problems.
 
-The runtime above is with continuous features. There are considerable time savings when the features are
-discrete. In the extreme case with all binary observations, the runtime will be practically linear in n.
-
-The optional approximation parameter `split.step` emulates rounding the data and is recommended to experiment with in order to reduce the runtime.
+| depth | n (continuous) | features | actions | split.step | time    |
+|-------|----------------|----------|---------|------------|---------|
+| 2     | 1000           | 30       | 20      | 1          | 1.5 min |
+| 2     | 1000           | 30       | 20      | 10         | 7 sec   |
+| 2     | 10 000         | 30       | 20      | 1          | 3 hrs   |
+| 2     | 10 000         | 30       | 20      | 10         | 14 min  |
+| 2     | 10 000         | 30       | 20      | 1, but `round(X, 2)`         | 8 min   |
+| 2     | 100 000        | 30       | 20      | 10         | 50 hrs |
+| 2     | 100 000        | 30       | 20      | 1, but `round(X, 2)`         | 6.3 hrs |
+| 2     | 100 000        | 60       | 20      | 1, but `round(X, 2)`         | 25 hrs |
+| 2     | 100 000        | 30       | 3       | 10         | 7.4 hrs |

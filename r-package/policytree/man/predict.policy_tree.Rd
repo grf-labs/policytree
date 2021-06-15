@@ -9,7 +9,8 @@
 \arguments{
 \item{object}{policy_tree object}
 
-\item{newdata}{A data frame with features}
+\item{newdata}{Points at which predictions should be made. Note that this matrix should have the
+same number of columns as the training matrix, and that the columns must appear in the same order.}
 
 \item{type}{The type of prediction required, "action.id" is the action id and
 "node.id" is the integer id of the leaf node the sample falls into. Default is "action.id".}
@@ -26,11 +27,12 @@ Predict values based on fitted policy_tree object.
 }
 \examples{
 \donttest{
-# Fit a depth two tree on doubly robust treatment effect estimates
-# from a causal forest.
+# Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 n <- 10000
-p <- 5
+p <- 10
+# Rounding down continuous covariates decreases runtime.
 X <- round(matrix(rnorm(n * p), n, p), 2)
+colnames(X) <- make.names(1:p)
 W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
 tau <- 1 / (1 + exp((X[, 1] + X[, 2]) / 2)) - 0.5
 Y <- X[, 3] + W * tau + rnorm(n)
@@ -56,5 +58,19 @@ samples.per.leaf <- split(1:n, node.id)
 values <- aggregate(dr.scores, by = list(leaf.node = node.id),
                     FUN = function(x) c(mean = mean(x), se = sd(x) / sqrt(length(x))))
 print(values, digits = 2)
+
+# Take cost of treatment into account by offsetting the objective
+# with an estimate of the average treatment effect.
+# See section 5.1 in Athey and Wager (2021) for more details, including
+# suggestions on using cross-validation to assess the accuracy of the learned policy.
+ate <- grf::average_treatment_effect(c.forest)
+cost.offset <- ate[["estimate"]]
+tree.cost <- policy_tree(X, dr.scores - cost.offset, 2)
+
+# If there are too many covariates to make tree search computationally feasible,
+# one can consider for example only the top 5 features according to GRF's variable importance.
+var.imp <- grf::variable_importance(c.forest)
+top.5 <- order(var.imp, decreasing = TRUE)[1:5]
+tree.top5 <- policy_tree(X[, top.5], dr.scores, 2, split.step = 50)
 }
 }
