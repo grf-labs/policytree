@@ -150,7 +150,8 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) 
 #'
 #' Predict values based on fitted policy_tree object.
 #' @param object policy_tree object
-#' @param newdata A data frame with features
+#' @param newdata Points at which predictions should be made. Note that this matrix should have the
+#'  same number of columns as the training matrix, and that the columns must appear in the same order.
 #' @param type The type of prediction required, "action.id" is the action id and
 #'  "node.id" is the integer id of the leaf node the sample falls into. Default is "action.id".
 #' @param ... Additional arguments (currently ignored).
