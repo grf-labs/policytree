@@ -2,7 +2,10 @@
 #'
 #' Since policytree version 1.1 this function is deprecated in favor of the new estimator
 #' `multi_arm_causal_forest` available in GRF (version 2+). This function will continue to work
-#' but passes its arguments onto the conformable `multi_arm_causal_forest` in GRF, with a warning.
+#' for now but passes its arguments onto the "conformable" `multi_arm_causal_forest` in GRF, with a warning.
+#' (Note: for policy learning this forest works as before,
+#' but for individual point predictions, they differ as `multi_arm_causal_forest` predicts contrasts.
+#' See the GRF documentation example for details.)
 #'
 #' @param X The covariates used in the causal regression.
 #' @param Y The outcome (must be a numeric vector with no NAs).

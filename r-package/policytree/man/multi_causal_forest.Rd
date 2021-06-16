@@ -137,5 +137,8 @@ estimator \code{multi_arm_causal_forest} and returns that object.
 \description{
 Since policytree version 1.1 this function is deprecated in favor of the new estimator
 \code{multi_arm_causal_forest} available in GRF (version 2+). This function will continue to work
-but passes its arguments onto the conformable \code{multi_arm_causal_forest} in GRF, with a warning.
+for now but passes its arguments onto the "conformable" \code{multi_arm_causal_forest} in GRF, with a warning.
+(Note: for policy learning this forest works as before,
+but for individual point predictions, they differ as \code{multi_arm_causal_forest} predicts contrasts.
+See the GRF documentation example for details.)
 }
