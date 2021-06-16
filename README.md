@@ -40,7 +40,7 @@ p <- 10
 X <- matrix(rnorm(n * p), n, p)
 W <- as.factor(sample(c("A", "B", "C"), n, replace = TRUE))
 Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
-multi.forest <- multi_causal_forest(X, Y, W)
+multi.forest <- grf::multi_arm_causal_forest(X, Y, W)
 
 # Compute doubly robust reward estimates.
 Gamma.matrix <- double_robust_scores(multi.forest)

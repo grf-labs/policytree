@@ -22,9 +22,9 @@ Plot a policy_tree tree object.
 n <- 250
 p <- 10
 X <- matrix(rnorm(n * p), n, p)
-W <- sample(c("A", "B", "C"), n, replace = TRUE)
+W <- as.factor(sample(c("A", "B", "C"), n, replace = TRUE))
 Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
-multi.forest <- multi_causal_forest(X = X, Y = Y, W = W)
+multi.forest <- grf::multi_arm_causal_forest(X = X, Y = Y, W = W)
 Gamma.matrix <- double_robust_scores(multi.forest)
 tree <- policy_tree(X, Gamma.matrix, depth = 2)
 plot(tree)

@@ -59,10 +59,10 @@ X <- data$X
 Y <- data$Y
 W <- data$action
 
-multi.forest <- multi_causal_forest(X, Y, W)
+multi.forest <- multi_arm_causal_forest(X, Y, W)
 
 # tau.hats:
-head(predict(multi.forest)$predictions)
+head(predict(multi.forest)$predictions[,,])
 
 # Each region with optimal action
 region.pp <- data$region + 1
