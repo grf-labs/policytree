@@ -1,7 +1,7 @@
 #' @describeIn conditional_means Mean rewards \eqn{\mu} for each treatment \eqn{a}
-#' @method conditional_means multi_causal_forest
+#' @method conditional_means multi_arm_causal_forest
 #' @export
-conditional_means.multi_causal_forest <- function(object, ...) {
+conditional_means.multi_arm_causal_forest <- function(object, ...) {
   n.treatments <- ncol(object$W.hat)
   tau.hat <- predict(object, ...)$predictions
   mu.matrix <- object$Y.hat + (1 - object$W.hat) * tau.hat
@@ -11,9 +11,9 @@ conditional_means.multi_causal_forest <- function(object, ...) {
 
 
 #' @describeIn double_robust_scores Matrix \eqn{\Gamma} of scores for each treatment \eqn{a}
-#' @method double_robust_scores multi_causal_forest
+#' @method double_robust_scores multi_arm_causal_forest
 #' @export
-double_robust_scores.multi_causal_forest <- function(object, ...) {
+double_robust_scores.multi_arm_causal_forest <- function(object, ...) {
   mu.matrix <- conditional_means(object, ...)
   n.obs <- nrow(object$W.hat)
   n.treatments <- ncol(object$W.hat)
