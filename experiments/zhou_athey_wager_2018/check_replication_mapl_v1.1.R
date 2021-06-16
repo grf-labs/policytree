@@ -1,5 +1,5 @@
 # Test that table 2 from MAPL matches https://arxiv.org/abs/1810.04778
-# Usage: `Rscript test_replication_mapl.R` (time with 16 cores: ~ 7 hours)
+# Usage: `Rscript test_replication_mapl.R`
 # policytree version: 1.1
 # grf version: 2.0
 library(policytree)
