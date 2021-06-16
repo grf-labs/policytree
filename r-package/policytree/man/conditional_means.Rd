@@ -13,7 +13,7 @@
 
 \method{conditional_means}{instrumental_forest}(object, ...)
 
-\method{conditional_means}{multi_arm_causal_forest}(object, ...)
+\method{conditional_means}{multi_arm_causal_forest}(object, outcome = 1, ...)
 
 conditional_means(object, ...)
 }
@@ -21,6 +21,10 @@ conditional_means(object, ...)
 \item{object}{An appropriate causal forest type object}
 
 \item{...}{Additional arguments}
+
+\item{outcome}{Only used with multi arm causal forets. In the event the forest is trained
+with multiple outcomes Y, a column number/name specifying the outcome of interest.
+Default is 1.}
 }
 \value{
 A matrix of estimated mean rewards

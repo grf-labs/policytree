@@ -13,7 +13,7 @@
 
 \method{double_robust_scores}{instrumental_forest}(object, compliance.score = NULL, ...)
 
-\method{double_robust_scores}{multi_arm_causal_forest}(object, ...)
+\method{double_robust_scores}{multi_arm_causal_forest}(object, outcome = 1, ...)
 
 double_robust_scores(object, ...)
 }
@@ -25,6 +25,10 @@ double_robust_scores(object, ...)
 \item{compliance.score}{An estimate of the causal effect of Z on W.
 i.e., Delta(X) = E(W | X, Z = 1) - E(W | X, Z = 0), for each sample i = 1, ..., n. If NULL (default)
 then this is estimated with a causal forest.}
+
+\item{outcome}{Only used with multi arm causal forets. In the event the forest is trained
+with multiple outcomes Y, a column number/name specifying the outcome of interest.
+Default is 1.}
 }
 \value{
 A matrix of scores for each treatment
