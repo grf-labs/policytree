@@ -51,14 +51,14 @@ is the double robust estimator of the treatment effect as in eqn. (44) in Athey 
 }
 \examples{
 \donttest{
-# Compute double robust scores for a multi_causal forest
+# Compute double robust scores for a multi-arm causal forest
 n <- 500
 p <- 10
 X <- matrix(rnorm(n * p), n, p)
-W <- sample(c("A", "B", "C"), n, replace = TRUE)
+W <- as.factor(sample(c("A", "B", "C"), n, replace = TRUE))
 Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
-forests <- multi_causal_forest(X = X, Y = Y, W = W)
-scores <- double_robust_scores(forests)
+forest <- grf::multi_arm_causal_forest(X, Y, W)
+scores <- double_robust_scores(forest)
 head(scores)
 
 # Compute double robust scores for a causal forest

@@ -39,14 +39,14 @@ A matrix of estimated mean rewards
 
 \examples{
 \donttest{
-# Compute conditional means for a multi_causal forest
+# Compute conditional means for a multi-arm causal forest
 n <- 500
 p <- 10
 X <- matrix(rnorm(n * p), n, p)
-W <- sample(c("A", "B", "C"), n, replace = TRUE)
+W <- as.factor(sample(c("A", "B", "C"), n, replace = TRUE))
 Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
-forests <- multi_causal_forest(X = X, Y = Y, W = W)
-mu.hats <- conditional_means(forests)
+forest <- grf::multi_arm_causal_forest(X, Y, W)
+mu.hats <- conditional_means(forest)
 head(mu.hats)
 
 # Compute conditional means for a causal forest
