@@ -103,10 +103,10 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) 
   if (!is.numeric(as.matrix(Gamma))) {
     stop("The reward matrix Gamma must be numeric")
   }
-  if (any(is.na(X))) {
+  if (anyNA(X)) {
     stop("Covariate matrix X contains missing values.")
   }
-  if (any(is.na(Gamma))) {
+  if (anyNA(Gamma)) {
     stop("Gamma matrix contains missing values.")
   }
   if (depth < 0 ) {
@@ -220,7 +220,7 @@ predict.policy_tree <- function(object, newdata, type = c("action.id", "node.id"
   if (!is.numeric(as.matrix(newdata))) {
     stop("The feature matrix X must be numeric")
   }
-  if (any(is.na(newdata))) {
+  if (anyNA(newdata)) {
     stop("Covariate matrix X contains missing values.")
   }
 
