@@ -21,8 +21,8 @@ reference:
 
   - title: Doubly robust reward estimates
     contents:
-      - conditional_means
       - double_robust_scores
+      - conditional_means
 
   - title: Simulate data
     contents:
