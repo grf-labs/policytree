@@ -135,7 +135,7 @@ reward.policy
 
 Exact tree search is intended as a way to find shallow (i.e. depth 2 or 3) globally optimal tree-based polices on datasets of "moderate" size. The amortized runtime of the exact tree search is $O(p^k n^k (log n + d) + pnlog n)$ where $p$ is the number of features, $n$ the number of observations, $d$ the number of treatments, and $k \geq 1$ the tree depth. Due to the exponents in this expression, exact tree search will not scale to datasets of arbitrary size.
 
-As an example, the runtime of a depth two tree scales quadratically with the number of observations, implying that doubling the number of samples will quadruple the runtime. n refers to the number of distinct observations, substantial speedups can be grained when the features are discrete (with all binary features, the runtime will be ~ linear in n), and it is often beneficial to round down very dense data to a lower cardinality (the optional parameter split.step emulates this, though rounding/re-encoding allow for finer-grained control).
+As an example, the runtime of a depth two tree scales quadratically with the number of observations, implying that doubling the number of samples will quadruple the runtime. n refers to the number of distinct observations, substantial speedups can be gained when the features are discrete (with all binary features, the runtime will be ~ linear in n), and it is therefore beneficial to round down/re-encode very dense data to a lower cardinality (the optional parameter split.step emulates this, though rounding/re-encoding allow for finer-grained control).
 
 As a point of reference, the following table presents runtimes for some example problems.
 

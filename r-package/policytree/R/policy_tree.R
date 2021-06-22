@@ -12,9 +12,9 @@
 #'
 #' As an example, the runtime of a depth two tree scales quadratically with the number of observations, implying
 #' that doubling the number of samples will quadruple the runtime.
-#' n refers to the number of distinct observations, substantial speedups can be grained
+#' n refers to the number of distinct observations, substantial speedups can be gained
 #' when the features are discrete (with all binary features, the runtime will be ~ linear in n),
-#' and it is often beneficial to round down very dense data to a lower cardinality
+#' and it is therefore beneficial to round down/re-encode very dense data to a lower cardinality
 #' (the optional parameter `split.step` emulates this, though rounding/re-encoding allow for finer-grained control).
 #'
 #' @param X The covariates used. Dimension \eqn{N*p} where \eqn{p} is the number of features.
