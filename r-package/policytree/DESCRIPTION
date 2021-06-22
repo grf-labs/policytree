@@ -26,6 +26,6 @@ LinkingTo:
     BH
 Imports:
     Rcpp,
-    grf (>= 2.0.0)
+    grf (>= 1.1.0)
 URL: https://github.com/grf-labs/policytree
 BugReports: https://github.com/grf-labs/policytree/issues
