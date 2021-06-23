@@ -1,7 +1,7 @@
 # Test that table 2 from MAPL matches https://arxiv.org/abs/1810.04778
 # Usage: `Rscript test_replication_mapl.R`
-# policytree version: 1.1
-# grf version: 2.0
+# policytree version: 1.1.0
+# grf version: 2.0.0
 library(policytree)
 library(grf)
 
@@ -45,7 +45,7 @@ res.df <- do.call(rbind, res)
 print(
   aggregate(res.df$regret, by = list(n = res.df$n, tune = res.df$tune.parameters), FUN = summary)
 )
-# Run one 
+# Run one
 #      n tune       x.Min.    x.1st Qu.     x.Median       x.Mean    x.3rd Qu.       x.Max.
 # 1 1000 none 0.0035000000 0.0763833333 0.1539333333 0.1531095833 0.1936083333 0.6988000000
 # 2 1500 none 0.0008000000 0.0289166667 0.0710833333 0.0939141667 0.1542083333 0.3604000000
