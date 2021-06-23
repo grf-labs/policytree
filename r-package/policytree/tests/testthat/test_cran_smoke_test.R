@@ -7,7 +7,7 @@ test_that("a simple workflow works on CRAN", {
   W <- sample(1:d, n, replace = TRUE)
 
   # Some simple smoke tests
-  expect_warning(mcf <- multi_causal_forest(X, Y, W))
+  expect_warning(mcf <- multi_causal_forest(X, Y, as.factor(W)))
   tau.hat <- predict(mcf)
   mu.hat <- conditional_means(mcf)
   gamma.hat <- double_robust_scores(mcf)
@@ -25,7 +25,7 @@ test_that("a simple workflow works on CRAN", {
   mu.iv <- conditional_means(iv)
   dr.iv <- double_robust_scores(iv)
 
-  expect_equal(ncol(tau.hat$predictions), d)
+  expect_equal(ncol(tau.hat$predictions), d - 1)
   expect_equal(ncol(mu.hat), d)
   expect_equal(ncol(gamma.hat), d)
   expect_equal(length(pt.actions), n)

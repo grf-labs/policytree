@@ -32,29 +32,17 @@ devtools::install_github("grf-labs/policytree", subdir = "r-package/policytree")
 Installing from source requires a C++ 11 compiler (on Windows Rtools is required as well) together with the R packages
 `Rcpp` and `BH`.
 
-### Multi-action treatment effect estimation
+### Multi-action policy learning
 ```r
 library(policytree)
 n <- 250
 p <- 10
 X <- matrix(rnorm(n * p), n, p)
-W <- sample(c("A", "B", "C"), n, replace = TRUE)
+W <- as.factor(sample(c("A", "B", "C"), n, replace = TRUE))
 Y <- X[, 1] + X[, 2] * (W == "B") + X[, 3] * (W == "C") + runif(n)
-multi.forest <- multi_causal_forest(X = X, Y = Y, W = W)
+multi.forest <- grf::multi_arm_causal_forest(X, Y, W)
 
-# tau.hats
-head(predict(multi.forest)$predictions)
-#              A            B          C
-# 1  0.110469853 -0.005280646  0.1664277
-# 2  0.258415454 -0.747010156  0.1734191
-# 3  0.449918392 -0.284277647 -0.6307613
-# 4 -0.005547692  0.871686529 -0.6564725
-# 5  0.343872139 -0.090049312 -0.3968521
-# 6  0.376482355  0.233689768 -0.8111073
-```
-
-### Policy learning
-```r
+# Compute doubly robust reward estimates.
 Gamma.matrix <- double_robust_scores(multi.forest)
 head(Gamma.matrix)
 #              A          B           C
@@ -65,10 +53,11 @@ head(Gamma.matrix)
 # 5  0.808323778  0.5017521  1.52094053
 # 6 -0.045844471 -0.1460745 -1.56055025
 
+# Fit a depth 2 tree on a random training subset.
 train <- sample(1:n, 200)
 opt.tree <- policy_tree(X[train, ], Gamma.matrix[train, ], depth = 2)
 opt.tree
-policy_tree object
+# policy_tree object
 # Tree depth:  2
 # Actions:  1: A 2: B 3: C
 # Variable splits:
@@ -86,12 +75,8 @@ head(predict(opt.tree, X[-train, ]))
 ```
 
 ### Details
-Tree search
-* `policy_tree()`: fits a depth L tree by exhaustive search (_Nxp_ features on _Nxd_ actions). The optimal tree maximizes the sum of rewards.
-
-Treatment effects
-* `multi_causal_forest()`: fits one causal forest for each treatment. Operates similarly to _grf_: `predict()` returns treatment estimates.
-* `double_robust_scores()`: generic function dispatching on the appropriate _grf_ forest type.
+* `policy_tree()`: fits a depth k tree by exhaustive search (_Nxp_ features on _Nxd_ actions). The optimal tree maximizes the sum of rewards.
+* `double_robust_scores()`: generic function computing doubly robust reward estimates for a subset of _grf_ forest types.
 
 ### Contributing
 
