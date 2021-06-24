@@ -57,7 +57,7 @@ head(data.frame(data)[1:6])
 
 X <- data$X
 Y <- data$Y
-W <- data$action
+W <- as.factor(data$action)
 
 multi.forest <- multi_arm_causal_forest(X, Y, W)
 
