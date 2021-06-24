@@ -4,6 +4,15 @@ All notable changes to policytree will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2021-06-?
+
+### Changed (breaking)
+**IMPORTANT** Some of these changes might cause small differences in results compared to previous releases, even if the same random seed is used.
+- Update `policytree` to use GRF version 2.0.0. The "one vs all" `multi_causal_forest` is deprecated and we instead utilize the new GRF estimator `multi_arm_causal_forest` which supports multiple treatment arms natively. `multi_causal_forest` will continue to work until the next release, but dispatches to `multi_arm_causal_forest` and emits a warning. Note that this allows for a drop-in replacement in workflows that rely on calls to `double_robust_scores` for policy learning, but not for workflows involving point predictions (`predict(forest)`) as the new GRF estimator will for K treatment arms `predict` a K-1 contrast matrix. [#67](https://github.com/grf-labs/policytree/issues/67)
+
+### Added
+- Add some improved documentation around runtime and the limitations of exact tree search. [#95](https://github.com/grf-labs/policytree/issues/95)
+
 ## [1.0.4] - 2021-03-10
 
 ### Added
