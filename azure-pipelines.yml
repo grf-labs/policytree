@@ -32,8 +32,6 @@ steps:
       curl -OLs https://eddelbuettel.github.io/r-ci/run.sh && chmod 0755 run.sh
       ./run.sh bootstrap
       ./run.sh install_deps
-      # TO REMOVE, force reinstall to get latest GRF
-      sudo Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/grf_2.0.0.tar.gz", type = "source", repos = NULL)'
     workingDirectory: r-package/policytree
     displayName: Setup R
   - script: ./run.sh run_tests
