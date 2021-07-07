@@ -4,6 +4,12 @@ All notable changes to policytree will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2021-07-07
+
+### Fixed
+
+- Compatibility release for CRAN Solaris. [#104](https://github.com/grf-labs/policytree/pull/104)
+
 ## [1.1.0] - 2021-06-24
 
 ### Changed (breaking)
