@@ -86,8 +86,8 @@ private:
 
 
 struct Node {
-  Node(size_t index, double value, double reward, size_t action_id) :
-  index(index), value(value), reward(reward), action_id(action_id) {
+  Node(size_t index, double value, double reward, size_t action_id, size_t depth) :
+  index(index), value(value), reward(reward), action_id(action_id), depth(depth) {
     this->left_child = nullptr;
     this->right_child = nullptr;
   }
@@ -104,6 +104,9 @@ struct Node {
   size_t action_id;
   std::unique_ptr<Node> left_child;
   std::unique_ptr<Node> right_child;
+  size_t depth;
+  std::unique_ptr<std::vector<flat_set> > left_sorted_sets;
+  std::unique_ptr<std::vector<flat_set> > right_sorted_sets;
 };
 
 
