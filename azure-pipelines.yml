@@ -40,6 +40,7 @@ jobs:
       curl -OLs https://eddelbuettel.github.io/r-ci/run.sh && chmod 0755 run.sh
       ./run.sh bootstrap
       ./run.sh install_deps
+      R CMD config CC
     workingDirectory: r-package/policytree
     displayName: Setup R
   - script: ./run.sh run_tests
