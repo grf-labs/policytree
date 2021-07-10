@@ -12,7 +12,7 @@ jobs:
       ubuntu:
         imageName: "ubuntu-latest"
       macos:
-        imageName: "macos-latest"
+        imageName: "macOS-latest"
   pool:
     vmImage: $(imageName)
 
