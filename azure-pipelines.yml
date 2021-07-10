@@ -1,33 +1,41 @@
 # The following pipeline tests policytree in the following way:
-# 1. With the latest R release (4.0) on Ubuntu.
+# 1. With the latest R release (4.0) on Ubuntu/OSX.
+# 2. With Valgrind on Linux
 # The R setup here is based on https://eddelbuettel.github.io/r-ci/
-name: "R (release) - Ubuntu-latest"
-
 trigger:
 - master
 
-pool:
-  vmImage: "ubuntu-latest"
+jobs:
+- job: R_package
+  strategy:
+    matrix:
+      ubuntu:
+        imageName: "ubuntu-latest"
+      macos:
+        imageName: "macOS-latest"
+  pool:
+    vmImage: $(imageName)
 
-variables:
-- name: R_LIBS_USER
-  value: '$(Agent.BuildDirectory)/R/library'
-- name: CRAN
-  value: 'https://cloud.r-project.org'
-- name: _R_CHECK_FORCE_SUGGESTS_
-  value: false
-- name: _R_CHECK_DONTTEST_EXAMPLES_
-  value: true
-- name: USE_BSPM
-  value: true
-- name: WARNINGS_ARE_ERRORS
-  value: true
+  variables:
+  - name: R_LIBS_USER
+    value: '$(Agent.BuildDirectory)/R/library'
+  - name: CRAN
+    value: 'https://cloud.r-project.org'
+  - name: _R_CHECK_FORCE_SUGGESTS_
+    value: false
+  - name: _R_CHECK_DONTTEST_EXAMPLES_
+    value: true
+  - name: USE_BSPM
+    value: true
+  - name: WARNINGS_ARE_ERRORS
+    value: true
 
-steps:
+  steps:
   - script: |
       sudo apt-get update -qq
       sudo apt-get install -qq valgrind
     displayName: Setup valgrind
+    condition: eq(variables['Agent.OS'], 'Linux')
   - script: |
       curl -OLs https://eddelbuettel.github.io/r-ci/run.sh && chmod 0755 run.sh
       ./run.sh bootstrap
@@ -40,12 +48,13 @@ steps:
   - script: R CMD INSTALL . && R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla  < tests/valgrind/test_policy_tree_valgrind.R
     workingDirectory: r-package/policytree
     displayName: Valgrind check
+    condition: eq(variables['Agent.OS'], 'Linux')
   - script: ./run.sh dump_logs_by_extension "fail"
     condition: failed()
     workingDirectory: r-package/policytree
     displayName: Print test failures
   # Final deploy step
-  # Build the online docs and deploy to gh-pages - only done on master branch.
+  # Build the online docs and deploy to gh-pages - only done on master branch with Linux image.
   # `GITHUB_PAT` is a GitHub access token stored on Azure Pipelines.
   - script: |
       set -e
@@ -73,5 +82,6 @@ steps:
     workingDirectory: r-package/policytree
     displayName: 'Publish GitHub Pages'
     condition: |
+      and(eq(variables['Agent.OS'], 'Linux'),
       and(not(eq(variables['Build.Reason'], 'PullRequest')),
-      eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+      eq(variables['Build.SourceBranch'], 'refs/heads/master')))
