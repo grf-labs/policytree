@@ -90,8 +90,8 @@ private:
 typedef boost::container::flat_set<Point, std::function<bool(const Point&, const Point&)>> flat_set;
 
 struct Node {
-  Node(size_t index, double value, double reward, size_t action_id, size_t depth) :
-  index(index), value(value), reward(reward), action_id(action_id), depth(depth) {
+  Node(size_t index, double value, double reward, size_t action_id, int depth, int height) :
+  index(index), value(value), reward(reward), action_id(action_id), depth(depth), height(height) {
     this->left_child = nullptr;
     this->right_child = nullptr;
   }
@@ -108,9 +108,13 @@ struct Node {
   size_t action_id;
   std::unique_ptr<Node> left_child;
   std::unique_ptr<Node> right_child;
-  size_t depth;
-  std::unique_ptr<std::vector<flat_set> > left_sorted_sets;
-  std::unique_ptr<std::vector<flat_set> > right_sorted_sets;
+  int depth;
+  int height;
+  //std::unique_ptr<std::vector<flat_set> > left_sorted_sets;
+  //std::unique_ptr<std::vector<flat_set> > right_sorted_sets;
+  std::vector<flat_set> left_sorted_sets;
+  std::vector<flat_set> right_sorted_sets;
+  std::vector<flat_set> complete_sorted_sets;
 };
 
 
