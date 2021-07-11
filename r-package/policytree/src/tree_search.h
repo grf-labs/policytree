@@ -22,6 +22,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include <boost/container/flat_set.hpp>
+
 const double INF = std::numeric_limits<double>::infinity();
 
 // Data class for column major storage
@@ -84,6 +86,8 @@ private:
   const Data* data;
 };
 
+
+typedef boost::container::flat_set<Point, std::function<bool(const Point&, const Point&)>> flat_set;
 
 struct Node {
   Node(size_t index, double value, double reward, size_t action_id, size_t depth) :

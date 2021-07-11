@@ -20,8 +20,6 @@
 
 #include "tree_search.h"
 
-typedef boost::container::flat_set<Point, std::function<bool(const Point&, const Point&)>> flat_set;
-
 /**
  * Create a vector of sorted sets
  *
