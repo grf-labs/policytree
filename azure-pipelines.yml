@@ -45,8 +45,8 @@ jobs:
   - script: ./run.sh run_tests
     workingDirectory: r-package/policytree
     displayName: Test R package
-  - script: R CMD INSTALL . && R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla  < tests/valgrind/test_policy_tree_valgrind.R
-    workingDirectory: r-package/policytree
+  - script: R CMD INSTALL . && R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla  < test_policy_tree_valgrind.R
+    workingDirectory: r-package/policytree/tests/valgrind
     displayName: Valgrind check
     condition: eq(variables['Agent.OS'], 'Linux')
   - script: ./run.sh dump_logs_by_extension "fail"
