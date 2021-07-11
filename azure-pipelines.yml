@@ -63,7 +63,6 @@ jobs:
       sudo Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/pkgdown/pkgdown_1.5.1.tar.gz', repos = NULL, type = 'source')"
       # Install dependencies needed for vignettes and install policytree.
       sudo Rscript -e "install.packages(c('DiagrammeR'))"
-      R CMD INSTALL .
       cp ../../README.md .
       cp ../../releases/CHANGELOG.md .
       # Build and deploy page. This requires that the branch `gh-pages` exists.
