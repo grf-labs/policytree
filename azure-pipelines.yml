@@ -45,25 +45,25 @@ jobs:
   - script: ./run.sh run_tests
     workingDirectory: r-package/policytree
     displayName: Test R package
-  - script: R CMD INSTALL . && R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla  < tests/valgrind/test_policy_tree_valgrind.R
-    workingDirectory: r-package/policytree
-    displayName: Valgrind check
-    condition: eq(variables['Agent.OS'], 'Linux')
   - script: ./run.sh dump_logs_by_extension "fail"
     condition: failed()
     workingDirectory: r-package/policytree
-    displayName: Print test failures
+    displayName: Print R failures
+  - script: |
+      R CMD INSTALL .
+      R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla < tests/valgrind/test_policy_tree_valgrind.R
+    workingDirectory: r-package/policytree
+    displayName: Valgrind check
+    condition: eq(variables['Agent.OS'], 'Linux')
   # Final deploy step
   # Build the online docs and deploy to gh-pages - only done on master branch with Linux image.
   # `GITHUB_PAT` is a GitHub access token stored on Azure Pipelines.
   - script: |
-      set -e
       # Install a previous version of `pkgdown` and its dependencies, which appears less likely to break.
       sudo Rscript -e "install.packages(c('fs', 'highlight', 'httr', 'memoise', 'openssl', 'purrr', 'rmarkdown', 'whisker', 'xml2', 'yaml'))"
       sudo Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/pkgdown/pkgdown_1.5.1.tar.gz', repos = NULL, type = 'source')"
       # Install dependencies needed for vignettes and install policytree.
       sudo Rscript -e "install.packages(c('DiagrammeR'))"
-      R CMD INSTALL .
       cp ../../README.md .
       cp ../../releases/CHANGELOG.md .
       # Build and deploy page. This requires that the branch `gh-pages` exists.
