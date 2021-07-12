@@ -140,8 +140,8 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
 
   for (size_t p = 0; p < num_features; p++) {
     // Fill the reward matrix with cumulative sums
-    auto right_sorted_sets = sorted_sets; // copy operator
-    auto left_sorted_sets = create_sorted_sets(data, true); // empty
+    //auto right_sorted_sets = sorted_sets; // copy operator
+    //auto left_sorted_sets = create_sorted_sets(data, true); // empty
     for (size_t d = 0; d < num_rewards; d++) {
       size_t n = 0;
       for (const auto &point : sorted_sets[p]) {
@@ -149,42 +149,42 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
         sum_array[d][n] = sum_array[d][n - 1] + point.get_reward(d);
       }
     }
-    //auto it = sorted_sets[p].cbegin();
+    auto it = sorted_sets[p].cbegin();
     int split_counter = 0;
     size_t samples_counter = 0;
-    //size_t n = 0;
-    for (size_t n = 0; n < num_points - 1; n++) {
-      auto point = right_sorted_sets[p].cbegin(); // O(1)
-      Point point_bk = *point; // store the Point instance since the iterator will be invalid after erase
-    //for (;;) {
+    size_t n = 0;
+    //for (size_t n = 0; n < num_points - 1; n++) {
+      //auto point = right_sorted_sets[p].cbegin(); // O(1)
+      //Point point_bk = *point; // store the Point instance since the iterator will be invalid after erase
       //Point point_bk = *it; // store the Point instance since the iterator will be invalid after erase
-      right_sorted_sets[p].erase(point); // O(1)
-      left_sorted_sets[p].insert(point_bk); // O(log n)
-      for (size_t j = 0; j < num_features; j++) {
-        if (j == p) {
-          continue;
-        }
-        auto to_erase = right_sorted_sets[j].find(point_bk); // O(log n)
-        right_sorted_sets[j].erase(to_erase); // O(1)
-        left_sorted_sets[j].insert(point_bk); // O(log n)
-      }
-      //++n;
-      //auto next = right_sorted_sets[p].cbegin(); // O(1)
-      auto next = right_sorted_sets[p].cbegin(); // O(1)
-      split_counter += 1;
-      samples_counter += 1;
-      auto value = point_bk.get_value(p);
-      auto next_value = next->get_value(p);
-      if (value >= next_value) { // are the values the same then skip
-        continue;
-      }
-      //++it;
-      //if (it == sorted_sets[p].end()) {
-        //break;
+      //right_sorted_sets[p].erase(point); // O(1)
+      //left_sorted_sets[p].insert(point_bk); // O(log n)
+      //for (size_t j = 0; j < num_features; j++) {
+        //if (j == p) {
+          //continue;
+        //}
+        //auto to_erase = right_sorted_sets[j].find(point_bk); // O(log n)
+        //right_sorted_sets[j].erase(to_erase); // O(1)
+        //left_sorted_sets[j].insert(point_bk); // O(log n)
       //}
-      //if (value == next_value) {
+      //auto next = right_sorted_sets[p].cbegin(); // O(1)
+      //auto next = right_sorted_sets[p].cbegin(); // O(1)
+      //split_counter += 1;
+      //samples_counter += 1;
+      //if (value >= next_value) { // are the values the same then skip
         //continue;
       //}
+    for (;;) {
+      ++n;
+      auto value = it->get_value(p);
+      ++it;
+      if (it == sorted_sets[p].end()) {
+	break;
+      }
+      auto next_value = it->get_value(p);
+      if (value == next_value) {
+	continue;
+      }
       if (samples_counter < min_node_size || num_points - samples_counter < min_node_size) {
         continue;
       }
@@ -217,8 +217,8 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
         best_action_right = right_action;
         split_var = p;
         split_val = value;
-	best_left_sorted_sets = left_sorted_sets;
-	best_right_sorted_sets = right_sorted_sets;
+	//best_left_sorted_sets = left_sorted_sets;
+	//best_right_sorted_sets = right_sorted_sets;
       }
     }
   }
@@ -232,8 +232,9 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       auto ans = std::unique_ptr<Node> (new Node(split_var, split_val, best_reward, 0, this_depth, 1));
       ans->left_child = std::move(left);
       ans->right_child = std::move(right);
-      ans->left_sorted_sets = best_left_sorted_sets; 
-      ans->right_sorted_sets = best_right_sorted_sets;
+      //TODO(kanodiaayush):uncomment
+      //ans->left_sorted_sets = best_left_sorted_sets; 
+      //ans->right_sorted_sets = best_right_sorted_sets;
       ans->complete_sorted_sets = sorted_sets ;
       //ans->left_sorted_sets.reset(&best_left_sorted_sets); 
       //ans->right_sorted_sets.reset(&best_right_sorted_sets);
@@ -386,6 +387,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         double leaf_reward = best_left_child->reward + best_right_child->reward;
         size_t leaf_action = best_left_child->action_id;
         best_ans_as_leaf = std::unique_ptr<Node> (new Node(0, 0.0, leaf_reward, leaf_action, this_depth, 0));
+      //TODO(kanodiaayush):uncomment
 	best_ans_as_leaf->complete_sorted_sets = sorted_sets;
         return best_ans_as_leaf;
       } else {
@@ -396,9 +398,10 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         ret->right_child = std::move(best_right_child);
 	//ret->left_sorted_sets.reset(&best_left_sorted_sets);
 	//ret->right_sorted_sets.reset(&best_right_sorted_sets);
-      	ret->left_sorted_sets = best_left_sorted_sets; 
-      	ret->right_sorted_sets = best_right_sorted_sets;
-      	ret->complete_sorted_sets = sorted_sets;
+      //TODO(kanodiaayush):uncomment
+              //ret->left_sorted_sets = best_left_sorted_sets; 
+              //ret->right_sorted_sets = best_right_sorted_sets;
+	ret->complete_sorted_sets = sorted_sets;
         return ret;
       }
     }
@@ -434,6 +437,7 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
   }
 
   auto start = new Node(0, 0.0, 0, 0, 0, 0);
+      //TODO(kanodiaayush):uncomment
   start->complete_sorted_sets = sorted_sets;
   std::queue<Node*> expansion_queue; 
   expansion_queue.push(start);
