@@ -4,7 +4,17 @@
 \alias{policy_tree}
 \title{Fit a policy with exact tree search}
 \usage{
-policy_tree(X, Gamma, depth = 2, split.step = 1, min.node.size = 1)
+policy_tree(
+  X,
+  Gamma,
+  depth = 2,
+  split.step = 1,
+  min.node.size = 1,
+  solver = c("exact", "hybrid"),
+  hybrid.complete.split.depth = 0,
+  hybrid.chop.depth = 0,
+  hybrid.repeat.splits = 0
+)
 }
 \arguments{
 \item{X}{The covariates used. Dimension \eqn{N*p} where \eqn{p} is the number of features.}
@@ -21,6 +31,14 @@ problem specific manner allows for finer-grained control of the accuracy/runtime
 be the preferred approach.}
 
 \item{min.node.size}{An integer indicating the smallest terminal node size permitted. Default is 1.}
+
+\item{solver}{TODO}
+
+\item{hybrid.complete.split.depth}{TODO}
+
+\item{hybrid.chop.depth}{TODO}
+
+\item{hybrid.repeat.splits}{TODO}
 }
 \value{
 A policy_tree object.
@@ -44,6 +62,11 @@ when the features are discrete (with all binary features, the runtime will be ~ 
 and it is therefore beneficial to round down/re-encode very dense data to a lower cardinality
 (the optional parameter \code{split.step} emulates this, though rounding/re-encoding allow for finer-grained control).
 }
+\section{Hybrid tree search (experimental)}{
+
+TODO
+}
+
 \examples{
 \donttest{
 # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.

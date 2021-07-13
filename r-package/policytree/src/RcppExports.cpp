@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // tree_search_rcpp
-Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X, const Rcpp::NumericMatrix& Y, int depth, int split_step, int min_node_size);
-RcppExport SEXP _policytree_tree_search_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP depthSEXP, SEXP split_stepSEXP, SEXP min_node_sizeSEXP) {
+Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X, const Rcpp::NumericMatrix& Y, int depth, int split_step, int min_node_size, bool exact_search, int hybrid_complete_split_depth, int hybrid_chop_depth, int hybrid_repeat_splits);
+RcppExport SEXP _policytree_tree_search_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP depthSEXP, SEXP split_stepSEXP, SEXP min_node_sizeSEXP, SEXP exact_searchSEXP, SEXP hybrid_complete_split_depthSEXP, SEXP hybrid_chop_depthSEXP, SEXP hybrid_repeat_splitsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,7 +16,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type depth(depthSEXP);
     Rcpp::traits::input_parameter< int >::type split_step(split_stepSEXP);
     Rcpp::traits::input_parameter< int >::type min_node_size(min_node_sizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(tree_search_rcpp(X, Y, depth, split_step, min_node_size));
+    Rcpp::traits::input_parameter< bool >::type exact_search(exact_searchSEXP);
+    Rcpp::traits::input_parameter< int >::type hybrid_complete_split_depth(hybrid_complete_split_depthSEXP);
+    Rcpp::traits::input_parameter< int >::type hybrid_chop_depth(hybrid_chop_depthSEXP);
+    Rcpp::traits::input_parameter< int >::type hybrid_repeat_splits(hybrid_repeat_splitsSEXP);
+    rcpp_result_gen = Rcpp::wrap(tree_search_rcpp(X, Y, depth, split_step, min_node_size, exact_search, hybrid_complete_split_depth, hybrid_chop_depth, hybrid_repeat_splits));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -34,7 +38,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_policytree_tree_search_rcpp", (DL_FUNC) &_policytree_tree_search_rcpp, 5},
+    {"_policytree_tree_search_rcpp", (DL_FUNC) &_policytree_tree_search_rcpp, 9},
     {"_policytree_tree_search_rcpp_predict", (DL_FUNC) &_policytree_tree_search_rcpp_predict, 2},
     {NULL, NULL, 0}
 };

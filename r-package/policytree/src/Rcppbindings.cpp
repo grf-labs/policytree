@@ -47,13 +47,23 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
                             const Rcpp::NumericMatrix& Y,
                             int depth,
                             int split_step,
-                            int min_node_size) {
+                            int min_node_size,
+                            bool exact_search,
+                            int hybrid_complete_split_depth,
+                            int hybrid_chop_depth,
+                            int hybrid_repeat_splits) {
   size_t num_rows = X.rows();
   size_t num_cols_x = X.cols();
   size_t num_cols_y = Y.cols();
   const Data* data = new Data(X.begin(), Y.begin(), num_rows, num_cols_x, num_cols_y);
 
-  std::unique_ptr<Node> root = tree_search(depth, split_step, min_node_size, data);
+  std::unique_ptr<Node> root;
+  if (exact_search) {
+    root = tree_search(depth, split_step, min_node_size, data);
+  } else {
+    root = tree_search_hybrid(depth, hybrid_complete_split_depth, hybrid_chop_depth,
+                              hybrid_repeat_splits, split_step, min_node_size, data);
+  }
 
   // We store the tree as the same list data structure (`nodes`) as GRF for seamless integration with
   // the plot and print methods. We also store the tree as an array (`tree_array`) for faster lookups.

@@ -17,6 +17,10 @@
 #' and it is therefore beneficial to round down/re-encode very dense data to a lower cardinality
 #' (the optional parameter `split.step` emulates this, though rounding/re-encoding allow for finer-grained control).
 #'
+#' @section Hybrid tree search (experimental):
+#' TODO
+#'
+#'
 #' @param X The covariates used. Dimension \eqn{N*p} where \eqn{p} is the number of features.
 #' @param Gamma The rewards for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.
 #' @param depth The depth of the fitted tree. Default is 2.
@@ -27,6 +31,10 @@
 #'  problem specific manner allows for finer-grained control of the accuracy/runtime tradeoff and may in some cases
 #'  be the preferred approach.
 #' @param min.node.size An integer indicating the smallest terminal node size permitted. Default is 1.
+#' @param solver TODO
+#' @param hybrid.complete.split.depth TODO
+#' @param hybrid.chop.depth TODO
+#' @param hybrid.repeat.splits TODO
 #'
 #' @return A policy_tree object.
 #'
@@ -87,11 +95,20 @@
 #' tree.top5 <- policy_tree(X[, top.5], dr.scores, 2, split.step = 50)
 #' }
 #' @export
-policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) {
+policy_tree <- function(X, Gamma,
+                        depth = 2,
+                        split.step = 1,
+                        min.node.size = 1,
+                        solver = c("exact", "hybrid"),
+                        hybrid.complete.split.depth = 0,
+                        hybrid.chop.depth = 0,
+                        hybrid.repeat.splits = 0
+                        ) {
   n.features <- ncol(X)
   n.actions <- ncol(Gamma)
   n.obs <- nrow(X)
   valid.classes <- c("matrix", "data.frame")
+  solver <- match.arg(solver)
 
   if (!inherits(X, valid.classes) || !inherits(Gamma, valid.classes)) {
     stop(paste("Currently the only supported data input types are:",
@@ -132,7 +149,8 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) 
     columns <- make.names(1:ncol(X))
   }
 
-  result <- tree_search_rcpp(as.matrix(X), as.matrix(Gamma), depth, split.step, min.node.size)
+  result <- tree_search_rcpp(as.matrix(X), as.matrix(Gamma), depth, split.step, min.node.size,
+                             solver == "exact", hybrid.complete.split.depth, hybrid.chop.depth, hybrid.repeat.splits)
   tree <- list(nodes = result[[1]])
 
   tree[["_tree_array"]] <- result[[2]]

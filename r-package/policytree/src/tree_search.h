@@ -119,5 +119,6 @@ struct Node {
 
 
 std::unique_ptr<Node> tree_search(int, int, size_t, const Data*);
+std::unique_ptr<Node> tree_search_hybrid(int, int, int, int, int, size_t, const Data*);
 
 #endif // TREE_SEARCH_H
