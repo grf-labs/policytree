@@ -112,9 +112,9 @@ struct Node {
   int height;
   //std::unique_ptr<std::vector<flat_set> > left_sorted_sets;
   //std::unique_ptr<std::vector<flat_set> > right_sorted_sets;
-  std::vector<flat_set> left_sorted_sets;
-  std::vector<flat_set> right_sorted_sets;
-  std::vector<flat_set> complete_sorted_sets;
+  //std::vector<flat_set> left_sorted_sets;
+  //std::vector<flat_set> right_sorted_sets;
+  //std::vector<flat_set> complete_sorted_sets;
 };
 
 

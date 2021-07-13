@@ -135,8 +135,8 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
   double best_reward = -INF;
   double global_best_left = -INF;
   double global_best_right = -INF;
-  std::vector<flat_set> best_left_sorted_sets;
-  std::vector<flat_set> best_right_sorted_sets;
+  //std::vector<flat_set> best_left_sorted_sets;
+  //std::vector<flat_set> best_right_sorted_sets;
 
   for (size_t p = 0; p < num_features; p++) {
     // Fill the reward matrix with cumulative sums
@@ -235,7 +235,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       //TODO(kanodiaayush):uncomment
       //ans->left_sorted_sets = best_left_sorted_sets; 
       //ans->right_sorted_sets = best_right_sorted_sets;
-      ans->complete_sorted_sets = sorted_sets ;
+      //ans->complete_sorted_sets = sorted_sets ;
       //ans->left_sorted_sets.reset(&best_left_sorted_sets); 
       //ans->right_sorted_sets.reset(&best_right_sorted_sets);
       return ans;
@@ -329,8 +329,8 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
     std::unique_ptr<Node> best_left_child = nullptr;
     std::unique_ptr<Node> best_right_child = nullptr;
     std::unique_ptr<Node> best_ans_as_leaf = nullptr;
-    std::vector<flat_set> best_left_sorted_sets;
-    std::vector<flat_set> best_right_sorted_sets;
+    //std::vector<flat_set> best_left_sorted_sets;
+    //std::vector<flat_set> best_right_sorted_sets;
 
     for (size_t p = 0; p < num_features; p++) {
       auto right_sorted_sets = sorted_sets; // copy operator
@@ -373,8 +373,8 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
           best_right_child = std::move(right_child);
           best_split_var = p;
           best_split_val = point_bk.get_value(p);
-	  best_left_sorted_sets = left_sorted_sets;
-	  best_right_sorted_sets = right_sorted_sets;
+	  //best_left_sorted_sets = left_sorted_sets;
+	  //best_right_sorted_sets = right_sorted_sets;
         }
       }
     }
@@ -388,7 +388,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         size_t leaf_action = best_left_child->action_id;
         best_ans_as_leaf = std::unique_ptr<Node> (new Node(0, 0.0, leaf_reward, leaf_action, this_depth, 0));
       //TODO(kanodiaayush):uncomment
-	best_ans_as_leaf->complete_sorted_sets = sorted_sets;
+	//best_ans_as_leaf->complete_sorted_sets = sorted_sets;
         return best_ans_as_leaf;
       } else {
         double best_reward = best_left_child->reward + best_right_child->reward;
@@ -401,7 +401,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
       //TODO(kanodiaayush):uncomment
               //ret->left_sorted_sets = best_left_sorted_sets; 
               //ret->right_sorted_sets = best_right_sorted_sets;
-	ret->complete_sorted_sets = sorted_sets;
+	//ret->complete_sorted_sets = sorted_sets;
         return ret;
       }
     }
@@ -438,7 +438,7 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
 
   auto start = new Node(0, 0.0, 0, 0, 0, 0);
       //TODO(kanodiaayush):uncomment
-  start->complete_sorted_sets = sorted_sets;
+  //start->complete_sorted_sets = sorted_sets;
   std::queue<Node*> expansion_queue; 
   expansion_queue.push(start);
   while(!expansion_queue.empty()) {
@@ -450,7 +450,9 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
     if(expansion_node->depth >= max_global_depth) {
 	    continue;
     }
-    auto expansion_tree = find_best_split(expansion_node->complete_sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
+      //TODO(kanodiaayush):uncomment
+    auto expansion_tree = find_best_split(sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
+    //auto expansion_tree = find_best_split(expansion_node->complete_sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
     std::queue<Node*> bfs_queue; 
     if (expansion_tree->left_child != nullptr) {
     	bfs_queue.push(expansion_tree->left_child.release());
