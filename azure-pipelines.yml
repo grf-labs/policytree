@@ -1,5 +1,5 @@
 # The following pipeline tests policytree in the following way:
-# 1. With the latest R release (4.0) on Ubuntu/OSX.
+# 1. With the latest R release on Ubuntu/OSX.
 # 2. With Valgrind on Linux
 # The R setup here is based on https://eddelbuettel.github.io/r-ci/
 trigger:
@@ -50,7 +50,7 @@ jobs:
     workingDirectory: r-package/policytree
     displayName: Print R failures
   - script: |
-      R CMD INSTALL .
+      sudo Rscript -e 'dir.create(file.path(.libPaths()[1], "policytree")); file.copy("policytree.Rcheck/policytree/", .libPaths()[1], recursive = TRUE)' # copy R check's installation instead of reinstalling the package.
       R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla < tests/valgrind/test_policy_tree_valgrind.R
     workingDirectory: r-package/policytree
     displayName: Valgrind check
@@ -59,10 +59,10 @@ jobs:
   # Build the online docs and deploy to gh-pages - only done on master branch with Linux image.
   # `GITHUB_PAT` is a GitHub access token stored on Azure Pipelines.
   - script: |
-      # Install a previous version of `pkgdown` and its dependencies, which appears less likely to break.
+      # Lock in a previous version of `pkgdown` and its dependencies.
       sudo Rscript -e "install.packages(c('fs', 'highlight', 'httr', 'memoise', 'openssl', 'purrr', 'rmarkdown', 'whisker', 'xml2', 'yaml'))"
       sudo Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/pkgdown/pkgdown_1.5.1.tar.gz', repos = NULL, type = 'source')"
-      # Install dependencies needed for vignettes and install policytree.
+      # Install dependencies needed for vignettes.
       sudo Rscript -e "install.packages(c('DiagrammeR'))"
       cp ../../README.md .
       cp ../../releases/CHANGELOG.md .
