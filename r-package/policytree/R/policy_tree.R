@@ -35,6 +35,7 @@
 #' @param hybrid.complete.split.depth TODO
 #' @param hybrid.chop.depth TODO
 #' @param hybrid.repeat.splits TODO
+#' @param verbose Give verbose output. Default is TRUE.
 #'
 #' @return A policy_tree object.
 #'
@@ -51,7 +52,7 @@
 #' # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 #' n <- 10000
 #' p <- 10
-#' # Rounding down continuous covariates decreases runtime.
+#' # Discretizing continuous covariates decreases runtime.
 #' X <- round(matrix(rnorm(n * p), n, p), 2)
 #' colnames(X) <- make.names(1:p)
 #' W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
@@ -102,7 +103,8 @@ policy_tree <- function(X, Gamma,
                         solver = c("exact", "hybrid"),
                         hybrid.complete.split.depth = 0,
                         hybrid.chop.depth = 0,
-                        hybrid.repeat.splits = 0
+                        hybrid.repeat.splits = 0,
+                        verbose = TRUE
                         ) {
   n.features <- ncol(X)
   n.actions <- ncol(Gamma)
@@ -137,6 +139,19 @@ policy_tree <- function(X, Gamma,
   }
   if (as.integer(min.node.size) != min.node.size || min.node.size < 1) {
     stop("min.node.size should be an integer greater than or equal to 1.")
+  }
+
+  if (verbose) {
+    cardinality <- apply(X, 2, function(x) length(unique(x)))
+    if (any(cardinality > 20000) && split.step == 1) {
+      warning(paste0(
+        "The cardinality of some covariates exceeds 20000 distinct values. ",
+        "Consider using the optional parameter `split.step` to speed up computations, or ",
+        "discretize/relabel continuous features for finer grained control ",
+        "(the runtime of exact tree search scales with the number of distinct features, ",
+        "see the documentation for details.)"
+      ), immediate. = TRUE)
+    }
   }
 
   action.names <- colnames(Gamma)
@@ -185,7 +200,7 @@ policy_tree <- function(X, Gamma,
 #' # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 #' n <- 10000
 #' p <- 10
-#' # Rounding down continuous covariates decreases runtime.
+#' # Discretizing continuous covariates decreases runtime.
 #' X <- round(matrix(rnorm(n * p), n, p), 2)
 #' colnames(X) <- make.names(1:p)
 #' W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
