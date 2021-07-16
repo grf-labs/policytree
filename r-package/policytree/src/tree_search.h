@@ -22,6 +22,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include <boost/container/flat_set.hpp>
+
 const double INF = std::numeric_limits<double>::infinity();
 
 // Data class for column major storage
@@ -85,9 +87,11 @@ private:
 };
 
 
+typedef boost::container::flat_set<Point, std::function<bool(const Point&, const Point&)>> flat_set;
+
 struct Node {
-  Node(size_t index, double value, double reward, size_t action_id) :
-  index(index), value(value), reward(reward), action_id(action_id) {
+  Node(size_t index, double value, double reward, size_t action_id, int depth, int height) :
+  index(index), value(value), reward(reward), action_id(action_id), depth(depth), height(height) {
     this->left_child = nullptr;
     this->right_child = nullptr;
   }
@@ -104,9 +108,17 @@ struct Node {
   size_t action_id;
   std::unique_ptr<Node> left_child;
   std::unique_ptr<Node> right_child;
+  int depth;
+  int height;
+  //std::unique_ptr<std::vector<flat_set> > left_sorted_sets;
+  //std::unique_ptr<std::vector<flat_set> > right_sorted_sets;
+  //std::vector<flat_set> left_sorted_sets;
+  //std::vector<flat_set> right_sorted_sets;
+  std::vector<flat_set> complete_sorted_sets;
 };
 
 
 std::unique_ptr<Node> tree_search(int, int, size_t, const Data*);
+std::unique_ptr<Node> tree_search_hybrid(int, int, int, int, int, size_t, const Data*);
 
 #endif // TREE_SEARCH_H
