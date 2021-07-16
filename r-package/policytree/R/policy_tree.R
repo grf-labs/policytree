@@ -44,7 +44,7 @@
 #' # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 #' n <- 10000
 #' p <- 10
-#' # Rounding down continuous covariates decreases runtime.
+#' # Discretizing continuous covariates decreases runtime.
 #' X <- round(matrix(rnorm(n * p), n, p), 2)
 #' colnames(X) <- make.names(1:p)
 #' W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
@@ -181,7 +181,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
 #' # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 #' n <- 10000
 #' p <- 10
-#' # Rounding down continuous covariates decreases runtime.
+#' # Discretizing continuous covariates decreases runtime.
 #' X <- round(matrix(rnorm(n * p), n, p), 2)
 #' colnames(X) <- make.names(1:p)
 #' W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))

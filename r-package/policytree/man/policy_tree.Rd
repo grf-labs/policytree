@@ -58,7 +58,7 @@ and it is therefore beneficial to round down/re-encode very dense data to a lowe
 # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 n <- 10000
 p <- 10
-# Rounding down continuous covariates decreases runtime.
+# Discretizing continuous covariates decreases runtime.
 X <- round(matrix(rnorm(n * p), n, p), 2)
 colnames(X) <- make.names(1:p)
 W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
