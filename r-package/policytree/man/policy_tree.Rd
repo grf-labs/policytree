@@ -4,7 +4,14 @@
 \alias{policy_tree}
 \title{Fit a policy with exact tree search}
 \usage{
-policy_tree(X, Gamma, depth = 2, split.step = 1, min.node.size = 1)
+policy_tree(
+  X,
+  Gamma,
+  depth = 2,
+  split.step = 1,
+  min.node.size = 1,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{X}{The covariates used. Dimension \eqn{N*p} where \eqn{p} is the number of features.}
@@ -21,6 +28,8 @@ problem specific manner allows for finer-grained control of the accuracy/runtime
 be the preferred approach.}
 
 \item{min.node.size}{An integer indicating the smallest terminal node size permitted. Default is 1.}
+
+\item{verbose}{Give verbose output. Default is TRUE.}
 }
 \value{
 A policy_tree object.
@@ -49,7 +58,7 @@ and it is therefore beneficial to round down/re-encode very dense data to a lowe
 # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 n <- 10000
 p <- 10
-# Rounding down continuous covariates decreases runtime.
+# Discretizing continuous covariates decreases runtime.
 X <- round(matrix(rnorm(n * p), n, p), 2)
 colnames(X) <- make.names(1:p)
 W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))

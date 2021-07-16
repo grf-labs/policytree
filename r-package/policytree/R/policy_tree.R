@@ -27,6 +27,7 @@
 #'  problem specific manner allows for finer-grained control of the accuracy/runtime tradeoff and may in some cases
 #'  be the preferred approach.
 #' @param min.node.size An integer indicating the smallest terminal node size permitted. Default is 1.
+#' @param verbose Give verbose output. Default is TRUE.
 #'
 #' @return A policy_tree object.
 #'
@@ -43,7 +44,7 @@
 #' # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 #' n <- 10000
 #' p <- 10
-#' # Rounding down continuous covariates decreases runtime.
+#' # Discretizing continuous covariates decreases runtime.
 #' X <- round(matrix(rnorm(n * p), n, p), 2)
 #' colnames(X) <- make.names(1:p)
 #' W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
@@ -87,7 +88,7 @@
 #' tree.top5 <- policy_tree(X[, top.5], dr.scores, 2, split.step = 50)
 #' }
 #' @export
-policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) {
+policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, verbose = TRUE) {
   n.features <- ncol(X)
   n.actions <- ncol(Gamma)
   n.obs <- nrow(X)
@@ -120,6 +121,19 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) 
   }
   if (as.integer(min.node.size) != min.node.size || min.node.size < 1) {
     stop("min.node.size should be an integer greater than or equal to 1.")
+  }
+
+  if (verbose) {
+    cardinality <- apply(X, 2, function(x) length(unique(x)))
+    if (any(cardinality > 20000) && split.step == 1) {
+      warning(paste0(
+        "The cardinality of some covariates exceeds 20000 distinct values. ",
+        "Consider using the optional parameter `split.step` to speed up computations, or ",
+        "discretize/relabel continuous features for finer grained control ",
+        "(the runtime of exact tree search scales with the number of distinct features, ",
+        "see the documentation for details.)"
+      ), immediate. = TRUE)
+    }
   }
 
   action.names <- colnames(Gamma)
@@ -167,7 +181,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1) 
 #' # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 #' n <- 10000
 #' p <- 10
-#' # Rounding down continuous covariates decreases runtime.
+#' # Discretizing continuous covariates decreases runtime.
 #' X <- round(matrix(rnorm(n * p), n, p), 2)
 #' colnames(X) <- make.names(1:p)
 #' W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
