@@ -235,10 +235,10 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       ans->left_child = std::move(left);
       ans->right_child = std::move(right);
       //TODO(kanodiaayush):uncomment
-      //ans->left_sorted_sets = best_left_sorted_sets; 
+      //ans->left_sorted_sets = best_left_sorted_sets;
       //ans->right_sorted_sets = best_right_sorted_sets;
       ans->complete_sorted_sets = sorted_sets ;
-      //ans->left_sorted_sets.reset(&best_left_sorted_sets); 
+      //ans->left_sorted_sets.reset(&best_left_sorted_sets);
       //ans->right_sorted_sets.reset(&best_right_sorted_sets);
       return ans;
     }
@@ -401,7 +401,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
 	//ret->left_sorted_sets.reset(&best_left_sorted_sets);
 	//ret->right_sorted_sets.reset(&best_right_sorted_sets);
       //TODO(kanodiaayush):uncomment
-              //ret->left_sorted_sets = best_left_sorted_sets; 
+              //ret->left_sorted_sets = best_left_sorted_sets;
               //ret->right_sorted_sets = best_right_sorted_sets;
 	ret->complete_sorted_sets = sorted_sets;
         return ret;
@@ -441,7 +441,7 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
   auto start = new Node(0, 0.0, 0, 0, 0, 0);
       //TODO(kanodiaayush):uncomment
   start->complete_sorted_sets = sorted_sets;
-  std::queue<Node*> expansion_queue; 
+  std::queue<Node*> expansion_queue;
   expansion_queue.push(start);
   while(!expansion_queue.empty()) {
     auto expansion_node = expansion_queue.front();
@@ -455,7 +455,7 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
       //TODO(kanodiaayush):uncomment
     //auto expansion_tree = find_best_split(sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
     auto expansion_tree = find_best_split(expansion_node->complete_sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
-    std::queue<Node*> bfs_queue; 
+    std::queue<Node*> bfs_queue;
     if (expansion_tree->left_child != nullptr) {
     	bfs_queue.push(expansion_tree->left_child.release());
     }
@@ -465,7 +465,7 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
     int expansion_tree_height = expansion_tree->height;
     while(!bfs_queue.empty()) {
     	auto bfs_node = bfs_queue.front();
-	bfs_queue.pop();
+      bfs_queue.pop();
     	if (expansion_tree_height - bfs_node->height == chop_depth) {
   	  expansion_queue.push(bfs_node);
 	} else if (expansion_tree_height - bfs_node->height < chop_depth) {
@@ -486,4 +486,3 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
 
   return std::unique_ptr<Node> (start);
 }
-
