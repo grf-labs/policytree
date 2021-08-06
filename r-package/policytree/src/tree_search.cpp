@@ -438,13 +438,14 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
     v.resize(num_points + 1, 0.0);
   }
 
-  auto start = new Node(0, 0.0, 0, 0, 0, 0);
+  std::unique_ptr<Node> result = std::unique_ptr<Node> (new Node(0, 0.0, 0, 0, 0, 0));
+  std::unique_ptr<Node> start = std::unique_ptr<Node> (new Node(0, 0.0, 0, 0, 0, 0));
       //TODO(kanodiaayush):uncomment
   start->complete_sorted_sets = sorted_sets;
-  std::queue<Node*> expansion_queue;
-  expansion_queue.push(start);
+  std::queue<std::unique_ptr<Node>> expansion_queue;
+  // expansion_queue.push(std::move(start));
   while(!expansion_queue.empty()) {
-    auto expansion_node = expansion_queue.front();
+    auto expansion_node = std::move(expansion_queue.front());
     expansion_queue.pop();
     if(expansion_node->height < 1) {
 	    continue;
@@ -454,35 +455,36 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
     }
       //TODO(kanodiaayush):uncomment
     //auto expansion_tree = find_best_split(sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
-    auto expansion_tree = find_best_split(expansion_node->complete_sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
-    std::queue<Node*> bfs_queue;
+    auto expansion_tree = find_best_split(expansion_node->complete_sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth);
+    std::queue<std::unique_ptr<Node>> bfs_queue;
     if (expansion_tree->left_child != nullptr) {
-    	bfs_queue.push(expansion_tree->left_child.release());
+    	bfs_queue.push(std::move(expansion_tree->left_child));
     }
     if (expansion_tree->right_child != nullptr) {
-    	bfs_queue.push(expansion_tree->right_child.release());
+    	bfs_queue.push(std::move(expansion_tree->right_child));
     }
     int expansion_tree_height = expansion_tree->height;
     while(!bfs_queue.empty()) {
-    	auto bfs_node = bfs_queue.front();
+    	auto bfs_node = std::move(bfs_queue.front());
       bfs_queue.pop();
     	if (expansion_tree_height - bfs_node->height == chop_depth) {
-  	  expansion_queue.push(bfs_node);
+  	  expansion_queue.push(std::move(bfs_node));
 	} else if (expansion_tree_height - bfs_node->height < chop_depth) {
           if (bfs_node->left_child != nullptr) {
-          	bfs_queue.push(bfs_node->left_child.release());
+          	bfs_queue.push(std::move(bfs_node->left_child));
           }
           if (bfs_node->right_child != nullptr) {
-          	bfs_queue.push(bfs_node->right_child.release());
+          	bfs_queue.push(std::move(bfs_node->right_child));
           }
 	}
     }
-    expansion_node = expansion_tree;
-    //expansion_node = std::move(expansion_tree);
+    // expansion_node = expansion_tree; // ERIKCS: what is the point of this assignment? It's void anyways at the new iteration at L447?
+    // expansion_node = std::move(expansion_tree);
     //if (expansion_node->depth == 0) {
       //start = std::move(expansion_node);
     //}
+    result = std::move(expansion_node);
   }
 
-  return std::unique_ptr<Node> (start);
+  return result;
 }
