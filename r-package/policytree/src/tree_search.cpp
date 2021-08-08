@@ -443,7 +443,7 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
       //TODO(kanodiaayush):uncomment
   start->complete_sorted_sets = sorted_sets;
   std::queue<std::unique_ptr<Node>> expansion_queue;
-  // expansion_queue.push(std::move(start));
+  expansion_queue.push(std::move(start));
   while(!expansion_queue.empty()) {
     auto expansion_node = std::move(expansion_queue.front());
     expansion_queue.pop();
