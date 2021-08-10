@@ -19,7 +19,7 @@
 #include <queue>
 
 #include "tree_search.h"
-//#include <iostream>
+#include <iostream>
 
 /**
  * Create a vector of sorted sets
@@ -316,6 +316,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       const Data* data,
                                       std::vector<std::vector<double>>& sum_array,
 				      int this_depth) {
+	//std::cerr << "in find_best_split  " << level << "\n";
   if (level == 0) {
     // this base case will only be hit if `find_best_split` is called directly with level = 0
     return level_zero_learning(sorted_sets, data, this_depth + 1);
@@ -325,6 +326,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
   // else continue the recursion
   } else {
     size_t num_points = sorted_sets[0].size();
+    std::cerr << num_points << std::endl;
     size_t num_features = data->num_features();
     size_t best_split_var;
     double best_split_val;
@@ -381,9 +383,11 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
       }
     }
     if (best_left_child == nullptr) {
+	    std::cerr << "Deb 1" << std::endl;
       return level_zero_learning(sorted_sets, data, this_depth + 1);
     } else {
           // "pruning", the recursive case (same action in both leaves):
+	    std::cerr << "Deb 2" << std::endl;
       if ((best_left_child->is_leaf() && best_right_child->is_leaf()) &&
               (best_left_child->action_id == best_right_child->action_id)) {
         double leaf_reward = best_left_child->reward + best_right_child->reward;
@@ -393,8 +397,10 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
 	best_ans_as_leaf->complete_sorted_sets = sorted_sets;
         return best_ans_as_leaf;
       } else {
+	    std::cerr << "Deb 3" << std::endl;
         double best_reward = best_left_child->reward + best_right_child->reward;
 	int height = std::max(best_left_child->height, best_right_child->height) + 1;
+	std::cerr << height << std::endl;
         auto ret = std::unique_ptr<Node> (new Node(best_split_var, best_split_val, best_reward, 0, this_depth + 1, height));
         ret->left_child = std::move(best_left_child);
         ret->right_child = std::move(best_right_child);
@@ -438,14 +444,19 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
     v.resize(num_points + 1, 0.0);
   }
 
-  auto start = new Node(0, 0.0, 0, 0, 0, 0);
+  auto start = new Node(0, 0.0, 0, 0, 0, max_global_depth);
       //TODO(kanodiaayush):uncomment
   start->complete_sorted_sets = sorted_sets;
   std::queue<Node*> expansion_queue; 
   expansion_queue.push(start);
+  int count = 0;
+  std::cerr << "mgd " << max_global_depth << "csd " << complete_split_depth << "cd " << chop_depth << "rs " << repeat_splits << "\n";
   while(!expansion_queue.empty()) {
+    std::cerr << "count loop " << count << "\n";
+    count += 1;
     auto expansion_node = expansion_queue.front();
     expansion_queue.pop();
+    std::cerr << "expansion tree height " << expansion_node->height << " depth " << expansion_node->depth << std::endl;
     if(expansion_node->height < 1) {
 	    continue;
     }
@@ -455,6 +466,8 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
       //TODO(kanodiaayush):uncomment
     //auto expansion_tree = find_best_split(sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
     auto expansion_tree = find_best_split(expansion_node->complete_sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
+    int expansion_tree_height = expansion_tree->height;
+    std::cerr << "expansion tree height " << expansion_tree_height;
     std::queue<Node*> bfs_queue; 
     if (expansion_tree->left_child != nullptr) {
     	bfs_queue.push(expansion_tree->left_child.release());
@@ -462,8 +475,10 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
     if (expansion_tree->right_child != nullptr) {
     	bfs_queue.push(expansion_tree->right_child.release());
     }
-    int expansion_tree_height = expansion_tree->height;
+    int count2 = 0;
     while(!bfs_queue.empty()) {
+    	std::cerr << "  count2 loop " << count2 << "\n";
+    	count2 += 1;
     	auto bfs_node = bfs_queue.front();
 	bfs_queue.pop();
     	if (expansion_tree_height - bfs_node->height == chop_depth) {
@@ -478,6 +493,11 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
 	}
     }
     expansion_node = expansion_tree;
+    if(count == 1) {
+	    std::cerr << "start == expansion_tree" << std::endl;
+	    start = expansion_tree;
+	    break;
+    }
     //expansion_node = std::move(expansion_tree);
     //if (expansion_node->depth == 0) {
       //start = std::move(expansion_node);
