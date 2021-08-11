@@ -57,7 +57,7 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
   size_t num_cols_y = Y.cols();
   const Data* data = new Data(X.begin(), Y.begin(), num_rows, num_cols_x, num_cols_y);
 
-  std::unique_ptr<Node> root;
+  std::shared_ptr<Node> root;
   if (exact_search) {
     root = tree_search(depth, split_step, min_node_size, data);
   } else {
@@ -75,7 +75,7 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
   Rcpp::List nodes;
   int i = 1;
   int j = 0;
-  std::queue<std::unique_ptr<Node>> frontier;
+  std::queue<std::shared_ptr<Node>> frontier;
   frontier.push(std::move(root));
   while (frontier.size() > 0) {
     auto node = std::move(frontier.front());

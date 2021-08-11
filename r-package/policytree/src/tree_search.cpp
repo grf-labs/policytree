@@ -20,6 +20,7 @@
 
 #include "tree_search.h"
 #include <iostream>
+#include <unistd.h>
 
 /**
  * Create a vector of sorted sets
@@ -94,7 +95,7 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
 }
 
 // Find the best action in a leaf node (O(nd))
-std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_sets,
+std::shared_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_sets,
                                           const Data* data, int this_depth) {
   size_t num_rewards = data->num_rewards();
   size_t best_action = 0;
@@ -112,18 +113,19 @@ std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_se
     }
   }
 
-  return std::unique_ptr<Node> (new Node(0, 0.0, best_reward, best_action, this_depth, 0));
+  auto ans = std::shared_ptr<Node> (new Node(0, 0.0, best_reward, best_action, this_depth, 0));
+  ans->complete_sorted_sets = sorted_sets;
+  return ans;
 }
 
 
 // Find the best action (left and right) in the parent of a leaf node (O(npd))
-std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_sets,
+std::shared_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_sets,
                                          const Data* data,
                                          std::vector<std::vector<double>>& sum_array,
                                          int split_step,
                                          size_t min_node_size,
 					 int this_depth) {
-  //std::cerr << "here" << std::endl;
   size_t num_points = sorted_sets[0].size();
   size_t num_rewards = data->num_rewards();
   size_t num_features = data->num_features();
@@ -135,13 +137,12 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
   double best_reward = -INF;
   double global_best_left = -INF;
   double global_best_right = -INF;
-  //std::vector<flat_set> best_left_sorted_sets;
-  //std::vector<flat_set> best_right_sorted_sets;
-
+  std::vector<flat_set> best_left_sorted_sets;
+  std::vector<flat_set> best_right_sorted_sets;
   for (size_t p = 0; p < num_features; p++) {
     // Fill the reward matrix with cumulative sums
-    //auto right_sorted_sets = sorted_sets; // copy operator
-    //auto left_sorted_sets = create_sorted_sets(data, true); // empty
+    auto right_sorted_sets = sorted_sets; // copy operator
+    auto left_sorted_sets = create_sorted_sets(data, true); // empty
     for (size_t d = 0; d < num_rewards; d++) {
       size_t n = 0;
       for (const auto &point : sorted_sets[p]) {
@@ -153,33 +154,41 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
     int split_counter = 0;
     size_t samples_counter = 0;
     size_t n = 0;
-    //for (size_t n = 0; n < num_points - 1; n++) {
-      //auto point = right_sorted_sets[p].cbegin(); // O(1)
-      //Point point_bk = *point; // store the Point instance since the iterator will be invalid after erase
-      //Point point_bk = *it; // store the Point instance since the iterator will be invalid after erase
-      //right_sorted_sets[p].erase(point); // O(1)
-      //left_sorted_sets[p].insert(point_bk); // O(log n)
-      //for (size_t j = 0; j < num_features; j++) {
-        //if (j == p) {
-          //continue;
-        //}
-        //auto to_erase = right_sorted_sets[j].find(point_bk); // O(log n)
-        //right_sorted_sets[j].erase(to_erase); // O(1)
-        //left_sorted_sets[j].insert(point_bk); // O(log n)
+/*
+    //auto point = right_sorted_sets[p].cbegin(); // O(1)
+    for (size_t n = 0; n < num_points - 1; n++) {
+      auto point = right_sorted_sets[p].cbegin(); // O(1)
+      Point point_bk = *point; // store the Point instance since the iterator will be invalid after erase
+      //++point;
+      //if (point == sorted_sets[p].end()) {
+	//break;
       //}
-      //auto next = right_sorted_sets[p].cbegin(); // O(1)
-      //auto next = right_sorted_sets[p].cbegin(); // O(1)
-      //split_counter += 1;
-      //samples_counter += 1;
-      //if (value >= next_value) { // are the values the same then skip
-        //continue;
-      //}
+      right_sorted_sets[p].erase(point); // O(1)
+      left_sorted_sets[p].insert(point_bk); // O(log n)
+      for (size_t j = 0; j < num_features; j++) {
+	if (j == p) {
+	  continue;
+	}
+	auto to_erase = right_sorted_sets[j].find(point_bk); // O(log n)
+	right_sorted_sets[j].erase(to_erase); // O(1)
+	left_sorted_sets[j].insert(point_bk); // O(log n)
+      }
+      auto next = right_sorted_sets[p].cbegin(); // O(1)
+      split_counter += 1;
+      samples_counter += 1;
+      auto value = point_bk.get_value(p);
+      auto next_value = next->get_value(p);
+      if (value == next_value) { // are the values the same then skip
+	continue;
+      }
+      */
+      
     for (;;) {
       ++n;
       auto value = it->get_value(p);
       ++it;
       if (it == sorted_sets[p].end()) {
-	break;
+        break;
       }
       auto next_value = it->get_value(p);
       split_counter += 1;
@@ -187,6 +196,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       if (value == next_value) {
 	continue;
       }
+      //*/
       if (samples_counter < min_node_size || num_points - samples_counter < min_node_size) {
         continue;
       }
@@ -219,31 +229,39 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
         best_action_right = right_action;
         split_var = p;
         split_val = value;
-	//best_left_sorted_sets = left_sorted_sets;
-	//best_right_sorted_sets = right_sorted_sets;
+	best_left_sorted_sets = left_sorted_sets;
+	best_right_sorted_sets = right_sorted_sets;
       }
     }
   }
   if (best_reward > -INF) {
     // "pruning": if both actions are the same then treat this as a leaf node
     if (best_action_left == best_action_right) {
-      return std::unique_ptr<Node> (new Node(0, 0.0, best_reward, best_action_left, this_depth, 0));
+    	auto ans = std::shared_ptr<Node> (new Node(0, 0.0, best_reward, best_action_left, this_depth, 0));
+  	ans->complete_sorted_sets = sorted_sets ;
+  	return ans;
     } else {
-      auto left = std::unique_ptr<Node> (new Node(0, 0.0, global_best_left, best_action_left, this_depth + 1, 0));
-      auto right = std::unique_ptr<Node> (new Node(0, 0.0, global_best_right, best_action_right, this_depth + 1, 0));
-      auto ans = std::unique_ptr<Node> (new Node(split_var, split_val, best_reward, 0, this_depth, 1));
+      auto left = std::shared_ptr<Node> (new Node(0, 0.0, global_best_left, best_action_left, this_depth + 1, 0));
+      auto right = std::shared_ptr<Node> (new Node(0, 0.0, global_best_right, best_action_right, this_depth + 1, 0));
+      left->complete_sorted_sets = best_left_sorted_sets;
+      right->complete_sorted_sets = best_right_sorted_sets;
+      auto ans = std::shared_ptr<Node> (new Node(split_var, split_val, best_reward, 0, this_depth, 1));
       ans->left_child = std::move(left);
       ans->right_child = std::move(right);
+      ans->left_child->parent = ans;
+      ans->left_child->is_left_child = true;
+      ans->right_child->parent = ans;
+      ans->right_child->is_left_child = false;
       //TODO(kanodiaayush):uncomment
-      //ans->left_sorted_sets = best_left_sorted_sets; 
+      //ans->left_sorted_sets = best_left_sorted_sets;
       //ans->right_sorted_sets = best_right_sorted_sets;
       ans->complete_sorted_sets = sorted_sets ;
-      //ans->left_sorted_sets.reset(&best_left_sorted_sets); 
+      //ans->left_sorted_sets.reset(&best_left_sorted_sets);
       //ans->right_sorted_sets.reset(&best_right_sorted_sets);
       return ans;
     }
   } else {
-    return level_zero_learning(sorted_sets, data, this_depth+1);
+    return level_zero_learning(sorted_sets, data, this_depth);
   }
 }
 
@@ -309,7 +327,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
  * features, n the number of observations, d the number of actions, and k
  * the tree depth.
  */
-std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
+std::shared_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       int level,
                                       int split_step,
                                       size_t min_node_size,
@@ -319,10 +337,10 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
 	//std::cerr << "in find_best_split  " << level << "\n";
   if (level == 0) {
     // this base case will only be hit if `find_best_split` is called directly with level = 0
-    return level_zero_learning(sorted_sets, data, this_depth + 1);
+    return level_zero_learning(sorted_sets, data, this_depth);
   } else if (level == 1) {
     // if at the parent of a leaf node we can compute the optimal action for both leaves
-    return level_one_learning(sorted_sets, data, sum_array, split_step, min_node_size, this_depth + 1);
+    return level_one_learning(sorted_sets, data, sum_array, split_step, min_node_size, this_depth);
   // else continue the recursion
   } else {
     size_t num_points = sorted_sets[0].size();
@@ -330,9 +348,9 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
     size_t num_features = data->num_features();
     size_t best_split_var;
     double best_split_val;
-    std::unique_ptr<Node> best_left_child = nullptr;
-    std::unique_ptr<Node> best_right_child = nullptr;
-    std::unique_ptr<Node> best_ans_as_leaf = nullptr;
+    std::shared_ptr<Node> best_left_child = nullptr;
+    std::shared_ptr<Node> best_right_child = nullptr;
+    std::shared_ptr<Node> best_ans_as_leaf = nullptr;
     //std::vector<flat_set> best_left_sorted_sets;
     //std::vector<flat_set> best_right_sorted_sets;
 
@@ -383,31 +401,32 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
       }
     }
     if (best_left_child == nullptr) {
-	    std::cerr << "Deb 1" << std::endl;
-      return level_zero_learning(sorted_sets, data, this_depth + 1);
+      return level_zero_learning(sorted_sets, data, this_depth);
     } else {
           // "pruning", the recursive case (same action in both leaves):
-	    std::cerr << "Deb 2" << std::endl;
       if ((best_left_child->is_leaf() && best_right_child->is_leaf()) &&
               (best_left_child->action_id == best_right_child->action_id)) {
         double leaf_reward = best_left_child->reward + best_right_child->reward;
         size_t leaf_action = best_left_child->action_id;
-        best_ans_as_leaf = std::unique_ptr<Node> (new Node(0, 0.0, leaf_reward, leaf_action, this_depth, 0));
+        best_ans_as_leaf = std::shared_ptr<Node> (new Node(0, 0.0, leaf_reward, leaf_action, this_depth, 0));
       //TODO(kanodiaayush):uncomment
 	best_ans_as_leaf->complete_sorted_sets = sorted_sets;
         return best_ans_as_leaf;
       } else {
-	    std::cerr << "Deb 3" << std::endl;
         double best_reward = best_left_child->reward + best_right_child->reward;
 	int height = std::max(best_left_child->height, best_right_child->height) + 1;
 	std::cerr << height << std::endl;
-        auto ret = std::unique_ptr<Node> (new Node(best_split_var, best_split_val, best_reward, 0, this_depth + 1, height));
+        auto ret = std::shared_ptr<Node> (new Node(best_split_var, best_split_val, best_reward, 0, this_depth, height));
         ret->left_child = std::move(best_left_child);
         ret->right_child = std::move(best_right_child);
+	ret->left_child->parent = ret;
+	ret->right_child->parent = ret;
+	ret->left_child->is_left_child = true;
+	ret->right_child->is_left_child = false;
 	//ret->left_sorted_sets.reset(&best_left_sorted_sets);
 	//ret->right_sorted_sets.reset(&best_right_sorted_sets);
       //TODO(kanodiaayush):uncomment
-              //ret->left_sorted_sets = best_left_sorted_sets; 
+              //ret->left_sorted_sets = best_left_sorted_sets;
               //ret->right_sorted_sets = best_right_sorted_sets;
 	ret->complete_sorted_sets = sorted_sets;
         return ret;
@@ -416,7 +435,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
   }
 }
 
-std::unique_ptr<Node> tree_search(int depth, int split_step, size_t min_node_size, const Data* data) {
+std::shared_ptr<Node> tree_search(int depth, int split_step, size_t min_node_size, const Data* data) {
   //std::cerr << "here0" << std::endl;
   size_t num_rewards = data->num_rewards();
   size_t num_points = data->num_rows;
@@ -429,10 +448,12 @@ std::unique_ptr<Node> tree_search(int depth, int split_step, size_t min_node_siz
     v.resize(num_points + 1, 0.0);
   }
 
-  return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array, 0);
+  auto ans = find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array, 0);
+  ans->print(0);
+  return ans;
 }
 
-std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_split_depth, int chop_depth, int repeat_splits, int split_step, size_t min_node_size, const Data* data) {
+std::shared_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_split_depth, int chop_depth, int repeat_splits, int split_step, size_t min_node_size, const Data* data) {
   size_t num_rewards = data->num_rewards();
   size_t num_points = data->num_rows;
   auto sorted_sets = create_sorted_sets(data);
@@ -444,66 +465,121 @@ std::unique_ptr<Node> tree_search_hybrid(int max_global_depth, int complete_spli
     v.resize(num_points + 1, 0.0);
   }
 
-  auto start = new Node(0, 0.0, 0, 0, 0, max_global_depth);
+//<<<<<<< HEAD
+  //auto start = new Node(0, 0.0, 0, 0, 0, max_global_depth);
+      ////TODO(kanodiaayush):uncomment
+  //start->complete_sorted_sets = sorted_sets;
+  //std::queue<Node*> expansion_queue; 
+  //expansion_queue.push(start);
+  //int count = 0;
+  //std::cerr << "mgd " << max_global_depth << "csd " << complete_split_depth << "cd " << chop_depth << "rs " << repeat_splits << "\n";
+  //while(!expansion_queue.empty()) {
+    //std::cerr << "count loop " << count << "\n";
+    //count += 1;
+    //auto expansion_node = expansion_queue.front();
+//=======
+  std::shared_ptr<Node> result = std::shared_ptr<Node> (new Node(0, 0.0, 0, 0, 0, 0));
+  std::shared_ptr<Node> start = std::shared_ptr<Node> (new Node(0, 0.0, 0, 0, 0, 0));
       //TODO(kanodiaayush):uncomment
   start->complete_sorted_sets = sorted_sets;
-  std::queue<Node*> expansion_queue; 
-  expansion_queue.push(start);
+  std::queue<std::shared_ptr<Node>> expansion_queue;
+  expansion_queue.push(std::move(start));
   int count = 0;
   std::cerr << "mgd " << max_global_depth << "csd " << complete_split_depth << "cd " << chop_depth << "rs " << repeat_splits << "\n";
   while(!expansion_queue.empty()) {
     std::cerr << "count loop " << count << "\n";
     count += 1;
+    std::cerr << "Retrieving\n";
+    sleep(5);
     auto expansion_node = expansion_queue.front();
+//>>>>>>> 35bb724294fc191a91c66407b3ef51399243cd65
     expansion_queue.pop();
-    std::cerr << "expansion tree height " << expansion_node->height << " depth " << expansion_node->depth << std::endl;
-    if(expansion_node->height < 1) {
-	    continue;
-    }
+    //std::cerr << "expansion node height " << expansion_node->height << " depth " << expansion_node->depth << std::endl;
+    std::cerr << "Expanding\n";
+    expansion_node->print(0);
+    sleep(5);
+    //if(expansion_node->height < 1) {
+	    //continue;
+    //}
     if(expansion_node->depth >= max_global_depth) {
 	    continue;
     }
       //TODO(kanodiaayush):uncomment
     //auto expansion_tree = find_best_split(sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
-    auto expansion_tree = find_best_split(expansion_node->complete_sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
+//<<<<<<< HEAD
+    //auto expansion_tree = find_best_split(expansion_node->complete_sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth).release();
+    //int expansion_tree_height = expansion_tree->height;
+    //std::cerr << "expansion tree height " << expansion_tree_height;
+    //std::queue<Node*> bfs_queue; 
+//=======
+    auto expansion_tree = find_best_split(expansion_node->complete_sorted_sets, complete_split_depth, split_step, min_node_size, data, sum_array, expansion_node->depth);
+	    expansion_tree->print(0);
     int expansion_tree_height = expansion_tree->height;
+    std::queue<std::shared_ptr<Node>> bfs_queue;
     std::cerr << "expansion tree height " << expansion_tree_height;
-    std::queue<Node*> bfs_queue; 
+    //std::queue<Node*> bfs_queue; 
+//>>>>>>> 35bb724294fc191a91c66407b3ef51399243cd65
     if (expansion_tree->left_child != nullptr) {
-    	bfs_queue.push(expansion_tree->left_child.release());
+    	bfs_queue.push(expansion_tree->left_child);
     }
     if (expansion_tree->right_child != nullptr) {
-    	bfs_queue.push(expansion_tree->right_child.release());
+    	bfs_queue.push(expansion_tree->right_child);
     }
     int count2 = 0;
     while(!bfs_queue.empty()) {
+//<<<<<<< HEAD
+            //std::cerr << "  count2 loop " << count2 << "\n";
+            //count2 += 1;
+            //auto bfs_node = bfs_queue.front();
+	//bfs_queue.pop();
+//=======
     	std::cerr << "  count2 loop " << count2 << "\n";
     	count2 += 1;
     	auto bfs_node = bfs_queue.front();
-	bfs_queue.pop();
+      	bfs_queue.pop();
+//>>>>>>> 35bb724294fc191a91c66407b3ef51399243cd65
     	if (expansion_tree_height - bfs_node->height == chop_depth) {
-  	  expansion_queue.push(bfs_node);
+	  std::cerr << expansion_tree_height << " " << bfs_node->height << " " << chop_depth << std::endl;
+  	  expansion_queue.push(bfs_node); // I don't want move semantics here
 	} else if (expansion_tree_height - bfs_node->height < chop_depth) {
+	  std::cerr << expansion_tree_height << " " << bfs_node->height << " " << chop_depth << std::endl;
           if (bfs_node->left_child != nullptr) {
-          	bfs_queue.push(bfs_node->left_child.release());
+          	bfs_queue.push(bfs_node->left_child);
           }
           if (bfs_node->right_child != nullptr) {
-          	bfs_queue.push(bfs_node->right_child.release());
+          	bfs_queue.push(bfs_node->right_child);
           }
 	}
     }
-    expansion_node = expansion_tree;
+//<<<<<<< HEAD
+    //expansion_node = expansion_tree;
+    std::cerr << "expansion queue size: " <<  expansion_queue.size() << std::endl;
     if(count == 1) {
-	    std::cerr << "start == expansion_tree" << std::endl;
-	    start = expansion_tree;
-	    break;
+	    start = std::move(expansion_tree);
+	    sleep(5);
+	    //int dummy;
+	    //std::cin >> dummy;
+	    //break;
+    } else {
+	    expansion_tree->parent = expansion_node->parent;
+	    if (expansion_node->is_left_child) {
+		    expansion_node->parent->left_child = std::move(expansion_tree);
+	    } else {
+		    expansion_node->parent->right_child = std::move(expansion_tree);
+	    }
     }
     //expansion_node = std::move(expansion_tree);
+//=======
+    //// expansion_node = expansion_tree; // ERIKCS: what is the point of this assignment? It's void anyways at the new iteration at L447?
+    // expansion_node = std::move(expansion_tree);
+//>>>>>>> 35bb724294fc191a91c66407b3ef51399243cd65
     //if (expansion_node->depth == 0) {
       //start = std::move(expansion_node);
     //}
+    //result = std::move(expansion_node);
   }
 
-  return std::unique_ptr<Node> (start);
+  std::cerr << "start tree height " << start->height;
+  start->print(0);
+  return start;
 }
-

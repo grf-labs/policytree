@@ -21,6 +21,7 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
+#include <iostream>
 
 #include <boost/container/flat_set.hpp>
 
@@ -94,10 +95,29 @@ struct Node {
   index(index), value(value), reward(reward), action_id(action_id), depth(depth), height(height) {
     this->left_child = nullptr;
     this->right_child = nullptr;
+    this->parent = nullptr;
+    is_left_child = false;
   }
 
   // A node is a leaf node if its left or right child node is a nullptr.
   // If one child is a nullptr, the other child is also a nullptr.
+
+  void print(int spaces){
+	  for (int ii = 0; ii < spaces; ii+=1) std::cerr << "\t";
+	  std::cerr << " index: " << this->index << " value: " << this->value << " reward: " << this->reward << " action_id: " << this->action_id << " depth: " << this->depth << " height" << this->height << "\n";
+	  if (this->left_child != nullptr) {
+		    //std::cerr << "\nLeft Child: " << this->left_child->value << "\n";
+		  this->left_child->print(spaces+1);
+	  } else {
+		  //std::cerr << "left nullptr";
+	  }
+	  if (this->right_child != nullptr) {
+		  this->right_child->print(spaces+1);
+	  } else {
+		  //std::cerr << "right nullptr";
+	  }
+  }
+
   bool is_leaf() {
     return (left_child == nullptr);
   }
@@ -106,8 +126,10 @@ struct Node {
   double value;
   double reward;
   size_t action_id;
-  std::unique_ptr<Node> left_child;
-  std::unique_ptr<Node> right_child;
+  std::shared_ptr<Node> parent;
+  bool is_left_child=false;
+  std::shared_ptr<Node> left_child;
+  std::shared_ptr<Node> right_child;
   int depth;
   int height;
   //std::unique_ptr<std::vector<flat_set> > left_sorted_sets;
@@ -118,7 +140,7 @@ struct Node {
 };
 
 
-std::unique_ptr<Node> tree_search(int, int, size_t, const Data*);
-std::unique_ptr<Node> tree_search_hybrid(int, int, int, int, int, size_t, const Data*);
+std::shared_ptr<Node> tree_search(int, int, size_t, const Data*);
+std::shared_ptr<Node> tree_search_hybrid(int, int, int, int, int, size_t, const Data*);
 
 #endif // TREE_SEARCH_H

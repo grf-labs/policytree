@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // tree_search_rcpp
 Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X, const Rcpp::NumericMatrix& Y, int depth, int split_step, int min_node_size, bool exact_search, int hybrid_complete_split_depth, int hybrid_chop_depth, int hybrid_repeat_splits);
 RcppExport SEXP _policytree_tree_search_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP depthSEXP, SEXP split_stepSEXP, SEXP min_node_sizeSEXP, SEXP exact_searchSEXP, SEXP hybrid_complete_split_depthSEXP, SEXP hybrid_chop_depthSEXP, SEXP hybrid_repeat_splitsSEXP) {

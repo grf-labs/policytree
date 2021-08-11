@@ -13,7 +13,8 @@ policy_tree(
   solver = c("exact", "hybrid"),
   hybrid.complete.split.depth = 0,
   hybrid.chop.depth = 0,
-  hybrid.repeat.splits = 0
+  hybrid.repeat.splits = 0,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -39,6 +40,8 @@ be the preferred approach.}
 \item{hybrid.chop.depth}{TODO}
 
 \item{hybrid.repeat.splits}{TODO}
+
+\item{verbose}{Give verbose output. Default is TRUE.}
 }
 \value{
 A policy_tree object.
@@ -72,7 +75,7 @@ TODO
 # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
 n <- 10000
 p <- 10
-# Rounding down continuous covariates decreases runtime.
+# Discretizing continuous covariates decreases runtime.
 X <- round(matrix(rnorm(n * p), n, p), 2)
 colnames(X) <- make.names(1:p)
 W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
