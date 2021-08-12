@@ -125,7 +125,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
 
   if (verbose) {
     cardinality <- apply(X, 2, function(x) length(unique(x)))
-    if (any(cardinality > 20000) && split.step == 1) {
+    if (split.step == 1 && any(cardinality > 20000)) {
       warning(paste0(
         "The cardinality of some covariates exceeds 20000 distinct values. ",
         "Consider using the optional parameter `split.step` to speed up computations, or ",
