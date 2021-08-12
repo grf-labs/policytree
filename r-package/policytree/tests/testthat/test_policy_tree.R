@@ -33,8 +33,8 @@ test_that("solver bindings run", {
 test_that("exact tree search finds the correct depth 0 tree", {
   depth <- 0
   n <- 100
-  p <- sample(1:10, 1)
-  d <- sample(1:5, 1)
+  p <- 5
+  d <- 3
   # Continuous X
   X <- matrix(rnorm(n * p), n, p)
   Y <- matrix(rnorm(n * d), n, d)
@@ -63,8 +63,8 @@ test_that("exact tree search finds the correct depth 0 tree", {
 test_that("exact tree search finds the correct depth 1 tree", {
   depth <- 1
   n <- 250
-  p <- sample(1:10, 1)
-  d <- sample(1:5, 1)
+  p <- 5
+  d <- 3
   # Continuous X
   X <- matrix(rnorm(n * p), n, p)
   Y <- matrix(0, n, d)
@@ -98,8 +98,8 @@ test_that("exact tree search finds the correct depth 1 tree", {
 test_that("exact tree search finds the correct depth 2 tree", {
   depth <- 2
   n <- 250
-  p <- sample(1:10, 1)
-  d <- sample(1:5, 1)
+  p <- 5
+  d <- 3
   # Continuous X
   X <- matrix(rnorm(n * p), n, p)
   Y <- matrix(0, n, d)
@@ -133,8 +133,8 @@ test_that("exact tree search finds the correct depth 2 tree", {
 test_that("exact tree search finds the correct depth 3 tree", {
   depth <- 3
   n <- 250
-  p <- sample(1:10, 1)
-  d <- sample(1:5, 1)
+  p <- 4
+  d <- 3
   # Continuous X
   X <- matrix(rnorm(n * p), n, p)
   Y <- matrix(0, n, d)
