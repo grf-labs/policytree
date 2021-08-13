@@ -1,0 +1,19 @@
+policy_tree object 
+Tree depth:  3 
+Actions:  1: X0 2: X1 3: X2 
+Variable splits: 
+(1) split_variable: V3  split_value: 0.528399 
+  (2) split_variable: V4  split_value: 0.4017 
+    (4) split_variable: V3  split_value: 0.133331 
+      (8) * action: 3 
+      (9) * action: 2 
+    (5) split_variable: V3  split_value: 0.115003 
+      (10) * action: 1 
+      (11) * action: 3 
+  (3) split_variable: V4  split_value: 0.594774 
+    (6) split_variable: V3  split_value: 0.889082 
+      (12) * action: 1 
+      (13) * action: 3 
+    (7) split_variable: V2  split_value: 0.4 
+      (14) * action: 1 
+      (15) * action: 3 

@@ -17,8 +17,16 @@ test_that("policy_tree has not changed", {
   X[, 1:2] <- round(X[, 1:2], 1)
 
   pt1 <- policy_tree(X, Y, depth = 2)
-  # writeLines(capture.output(print(pt1)), "data/data_pt1_tree.txt") # <--- update with
+  # writeLines(capture.output(print(pt1)), "data/data_pt1_tree.txt") # <--- uncomment to update
   expect_equal(capture.output(print(pt1)), readLines("data/data_pt1_tree.txt"))
+
+  pt2 <- policy_tree(X, Y, depth = 2, split.step = 3, min.node.size = 5)
+  # writeLines(capture.output(print(pt2)), "data/data_pt2_tree.txt") # <--- uncomment to update
+  expect_equal(capture.output(print(pt2)), readLines("data/data_pt2_tree.txt"))
+
+  pt3 <- policy_tree(X[1:75, ], Y[1:75, ], depth = 3, split.step = 2, min.node.size = 2)
+  # writeLines(capture.output(print(pt3)), "data/data_pt3_tree.txt") # <--- uncomment to update
+  expect_equal(capture.output(print(pt3)), readLines("data/data_pt3_tree.txt"))
 })
 
 test_that("solver bindings run", {
