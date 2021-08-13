@@ -10,6 +10,16 @@ test_that("predictions have not changed from first vetted version", {
   expect_equal(capture.output(print(pt)), printed.tree)
 })
 
+test_that("policy_tree has not changed", {
+  X <- read.csv("data/data_clf_X.csv")
+  Y <- read.csv("data/data_clf_Y.csv")
+  X <- X[, 1:4]
+  X[, 1:2] <- round(X[, 1:2], 1)
+
+  pt1 <- policy_tree(X, Y, depth = 2)
+  # writeLines(capture.output(print(pt1)), "data/data_pt1_tree.txt") # <--- update with
+  expect_equal(capture.output(print(pt1)), readLines("data/data_pt1_tree.txt"))
+})
 
 test_that("solver bindings run", {
   n <- 50
