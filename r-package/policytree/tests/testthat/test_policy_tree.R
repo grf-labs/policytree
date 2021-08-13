@@ -2,10 +2,12 @@ test_that("predictions have not changed from first vetted version", {
   X <- read.csv("data/data_clf_X.csv")
   Y <- read.csv("data/data_clf_Y.csv")
   clf.exact <- read.csv("data/data_clf_exact.csv")
+  printed.tree <- readLines("data/data_clf_tree.txt")
 
   pt <- policy_tree(X, Y, depth = 2)
 
   expect_equal(predict(pt, X), clf.exact$clf.exact)
+  expect_equal(capture.output(print(pt)), printed.tree)
 })
 
 
