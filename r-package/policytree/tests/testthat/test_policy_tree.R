@@ -1,7 +1,7 @@
 test_that("predictions have not changed from first vetted version", {
-  X <- read.csv("data_clf_X.csv")
-  Y <- read.csv("data_clf_Y.csv")
-  clf.exact <- read.csv("data_clf_exact.csv")
+  X <- read.csv("data/data_clf_X.csv")
+  Y <- read.csv("data/data_clf_Y.csv")
+  clf.exact <- read.csv("data/data_clf_exact.csv")
 
   pt <- policy_tree(X, Y, depth = 2)
 

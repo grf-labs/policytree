@@ -8,7 +8,7 @@
 
   ```
   ^tests/testthat/test_((?!cran).).*
-  ^tests/testthat/.*csv
+  ^tests/testthat/data
   ```
 
   to `.Rbuildignore` (do not commit the change)
