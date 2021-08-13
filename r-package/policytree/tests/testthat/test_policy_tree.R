@@ -27,6 +27,10 @@ test_that("policy_tree has not changed", {
   pt3 <- policy_tree(X[1:75, ], Y[1:75, ], depth = 3, split.step = 2, min.node.size = 2)
   # writeLines(capture.output(print(pt3)), "data/data_pt3_tree.txt") # <--- uncomment to update
   expect_equal(capture.output(print(pt3)), readLines("data/data_pt3_tree.txt"))
+
+  pt4 <- policy_tree(X, Y, depth = 2, split.step = 42)
+  # writeLines(capture.output(print(pt4)), "data/data_pt4_tree.txt") # <--- uncomment to update
+  expect_equal(capture.output(print(pt4)), readLines("data/data_pt4_tree.txt"))
 })
 
 test_that("solver bindings run", {
