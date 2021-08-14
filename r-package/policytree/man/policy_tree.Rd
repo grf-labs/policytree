@@ -113,3 +113,6 @@ Journal of Open Source Software 5, no. 50 (2020): 2232.
 Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning:
 Generalization and optimization." arXiv preprint arXiv:1810.04778 (2018).
 }
+\seealso{
+\code{\link{hybrid_policy_tree}} for building deeper trees.
+}

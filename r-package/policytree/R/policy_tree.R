@@ -87,6 +87,7 @@
 #' top.5 <- order(var.imp, decreasing = TRUE)[1:5]
 #' tree.top5 <- policy_tree(X[, top.5], dr.scores, 2, split.step = 50)
 #' }
+#' @seealso \code{\link{hybrid_policy_tree}} for building deeper trees.
 #' @export
 policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, verbose = TRUE) {
   n.features <- ncol(X)
