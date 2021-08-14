@@ -112,10 +112,9 @@ hybrid_policy_tree <- function(X, Gamma,
     }
     node <- node + 1
   }
-  nodes <- unpack_tree(tree.nodes)
 
-  tree[["nodes"]] <- nodes
-  tree[["_tree_array"]] <- tree_mat(nodes, depth)
+  tree[["nodes"]] <- unpack_tree(tree.nodes)
+  tree[["_tree_array"]] <- tree_mat(tree[["nodes"]], depth)
   tree[["depth"]] <- depth
 
   tree
@@ -127,7 +126,7 @@ unpack_tree <- function(tree) {
   node.index <- 1
   frontier <- 1
   inds <- 1
-  while(length(frontier) > 0) {
+  while (length(frontier) > 0) {
     node <- frontier[1]
     frontier <- frontier[-1]
     ind <- inds[1]
