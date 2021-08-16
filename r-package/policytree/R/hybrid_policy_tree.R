@@ -63,11 +63,16 @@ hybrid_policy_tree <- function(X, Gamma,
   if (verbose && (!search.depth %in% c(2, 3))) {
     warning("Suggested values for `search.depth` is 2 or 3. ", immediate. = TRUE)
   }
-  # Dummy tree object.
-  tree <- policy_tree(X[1, , drop = FALSE], Gamma[1, , drop = FALSE], depth = 0, verbose = FALSE)
+  valid.classes <- c("matrix", "data.frame")
+  if (!inherits(X, valid.classes) || !inherits(Gamma, valid.classes)) {
+    stop(paste("Currently the only supported data input types are:",
+               "`matrix`, `data.frame`"))
+  }
   if (nrow(X) != nrow(Gamma)) {
     stop("X and Gamma does not have the same number of rows")
   }
+  # Dummy tree object.
+  tree <- policy_tree(X[1, , drop = FALSE], Gamma[1, , drop = FALSE], depth = 0, verbose = FALSE)
 
   samples <- list(seq_len(nrow(X)))
   levels <- list(0)
