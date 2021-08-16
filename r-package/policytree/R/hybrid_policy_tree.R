@@ -58,7 +58,7 @@ hybrid_policy_tree <- function(X, Gamma,
     stop("`search.depth` should be less than `depth`.")
   }
   if (depth > 20) {
-    stop("Specified `depth` is too close to R's memory limit of 2^32 - 1.")
+    stop("Specified depth is too large (as internal tree array requires `2^(depth + 1) - 1` number of rows).")
   }
   if (verbose && (!search.depth %in% c(2, 3))) {
     warning("Suggested values for `search.depth` is 2 or 3. ", immediate. = TRUE)
