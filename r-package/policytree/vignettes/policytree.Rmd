@@ -150,3 +150,16 @@ As a point of reference, the following table presents runtimes for some example 
 | 2     | 100 000        | 30       | 20      | 1, but `round(X, 2)`         | 6.3 hrs |
 | 2     | 100 000        | 60       | 20      | 1, but `round(X, 2)`         | 25 hrs |
 | 2     | 100 000        | 30       | 3       | 10         | 7.4 hrs |
+
+# Fitting deeper trees with hybrid search
+
+The previous section demonstrates that it is infeasible to grow globally optimal deep (depth >= 3) trees on very large N. Notice however that with appropriate _discretization_ of continuous covariates, and feature selection, growing depth 2 exact trees is feasible.
+
+We can maintain the depth-2 amortized runtime while growing deeper trees by using a "hybrid" approach: look ahead depth-2 subtrees when forming splits. This heuristic combines the advantages of a fully greedy and fully optimal approach: by looking further ahead we take potential interactions among variables into account, while retaining feasible scaling. This feature is available in `hybrid_policy_tree`.
+
+An exact depth 3 tree using the dataset above would take almost 10 minutes to complete, compared with the hybrid approach:
+
+```{r}
+system.time(htree <- hybrid_policy_tree(data$X[train, ], gamma[train, ], depth = 3, search.depth = 2))
+htree
+```
