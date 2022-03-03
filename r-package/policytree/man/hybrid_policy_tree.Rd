@@ -44,9 +44,11 @@ Finds a depth k tree by looking ahead l steps.
 Builds deeper trees by iteratively using exact tree search to look ahead l splits. For example,
 with \code{depth = 3} and \code{search.depth = 2}, the root split is determined by a depth 2 exact tree,
 and two new depth 2 trees are fit in the two immediate children using exact tree search,
-leading to a total depth of 3. Note that the resulting tree may be shallower than the
-specified \code{depth} depending on whether leaf nodes were pruned or not.
-This algorithm scales with some coefficient multiple of the runtime of a \code{search.depth} \code{policy_tree}.
+leading to a total depth of 3 (the resulting tree may be shallower than the
+specified \code{depth} depending on whether leaf nodes were pruned or not).
+This algorithm scales with some coefficient multiple of the runtime of a \code{search.depth} \code{policy_tree},
+which means that for this approach to be feasible it needs an (n, p, d) configuration in which
+a \code{search.depth} \code{policy_tree} runs in reasonable time.
 
 The algorithm: desired depth is given by \code{depth}. Each node is split using exact tree search
 with depth  = \code{search.depth}. When we reach a node where the current level + \code{search.depth} is equal to \code{depth},
