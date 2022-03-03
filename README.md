@@ -28,7 +28,7 @@ devtools::install_github("grf-labs/policytree", subdir = "r-package/policytree")
 Installing from source requires a C++ 11 compiler (on Windows Rtools is required as well) together with the R packages
 `Rcpp` and `BH`.
 
-### Multi-action policy learning
+### Multi-action policy learning example
 ```r
 library(policytree)
 n <- 250

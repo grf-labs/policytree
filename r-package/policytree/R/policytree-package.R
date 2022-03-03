@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' \donttest{
-#' # Multi-action policy learning.
+#' # Multi-action policy learning example.
 #' n <- 250
 #' p <- 10
 #' X <- matrix(rnorm(n * p), n, p)
