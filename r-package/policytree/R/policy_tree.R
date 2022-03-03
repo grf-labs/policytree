@@ -99,10 +99,10 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
     stop(paste("Currently the only supported data input types are:",
                "`matrix`, `data.frame`"))
   }
-  if (!is.numeric(as.matrix(X))) {
+  if (!is.numeric(as.matrix(X)) || any(dim(X) == 0)) {
     stop("The feature matrix X must be numeric")
   }
-  if (!is.numeric(as.matrix(Gamma))) {
+  if (!is.numeric(as.matrix(Gamma)) || any(dim(Gamma) == 0)) {
     stop("The reward matrix Gamma must be numeric")
   }
   if (anyNA(X)) {
