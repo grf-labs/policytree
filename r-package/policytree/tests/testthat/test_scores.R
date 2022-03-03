@@ -44,3 +44,25 @@ test_that("multi_arm_causal_forest scores with multiple outcomes works as expect
   expect_equal(double_robust_scores(mcf, outcome = 2), double_robust_scores(mcf, outcome = "Y2"))
   expect_equal(double_robust_scores(mcf, outcome = 3), double_robust_scores(mcf, outcome = "orange"))
 })
+
+test_that("causal survival forest on complete data is ~same as causal forest", {
+  n <- 2000
+  p <- 5
+  X <- round(matrix(runif(n * p), n, p), 2)
+  W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
+  tau <- 1 / (1 + exp((X[, 1] + X[, 2]) / 2)) + 0.5
+  Y <- X[, 3] + W * tau + runif(n)
+  cf <- grf::causal_forest(X, Y, W)
+  dr.cf <- double_robust_scores(cf)
+  tree.cf <- policy_tree(X, dr.cf, 2)
+  pp.cf <- predict(tree.cf, X)
+
+  csf <- grf::causal_survival_forest(X, Y, W, rep(1, n), horizon = max(Y))
+  dr.csf <- double_robust_scores(csf)
+  tree.csf <- policy_tree(X, dr.csf)
+  pp.csf <- predict(tree.csf, X)
+
+  pp.eq <- as.integer(pp.cf == pp.csf)
+  expect_gte(mean(pp.eq), 0.95)
+  expect_equal(conditional_means(cf), conditional_means(csf), tolerance = 0.05)
+})
