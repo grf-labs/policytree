@@ -102,5 +102,5 @@ Erik Sverdrup, Ayush Kanodia, Zhengyuan Zhou, Susan Athey, and Stefan Wager.
 [<a href="https://joss.theoj.org/papers/10.21105/joss.02232">paper</a>]
 
 Zhengyuan Zhou, Susan Athey, and Stefan Wager.
-<b>Offline Multi-Action Policy Learning: Generalization and Optimization.</b> 2018.
+<b>Offline Multi-Action Policy Learning: Generalization and Optimization.</b> <i> Operations Research</i>, forthcoming.
 [<a href="https://arxiv.org/abs/1810.04778">arxiv</a>]
