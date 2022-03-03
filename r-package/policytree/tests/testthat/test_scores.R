@@ -29,6 +29,9 @@ test_that("multi_arm_causal_forest scores works as expected", {
 
   reward <- mean(data$mu.all[cbind(1:n, pp)])
   expect_true(all(reward > colMeans(data$mu.all)))
+  expect_equal(unname(Gamma.matrix[, -1] - Gamma.matrix[, 1]),
+               unname(grf::get_scores(mcf)[,,]),
+               tolerance = 1e-15)
 })
 
 test_that("multi_arm_causal_forest scores with multiple outcomes works as expected", {
