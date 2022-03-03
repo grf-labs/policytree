@@ -21,7 +21,7 @@ install.packages("policytree")
 
 To install the latest development version from source:
 
-```
+```R
 devtools::install_github("grf-labs/policytree", subdir = "r-package/policytree")
 ```
 
