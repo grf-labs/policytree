@@ -135,6 +135,14 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
         "see the documentation for details.)"
       ), immediate. = TRUE)
     }
+    if (ncol(X) > 50) {
+      warning(paste0(
+        "The number of covariates exceeds 50. Consider reducing the dimensionality before ",
+        "running policy_tree, by for example using only the Xj's with the ",
+        "highest variable importance (`grf::variable_importance` - the runtime of exact tree ",
+        "search scales with ncol(X)^depth, see the documentation for details)."
+      ), immediate. = TRUE)
+    }
   }
 
   action.names <- colnames(Gamma)
