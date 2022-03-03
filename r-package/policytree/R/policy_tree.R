@@ -147,8 +147,8 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
       warning(paste0(
         "A depth 3 or deeper policy_tree is only feasible for 'small' n and p. ",
         "To fit deeper trees, consider using the hybrid greedy approach available in the function ",
-        "`hybrid_policy_tree`. Note that this still requires an (n, p, d) configuration ",
-        "which is feasible for a depth d=2 policy_tree, see the documentation for details."
+        "`hybrid_policy_tree`. Note that this still requires an (n, p) configuration ",
+        "which is feasible for a depth k=2 policy_tree, see the documentation for details."
       ), immediate. = TRUE)
     }
   }
