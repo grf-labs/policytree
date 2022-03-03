@@ -135,6 +135,22 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
         "see the documentation for details.)"
       ), immediate. = TRUE)
     }
+    if (ncol(X) > 50) {
+      warning(paste0(
+        "The number of covariates exceeds 50. Consider reducing the dimensionality before ",
+        "running policy_tree, by for example using only the Xj's with the ",
+        "highest variable importance (`grf::variable_importance` - the runtime of exact tree ",
+        "search scales with ncol(X)^depth, see the documentation for details)."
+      ), immediate. = TRUE)
+    }
+    if (depth > 2 && nrow(X) > 5000) {
+      warning(paste0(
+        "A depth 3 or deeper policy_tree is only feasible for 'small' n and p. ",
+        "To fit deeper trees, consider using the hybrid greedy approach available in the function ",
+        "`hybrid_policy_tree`. Note that this still requires an (n, p) configuration ",
+        "which is feasible for a depth k=2 policy_tree, see the documentation for details."
+      ), immediate. = TRUE)
+    }
   }
 
   action.names <- colnames(Gamma)

@@ -6,9 +6,11 @@
 #' Builds deeper trees by iteratively using exact tree search to look ahead l splits. For example,
 #' with `depth = 3` and `search.depth = 2`, the root split is determined by a depth 2 exact tree,
 #' and two new depth 2 trees are fit in the two immediate children using exact tree search,
-#' leading to a total depth of 3. Note that the resulting tree may be shallower than the
-#' specified `depth` depending on whether leaf nodes were pruned or not.
-#' This algorithm scales with some coefficient multiple of the runtime of a `search.depth` `policy_tree`.
+#' leading to a total depth of 3 (the resulting tree may be shallower than the
+#' specified `depth` depending on whether leaf nodes were pruned or not).
+#' This algorithm scales with some coefficient multiple of the runtime of a `search.depth` `policy_tree`,
+#' which means that for this approach to be feasible it needs an (n, p, d) configuration in which
+#' a `search.depth` `policy_tree` runs in reasonable time.
 #'
 #' The algorithm: desired depth is given by `depth`. Each node is split using exact tree search
 #' with depth  = `search.depth`. When we reach a node where the current level + `search.depth` is equal to `depth`,
