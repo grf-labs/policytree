@@ -9,7 +9,7 @@ Authors@R: c(
     person("Stefan", "Wager", role = "aut")
     )
 Description: Learn optimal policies via doubly robust empirical
- welfare maximization over trees. This package estimates tree-based polies from
+ welfare maximization over trees. This package estimates tree-based policies from
  doubly robust reward estimates, where the trees are shallow but globally optimal.
 Depends:
     R (>= 3.5.0)
