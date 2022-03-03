@@ -25,5 +25,5 @@ on 3 regions the covariates \eqn{X \sim U[0,1]^p} reside in. Observed outcomes:
 }
 \references{
 Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning:
-Generalization and optimization." arXiv preprint arXiv:1810.04778 (2018).
+Generalization and optimization." Operations Research, forthcoming.
 }
