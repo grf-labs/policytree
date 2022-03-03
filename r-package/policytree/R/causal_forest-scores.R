@@ -2,6 +2,9 @@
 #' @method conditional_means causal_forest
 #' @export
 conditional_means.causal_forest <- function(object, ...) {
+  if (!all(object$W.orig %in% c(0, 1))) {
+    stop("policytree currently only supports causal forest with binary treatment.")
+  }
   tau.hat <- predict(object, ...)$predictions
   Y.hat.0 <- object$Y.hat - object$W.hat * tau.hat
   Y.hat.1 <- object$Y.hat + (1 - object$W.hat) * tau.hat

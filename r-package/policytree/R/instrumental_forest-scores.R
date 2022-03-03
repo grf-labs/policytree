@@ -2,6 +2,9 @@
 #' @method conditional_means instrumental_forest
 #' @export
 conditional_means.instrumental_forest <- function(object, ...) {
+  if (!all(object$Z.orig %in% c(0, 1))) {
+    stop("policytree currently only supports instrumental forest with binary instrument.")
+  }
   tau.hat <- predict(object, ...)$predictions
   Y.hat.0 <- object$Y.hat - object$W.hat * tau.hat
   Y.hat.1 <- object$Y.hat + (1 - object$W.hat) * tau.hat
@@ -23,6 +26,9 @@ conditional_means.instrumental_forest <- function(object, ...) {
 #' @method double_robust_scores instrumental_forest
 #' @export
 double_robust_scores.instrumental_forest <- function(object, compliance.score = NULL, ...) {
+  if (!all(object$Z.orig %in% c(0, 1))) {
+    stop("policytree currently only supports instrumental forest with binary instrument.")
+  }
   if (is.null(compliance.score)) {
     compliance.forest <- grf::causal_forest(
       X = object$X.orig,
