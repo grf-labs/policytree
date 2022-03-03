@@ -37,7 +37,7 @@
 #'  "policytree: Policy learning via doubly robust empirical welfare maximization over trees."
 #'   Journal of Open Source Software 5, no. 50 (2020): 2232.
 #' @references Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning:
-#'  Generalization and optimization." arXiv preprint arXiv:1810.04778 (2018).
+#'  Generalization and optimization." Operations Research, forthcoming.
 #'
 #' @examples
 #' \donttest{
@@ -99,10 +99,10 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
     stop(paste("Currently the only supported data input types are:",
                "`matrix`, `data.frame`"))
   }
-  if (!is.numeric(as.matrix(X))) {
+  if (!is.numeric(as.matrix(X)) || any(dim(X) == 0)) {
     stop("The feature matrix X must be numeric")
   }
-  if (!is.numeric(as.matrix(Gamma))) {
+  if (!is.numeric(as.matrix(Gamma)) || any(dim(Gamma) == 0)) {
     stop("The reward matrix Gamma must be numeric")
   }
   if (anyNA(X)) {
@@ -133,6 +133,22 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
         "discretize/relabel continuous features for finer grained control ",
         "(the runtime of exact tree search scales with the number of distinct features, ",
         "see the documentation for details.)"
+      ), immediate. = TRUE)
+    }
+    if (ncol(X) > 50) {
+      warning(paste0(
+        "The number of covariates exceeds 50. Consider reducing the dimensionality before ",
+        "running policy_tree, by for example using only the Xj's with the ",
+        "highest variable importance (`grf::variable_importance` - the runtime of exact tree ",
+        "search scales with ncol(X)^depth, see the documentation for details)."
+      ), immediate. = TRUE)
+    }
+    if (depth > 2 && nrow(X) > 5000) {
+      warning(paste0(
+        "A depth 3 or deeper policy_tree is only feasible for 'small' n and p. ",
+        "To fit deeper trees, consider using the hybrid greedy approach available in the function ",
+        "`hybrid_policy_tree`. Note that this still requires an (n, p) configuration ",
+        "which is feasible for a depth k=2 policy_tree, see the documentation for details."
       ), immediate. = TRUE)
     }
   }

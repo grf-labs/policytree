@@ -3,7 +3,7 @@
 [![CRANstatus](https://www.r-pkg.org/badges/version/policytree)](https://cran.r-project.org/package=policytree)
 [![Build Status](https://dev.azure.com/grf-labs/grf/_apis/build/status/grf-labs.policytree?branchName=master)](https://dev.azure.com/grf-labs/grf/_build/latest?definitionId=1&branchName=master)
 
-A package for learning optimal policies via doubly robust empirical welfare maximization over trees. Many practical policy applications require interpretable predictions. For example, a drug prescription guide that follows a simple 2-question Yes/No checklist can be encoded as a depth 2 decision tree (does the patient have a heart condition - etc.). This package implements the multi-action doubly robust approach of Zhou et al. (2018) in the case where we want to learn policies that belong to the class of depth _k_ decision trees.
+A package for learning simple rule-based policies, where the rule takes the form of a shallow decision tree. Applications include settings which require interpretable predictions, such as for example a medical treatment prescription. This package uses doubly robust reward estimates from [grf](https://github.com/grf-labs/grf) to find a shallow, but globally optimal decision tree.
 
 Some helpful links for getting started:
 
@@ -21,18 +21,14 @@ install.packages("policytree")
 
 To install the latest development version from source:
 
-```
-git clone https://github.com/grf-labs/policytree.git && cd policytree
-Rscript -e 'install.packages("r-package/policytree", repos = NULL, type = "source")'
-
-# or
+```R
 devtools::install_github("grf-labs/policytree", subdir = "r-package/policytree")
 ```
 
 Installing from source requires a C++ 11 compiler (on Windows Rtools is required as well) together with the R packages
 `Rcpp` and `BH`.
 
-### Multi-action policy learning
+### Multi-action policy learning example
 ```r
 library(policytree)
 n <- 250
@@ -75,8 +71,8 @@ head(predict(opt.tree, X[-train, ]))
 ```
 
 ### Details
-* `policy_tree()`: fits a depth k tree by exhaustive search (_Nxp_ features on _Nxd_ actions). The optimal tree maximizes the sum of rewards.
-* `double_robust_scores()`: generic function computing doubly robust reward estimates for a subset of _grf_ forest types.
+* `policy_tree()`: fits a depth k tree by exhaustive search (_Nxp_ features on _Nxd_ actions). The optimal tree maximizes the sum of rewards. `hybrid_policy_tree()` employs a mix between a optimal/greedy approach and can be used to fit deeper trees.
+* `double_robust_scores()`: computes doubly robust reward estimates for a subset of _grf_ forest types.
 
 ### Contributing
 
@@ -102,5 +98,5 @@ Erik Sverdrup, Ayush Kanodia, Zhengyuan Zhou, Susan Athey, and Stefan Wager.
 [<a href="https://joss.theoj.org/papers/10.21105/joss.02232">paper</a>]
 
 Zhengyuan Zhou, Susan Athey, and Stefan Wager.
-<b>Offline Multi-Action Policy Learning: Generalization and Optimization.</b> 2018.
+<b>Offline Multi-Action Policy Learning: Generalization and Optimization.</b> <i> Operations Research</i>, forthcoming.
 [<a href="https://arxiv.org/abs/1810.04778">arxiv</a>]
