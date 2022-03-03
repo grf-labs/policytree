@@ -9,8 +9,9 @@ Authors@R: c(
     person("Stefan", "Wager", role = "aut")
     )
 Description: Learn optimal policies via doubly robust empirical
- welfare maximization over trees. This package estimates tree-based policies from
- doubly robust reward estimates, where the trees are shallow but globally optimal.
+ welfare maximization over trees. Given doubly robust reward estimates, this package
+ finds a rule-based treatment prescription policy, where the policy takes the form of
+ a shallow decision tree that is globally (or close to) optimal.
 Depends:
     R (>= 3.5.0)
 License: GPL-3
