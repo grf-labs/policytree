@@ -6,7 +6,7 @@
 \alias{policytree-package}
 \title{policytree: Policy Learning via Doubly Robust Empirical Welfare Maximization over Trees}
 \description{
-A package for learning optimal policies via doubly robust empirical welfare maximization over trees. Many practical policy applications require interpretable predictions. For example, a drug prescription guide that follows a simple 2-question Yes/No checklist can be encoded as a depth 2 decision tree (does the patient have a heart condition - etc.). This package implements the multi-action doubly robust approach of Zhou et al. (2018) in the case where we want to learn policies that belong to the class of depth k decision trees.
+A package for learning simple rule-based policies, where the rule takes the form of a shallow decision tree. Applications include settings which require interpretable predictions, such as for example a medical treatment prescription. This package uses doubly robust reward estimates from \code{grf} to find a shallow, but globally optimal decision tree.
 
 Some helpful links for getting started:
 \itemize{

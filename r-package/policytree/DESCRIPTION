@@ -9,9 +9,8 @@ Authors@R: c(
     person("Stefan", "Wager", role = "aut")
     )
 Description: Learn optimal policies via doubly robust empirical
- welfare maximization over trees. This package implements the multi-action doubly
- robust approach of Zhou, Athey and Wager (2018) <arXiv:1810.04778> in the case where
- we want to learn policies that belong to the class of depth k decision trees.
+ welfare maximization over trees. This package estimates tree-based polies from
+ doubly robust reward estimates, where the trees are shallow but globally optimal.
 Depends:
     R (>= 3.5.0)
 License: GPL-3
