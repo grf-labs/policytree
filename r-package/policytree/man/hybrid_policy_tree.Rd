@@ -2,7 +2,7 @@
 % Please edit documentation in R/hybrid_policy_tree.R
 \name{hybrid_policy_tree}
 \alias{hybrid_policy_tree}
-\title{Hybrid tree search (experimental)}
+\title{Hybrid tree search}
 \usage{
 hybrid_policy_tree(
   X,

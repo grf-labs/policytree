@@ -1,4 +1,4 @@
-#' Hybrid tree search (experimental)
+#' Hybrid tree search
 #'
 #' Finds a depth k tree by looking ahead l steps.
 #'
