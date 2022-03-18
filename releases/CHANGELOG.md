@@ -4,6 +4,16 @@ All notable changes to policytree will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2022-03-18
+
+### Fixed
+- Raise error if causal forest or instrumental forest with non-binary treatment is passed to `double_robust_scores`. [#125](https://github.com/grf-labs/policytree/pull/125)
+
+### Added
+- Add `hybrid_policy_tree` for building deeper trees by using `policy_tree` to look ahead `search.depth` (typically equal to 2) splits. [#118](https://github.com/grf-labs/policytree/pull/118)
+- Add some prescriptive warning messages to `policy_tree` in case the input type (`Gamma, X`) is beyond what is computationally feasible with exact tree search. [#116](https://github.com/grf-labs/policytree/pull/116), [#129](https://github.com/grf-labs/policytree/pull/129)
+- Add `double_robust_scores` for GRF's `causal_survival_forest`. [#126](https://github.com/grf-labs/policytree/pull/126)
+
 ## [1.1.1] - 2021-07-07
 
 ### Fixed
