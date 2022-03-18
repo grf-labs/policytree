@@ -4,7 +4,7 @@ All notable changes to policytree will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [1.1.1] - 2022-03-18
+## [1.2.0] - 2022-03-18
 
 ### Fixed
 - Raise error if causal forest or instrumental forest with non-binary treatment is passed to `double_robust_scores`. [#125](https://github.com/grf-labs/policytree/pull/125)
