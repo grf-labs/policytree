@@ -79,7 +79,8 @@
 #' # suggestions on using cross-validation to assess the accuracy of the learned policy.
 #' ate <- grf::average_treatment_effect(c.forest)
 #' cost.offset <- ate[["estimate"]]
-#' tree.cost <- policy_tree(X, dr.scores - cost.offset, 2)
+#' dr.scores[, "treated"] <- dr.scores[, "treated"] - cost.offset
+#' tree.cost <- policy_tree(X, dr.scores, 2)
 #'
 #' # If there are too many covariates to make tree search computationally feasible,
 #' # one can consider for example only the top 5 features according to GRF's variable importance.
@@ -231,9 +232,9 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
 #' # with an estimate of the average treatment effect.
 #' # See section 5.1 in Athey and Wager (2021) for more details, including
 #' # suggestions on using cross-validation to assess the accuracy of the learned policy.
-#' ate <- grf::average_treatment_effect(c.forest)
 #' cost.offset <- ate[["estimate"]]
-#' tree.cost <- policy_tree(X, dr.scores - cost.offset, 2)
+#' dr.scores[, "treated"] <- dr.scores[, "treated"] - cost.offset
+#' tree.cost <- policy_tree(X, dr.scores, 2)
 #'
 #' # If there are too many covariates to make tree search computationally feasible,
 #' # one can consider for example only the top 5 features according to GRF's variable importance.
