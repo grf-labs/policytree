@@ -93,7 +93,8 @@ print(values, digits = 2)
 # suggestions on using cross-validation to assess the accuracy of the learned policy.
 ate <- grf::average_treatment_effect(c.forest)
 cost.offset <- ate[["estimate"]]
-tree.cost <- policy_tree(X, dr.scores - cost.offset, 2)
+dr.scores[, "treated"] <- dr.scores[, "treated"] - cost.offset
+tree.cost <- policy_tree(X, dr.scores, 2)
 
 # If there are too many covariates to make tree search computationally feasible,
 # one can consider for example only the top 5 features according to GRF's variable importance.
