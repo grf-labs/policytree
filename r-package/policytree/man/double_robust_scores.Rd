@@ -45,15 +45,15 @@ This is the matrix used for CAIPWL (Cross-fitted Augmented Inverse Propensity We
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{causal_forest}: Scores \eqn{(\Gamma_0, \Gamma_1)}
+\item \code{double_robust_scores(causal_forest)}: Scores \eqn{(\Gamma_0, \Gamma_1)}
 
-\item \code{causal_survival_forest}: Scores \eqn{(\Gamma_0, \Gamma_1)}
+\item \code{double_robust_scores(causal_survival_forest)}: Scores \eqn{(\Gamma_0, \Gamma_1)}
 
-\item \code{instrumental_forest}: Scores \eqn{(-\Gamma, \Gamma)}
+\item \code{double_robust_scores(instrumental_forest)}: Scores \eqn{(-\Gamma, \Gamma)}
 
-\item \code{multi_arm_causal_forest}: Matrix \eqn{\Gamma} of scores for each treatment \eqn{a}
+\item \code{double_robust_scores(multi_arm_causal_forest)}: Matrix \eqn{\Gamma} of scores for each treatment \eqn{a}
+
 }}
-
 \note{
 For instrumental_forest this method returns \eqn{(-\Gamma_i, \Gamma_i)} where \eqn{\Gamma_i}
 is the double robust estimator of the treatment effect as in eqn. (44) in Athey and Wager (2021).

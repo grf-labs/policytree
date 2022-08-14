@@ -37,15 +37,15 @@ A matrix of estimated mean rewards
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{causal_forest}: Mean rewards \eqn{\mu} for control/treated
+\item \code{conditional_means(causal_forest)}: Mean rewards \eqn{\mu} for control/treated
 
-\item \code{causal_survival_forest}: Mean rewards \eqn{\mu} for control/treated
+\item \code{conditional_means(causal_survival_forest)}: Mean rewards \eqn{\mu} for control/treated
 
-\item \code{instrumental_forest}: Mean rewards \eqn{\mu} for control/treated
+\item \code{conditional_means(instrumental_forest)}: Mean rewards \eqn{\mu} for control/treated
 
-\item \code{multi_arm_causal_forest}: Mean rewards \eqn{\mu} for each treatment \eqn{a}
+\item \code{conditional_means(multi_arm_causal_forest)}: Mean rewards \eqn{\mu} for each treatment \eqn{a}
+
 }}
-
 \examples{
 \donttest{
 # Compute conditional means for a multi-arm causal forest
