@@ -14,6 +14,7 @@
   You should have received a copy of the GNU General Public License
   along with policytree. If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------*/
+#include <cmath>
 #include <functional>
 #include <boost/container/flat_set.hpp>
 
@@ -97,6 +98,8 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
 double reward_function(const std::vector<double>& Gamma_sums, int reward_type) {
   if (reward_type == 1) {
     return Gamma_sums[0];
+  } else {
+    return -1;
   }
 }
 
