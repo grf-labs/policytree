@@ -1,14 +1,21 @@
-#' Fit a policy with exact tree search
+#' Fit a penalized tree-based policy
 #'
-#' Finds the optimal (maximizing the sum of rewards) depth k tree by exhaustive search. If the optimal
-#' action is the same in both the left and right leaf of a node, the node is pruned.
+#' Find a policy tree where the objective is penalized by some matrix Gamma2.
 #'
-#' Exact tree search is intended as a way to find shallow (i.e. depth 2 or 3) globally optimal
-#' tree-based polices on datasets of "moderate" size.
+#' Let \eqn{\Gamma_{1,i}, \Gamma_{2,i} \in R^d} and \eqn{\pi(X) \in \{0, 1\}^d}.
+#' For penalty.type = "ratio", this function solves
+#'
+#' \eqn{\pi^* = argmax_{\pi \in \Pi} \frac{ \sum_{i=1}^{n} \pi(X_i) \cdot  \Gamma_{1,i} }{ max(1, \sqrt{\sum_{i=1}^{n} \pi(X_i) \cdot  \Gamma_{2,i}}) }.}
+#'
+#' For penalty.type = "difference", this function solves
+#'
+#' \eqn{\pi^* = argmax_{\pi \in \Pi} \sum_{i=1}^{n} \pi(X_i) \cdot  \Gamma_{1,i}  +\sqrt{\sum_{i=1}^{n} \pi(X_i) \cdot  \Gamma_{2,i}}.}
+#'
+#' When \eqn{\Gamma_2} is zero, this function is identical to `policy_tree`.
 #'
 #' @param X The covariates used. Dimension \eqn{N*p} where \eqn{p} is the number of features.
 #' @param Gamma1 The rewards for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.
-#' @param Gamma2 The rewards for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.
+#' @param Gamma2 The corresponding penalities for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.
 #' @param depth The depth of the fitted tree. Default is 2.
 #' @param split.step An optional approximation parameter, the number of possible splits
 #'  to consider when performing tree search. split.step = 1 (default) considers every possible split, split.step = 10
@@ -17,31 +24,25 @@
 #'  problem specific manner allows for finer-grained control of the accuracy/runtime tradeoff and may in some cases
 #'  be the preferred approach.
 #' @param min.node.size An integer indicating the smallest terminal node size permitted. Default is 1.
-#' @param penalty.type todo
+#' @param penalty.type The type of penalty. Default is "ratio".
 #' @param verbose Give verbose output. Default is TRUE.
 #'
 #' @return A policy_tree object.
 #'
 #' @examples
 #' \donttest{
-#' # Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
-#' n <- 10000
-#' p <- 10
-#' # Discretizing continuous covariates decreases runtime.
+#' # Fit a penalized policy tree.
+#' n <- 500
+#' p <- 5
+#' d <- 3
 #' X <- round(matrix(rnorm(n * p), n, p), 2)
-#' colnames(X) <- make.names(1:p)
-#' W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
-#' tau <- 1 / (1 + exp((X[, 1] + X[, 2]) / 2)) - 0.5
-#' Y <- X[, 3] + W * tau + rnorm(n)
-#' c.forest <- grf::causal_forest(X, Y, W)
-#' dr.scores <- double_robust_scores(c.forest)
+#' Y <- matrix(rnorm(n * d), n, d)
+#' Y.ones <- matrix(1, n, d)
 #'
-#' tree <- policy_tree(X, dr.scores, 2)
-#' tree
+#' ppt <- penalized_policy_tree(X, Y, Y.ones, depth = 2)
 #'
 #' # Predict treatment assignment.
-#' predicted <- predict(tree, X)
-#'
+#' pi <- predict(ppt, X)
 #' }
 #' @export
 penalized_policy_tree <- function(X,

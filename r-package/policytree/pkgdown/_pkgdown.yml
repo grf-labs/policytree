@@ -17,6 +17,7 @@ reference:
     contents:
       - policy_tree
       - hybrid_policy_tree
+      - penalized_policy_tree
       - predict.policy_tree
       - print.policy_tree
       - plot.policy_tree
