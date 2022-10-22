@@ -11,8 +11,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // tree_search_rcpp
-Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X, const Rcpp::NumericMatrix& Y, int depth, int split_step, int min_node_size);
-RcppExport SEXP _policytree_tree_search_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP depthSEXP, SEXP split_stepSEXP, SEXP min_node_sizeSEXP) {
+Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X, const Rcpp::NumericMatrix& Y, int depth, int split_step, int min_node_size, int reward_type, size_t reward_dim);
+RcppExport SEXP _policytree_tree_search_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP depthSEXP, SEXP split_stepSEXP, SEXP min_node_sizeSEXP, SEXP reward_typeSEXP, SEXP reward_dimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,7 +21,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type depth(depthSEXP);
     Rcpp::traits::input_parameter< int >::type split_step(split_stepSEXP);
     Rcpp::traits::input_parameter< int >::type min_node_size(min_node_sizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(tree_search_rcpp(X, Y, depth, split_step, min_node_size));
+    Rcpp::traits::input_parameter< int >::type reward_type(reward_typeSEXP);
+    Rcpp::traits::input_parameter< size_t >::type reward_dim(reward_dimSEXP);
+    rcpp_result_gen = Rcpp::wrap(tree_search_rcpp(X, Y, depth, split_step, min_node_size, reward_type, reward_dim));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -39,7 +41,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_policytree_tree_search_rcpp", (DL_FUNC) &_policytree_tree_search_rcpp, 5},
+    {"_policytree_tree_search_rcpp", (DL_FUNC) &_policytree_tree_search_rcpp, 7},
     {"_policytree_tree_search_rcpp_predict", (DL_FUNC) &_policytree_tree_search_rcpp_predict, 2},
     {NULL, NULL, 0}
 };

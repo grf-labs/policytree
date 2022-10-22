@@ -31,17 +31,19 @@ public:
        const double* data_y,
        size_t num_rows,
        size_t num_cols_x,
-       size_t num_cols_y) :
+       size_t num_cols_y,
+       size_t num_dims_y) :
   num_rows(num_rows), data_x(data_x), data_y(data_y),
-  num_cols_x(num_cols_x), num_cols_y(num_cols_y) {
+  num_cols_x(num_cols_x), num_cols_y(num_cols_y), num_dims_y(num_dims_y) {
   }
 
   double get_x(size_t row, size_t col) const {
     return data_x[col * num_rows + row];
   }
 
-  double get_y(size_t row, size_t col) const {
-    return data_y[col * num_rows + row];
+  double get_y(size_t row, size_t col, size_t dim) const {
+    // return data_y[col * num_rows + dim * num_rows * num_cols_y +  row];
+    return data_y[num_rows * (col + dim * num_cols_y) + row];
   }
 
   size_t num_features() const {
@@ -52,6 +54,10 @@ public:
     return num_cols_y;
   }
 
+  size_t reward_dim() const {
+    return num_dims_y;
+  }
+
   size_t num_rows;
 
 private:
@@ -59,6 +65,7 @@ private:
   const double* data_y;
   size_t num_cols_x;
   size_t num_cols_y;
+  size_t num_dims_y;
 };
 
 
@@ -74,8 +81,8 @@ public:
   }
 
   // j is the column index of the reward
-  double get_reward(size_t j) const {
-    return data->get_y(sample, j);
+  double get_reward(size_t j, size_t g) const {
+    return data->get_y(sample, j, g);
   }
 
   size_t sample;
@@ -107,6 +114,6 @@ struct Node {
 };
 
 
-std::unique_ptr<Node> tree_search(int, int, size_t, const Data*);
+std::unique_ptr<Node> tree_search(int, int, size_t, int, const Data*);
 
 #endif // TREE_SEARCH_H
