@@ -52,7 +52,7 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
                             size_t reward_dim) {
   size_t num_rows = X.rows();
   size_t num_cols_x = X.cols();
-  size_t num_cols_y = Y.cols();
+  size_t num_cols_y = Y.cols() / reward_dim;
   const Data* data = new Data(X.begin(), Y.begin(), num_rows, num_cols_x, num_cols_y, reward_dim);
 
   std::unique_ptr<Node> root = tree_search(depth, split_step, min_node_size, reward_type, data);

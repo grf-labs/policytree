@@ -42,7 +42,6 @@ public:
   }
 
   double get_y(size_t row, size_t col, size_t dim) const {
-    // return data_y[col * num_rows + dim * num_rows * num_cols_y +  row];
     return data_y[num_rows * (col + dim * num_cols_y) + row];
   }
 

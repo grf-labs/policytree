@@ -94,10 +94,14 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
   return res;
 }
 
-
-double reward_function(const std::vector<double>& Gamma_sums, int reward_type) {
+double reward_function(const std::vector<double>& Gamma_sums,
+                       int reward_type) {
   if (reward_type == 1) {
     return Gamma_sums[0];
+  } else if (reward_type == 2) {
+    return Gamma_sums[0] / std::max(1.0, std::sqrt(Gamma_sums[1]));
+  } else if (reward_type == 3) {
+    return Gamma_sums[0] + std::sqrt(Gamma_sums[1]); // < 0 TODO
   } else {
     return -1;
   }
@@ -155,12 +159,12 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
 
   for (size_t p = 0; p < num_features; p++) {
     // Fill the reward matrix (or matrices) with cumulative sums
-    for (size_t g = 0; g < reward_dim; g++) {
-      for (size_t d = 0; d < num_rewards; d++) {
+    for (size_t d = 0; d < num_rewards; d++) {
+      for (size_t g = 0; g < reward_dim; g++) {
         size_t n = 0;
         for (const auto &point : sorted_sets[p]) {
           ++n;
-          sum_array[g][d][n] = sum_array[g][d][n - 1] + point.get_reward(d, 0);
+          sum_array[g][d][n] = sum_array[g][d][n - 1] + point.get_reward(d, g);
         }
       }
     }
