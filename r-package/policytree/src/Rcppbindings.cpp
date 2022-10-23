@@ -28,6 +28,10 @@
   * @param split_step The number of possible splits to consider when performing tree search.
   * (an integer greater than or equal to one.)
   * @param min_node_size An integer indicating the smallest terminal node size permitted.
+  * @param reward_type Specifies the type of objective to maximize.
+  * @param reward_dim For reward_type=1 we are just maximizing the sum of rewards which
+  * involves a single reward matrix (reward_dim=1). If we are including a variance penalty
+  * in the objective, we need two "reward" matrices, and reward_dim=2.
   * @return The best tree stored in an adjacency list (same format as `grf`).
   *
   * The returned list's first entry:

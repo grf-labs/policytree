@@ -79,7 +79,7 @@ public:
     return data->get_x(sample, i);
   }
 
-  // j is the column index of the reward
+  // j is the column index of the reward, g is the reward matrix
   double get_reward(size_t j, size_t g) const {
     return data->get_y(sample, j, g);
   }
