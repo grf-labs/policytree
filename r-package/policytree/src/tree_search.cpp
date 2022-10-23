@@ -96,13 +96,14 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
 
 
 double reward_function(const std::vector<double>& Gamma_sums,
-                       int reward_type) {
+                       int reward_type,
+                       double lambda) {
   if (reward_type == 1) {
     return Gamma_sums[0];
   } else if (reward_type == 2) {
     return Gamma_sums[0] / std::max(1.0, std::sqrt(Gamma_sums[1]));
   } else if (reward_type == 3) {
-    return Gamma_sums[0] + std::sqrt(Gamma_sums[1]); // < 0 TODO
+    return Gamma_sums[0] + lambda * std::sqrt(Gamma_sums[1]); // < 0 TODO
   } else {
     return -1;
   }
@@ -112,7 +113,8 @@ double reward_function(const std::vector<double>& Gamma_sums,
 // Find the best action in a leaf node (O(nd))
 std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_sets,
                                           const Data* data,
-                                          int reward_type) {
+                                          int reward_type,
+                                          double lambda) {
   size_t num_rewards = data->num_rewards();
   size_t reward_dim = data->reward_dim();
   size_t best_action = 0;
@@ -125,7 +127,7 @@ std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_se
         reward_sums[g] += point.get_reward(d, g);
       }
     }
-    double this_reward = reward_function(reward_sums, reward_type);
+    double this_reward = reward_function(reward_sums, reward_type, lambda);
     if (this_reward > best_reward) {
       best_reward = this_reward;
       best_action = d;
@@ -141,6 +143,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
                                          const Data* data,
                                          std::vector<std::vector<std::vector<double>>>& sum_array,
                                          int reward_type,
+                                         double lambda,
                                          int split_step,
                                          size_t min_node_size) {
   size_t num_points = sorted_sets[0].size();
@@ -203,8 +206,8 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
           left_sum[g] = sum_array[g][d][n];
           right_sum[g] = sum_array[g][d][num_points] - left_sum[g];
         }
-        double left_reward = reward_function(left_sum, reward_type);
-        double right_reward = reward_function(right_sum, reward_type);
+        double left_reward = reward_function(left_sum, reward_type, lambda);
+        double right_reward = reward_function(right_sum, reward_type, lambda);
         if (left_best < left_reward) {
           left_best = left_reward;
           left_action = d;
@@ -238,7 +241,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       return ans;
     }
   } else {
-    return level_zero_learning(sorted_sets, data, reward_type);
+    return level_zero_learning(sorted_sets, data, reward_type, lambda);
   }
 }
 
@@ -285,6 +288,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
  * @param sum_array: A global zero initialized (reward_dim) x (num_rewards) x (num_points + 1)
  *  array which is used to calculate cumulative rewards.
  * @param reward_type: The type of objective to maximize.
+ * @param reward_type: An optional penalty parameter (defaults to 1).
  * @return The best tree
  *
  * Details:
@@ -311,13 +315,14 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       size_t min_node_size,
                                       const Data* data,
                                       std::vector<std::vector<std::vector<double>>>& sum_array,
-                                      int reward_type) {
+                                      int reward_type,
+                                      double lambda) {
   if (level == 0) {
     // this base case will only be hit if `find_best_split` is called directly with level = 0
-    return level_zero_learning(sorted_sets, data, reward_type);
+    return level_zero_learning(sorted_sets, data, reward_type, lambda);
   } else if (level == 1) {
     // if at the parent of a leaf node we can compute the optimal action for both leaves
-    return level_one_learning(sorted_sets, data, sum_array, reward_type, split_step, min_node_size);
+    return level_one_learning(sorted_sets, data, sum_array, reward_type, lambda, split_step, min_node_size);
   // else continue the recursion
   } else {
     size_t num_points = sorted_sets[0].size();
@@ -360,8 +365,8 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         } else {
           continue;
         }
-        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size, data, sum_array, reward_type);
-        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size, data, sum_array, reward_type);
+        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size, data, sum_array, reward_type, lambda);
+        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size, data, sum_array, reward_type, lambda);
         if ((best_left_child == nullptr) ||
             (left_child->reward + right_child->reward >
               best_left_child->reward + best_right_child->reward)) {
@@ -373,7 +378,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
       }
     }
     if (best_left_child == nullptr) {
-      return level_zero_learning(sorted_sets, data, reward_type);
+      return level_zero_learning(sorted_sets, data, reward_type, lambda);
     } else {
           // "pruning", the recursive case (same action in both leaves):
       if ((best_left_child->is_leaf() && best_right_child->is_leaf()) &&
@@ -398,6 +403,7 @@ std::unique_ptr<Node> tree_search(int depth,
                                   int split_step,
                                   size_t min_node_size,
                                   int reward_type,
+                                  double lambda,
                                   const Data* data) {
   size_t num_rewards = data->num_rewards();
   size_t reward_dim = data->reward_dim();
@@ -414,5 +420,5 @@ std::unique_ptr<Node> tree_search(int depth,
     }
   }
 
-  return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array, reward_type);
+  return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array, reward_type, lambda);
 }

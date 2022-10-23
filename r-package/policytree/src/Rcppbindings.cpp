@@ -32,6 +32,7 @@
   * @param reward_dim For reward_type=1 we are just maximizing the sum of rewards which
   * involves a single reward matrix (reward_dim=1). If we are including a variance penalty
   * in the objective, we need two "reward" matrices, and reward_dim=2.
+  * @param lambda An optional penalty parameter.
   * @return The best tree stored in an adjacency list (same format as `grf`).
   *
   * The returned list's first entry:
@@ -53,13 +54,14 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
                             int split_step,
                             int min_node_size,
                             int reward_type,
-                            size_t reward_dim) {
+                            size_t reward_dim,
+                            double lambda) {
   size_t num_rows = X.rows();
   size_t num_cols_x = X.cols();
   size_t num_cols_y = Y.cols() / reward_dim;
   const Data* data = new Data(X.begin(), Y.begin(), num_rows, num_cols_x, num_cols_y, reward_dim);
 
-  std::unique_ptr<Node> root = tree_search(depth, split_step, min_node_size, reward_type, data);
+  std::unique_ptr<Node> root = tree_search(depth, split_step, min_node_size, reward_type, lambda, data);
 
   // We store the tree as the same list data structure (`nodes`) as GRF for seamless integration with
   // the plot and print methods. We also store the tree as an array (`tree_array`) for faster lookups.
