@@ -94,6 +94,7 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
   return res;
 }
 
+
 double reward_function(const std::vector<double>& Gamma_sums,
                        int reward_type) {
   if (reward_type == 1) {
