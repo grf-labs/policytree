@@ -2,14 +2,14 @@
 #'
 #' Find a policy tree where the objective is penalized by some term \eqn{\Gamma_2}.
 #'
-#' Let \eqn{\Gamma_{1,i}, \Gamma_{2,i} \in \mathbb R^d} and \eqn{\pi(X) \in \{0, 1\}^d}.
+#' Let \eqn{\Gamma_{1,i}, \Gamma_{2,i} \in \mathbb R^d} and \eqn{\pi(X) \in \{1, ..., d\}}.
 #' For penalty.type = "ratio", this function solves
 #'
-#' \eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \frac{ \sum_{i=1}^{n} \pi(X_i) \cdot  \Gamma_{1,i} }{ max\left(1, \sqrt{\sum_{i=1}^{n} \pi(X_i) \cdot  \Gamma_{2,i}}\right) }\right]. }
+#' \eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \frac{ \sum_{i=1}^{n} \Gamma_{1,i}(\pi(X_i))}{ max\left(1, \sqrt{\sum_{i=1}^{n} \Gamma_{2,i}(\pi(X_i)}\right) }\right]. }
 #'
 #' For penalty.type = "difference", this function solves
 #'
-#' \eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \sum_{i=1}^{n} \pi(X_i) \cdot  \Gamma_{1,i}  +\sqrt{\sum_{i=1}^{n} \pi(X_i) \cdot  \Gamma_{2,i}} \right]. }
+#' \eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \sum_{i=1}^{n} \Gamma_{1,i}(\pi(X_i)) + \lambda \sqrt{\sum_{i=1}^{n} \Gamma_{2,i}(\pi(X_i))} \right]. }
 #'
 #' When \eqn{\Gamma_2} is zero, this function's objective is identical to `policy_tree`.
 #'
