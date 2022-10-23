@@ -352,7 +352,7 @@ test_that("min.node.size works as expected", {
 
   tree.min <- policy_tree(X, Y, depth = depth, min.node.size = smallest.leaf + 5)
   leaf.sizes.min <- summary(as.factor(predict(tree.min, X, type = "node.id")))
-  expect_true(all(leaf.sizes.min >= smallest.leaf + 5))
+  expect_true(smallest.leaf == n || all(leaf.sizes.min >= smallest.leaf + 5))
 
   # Discrete X
   X <- matrix(sample(1:5, n, TRUE), n, p)
@@ -361,5 +361,5 @@ test_that("min.node.size works as expected", {
 
   tree.min <- policy_tree(X, Y, depth = depth, min.node.size = smallest.leaf + 5)
   leaf.sizes.min <- summary(as.factor(predict(tree.min, X, type = "node.id")))
-  expect_true(all(leaf.sizes.min >= smallest.leaf + 5))
+  expect_true(smallest.leaf == n || all(leaf.sizes.min >= smallest.leaf + 5))
 })
