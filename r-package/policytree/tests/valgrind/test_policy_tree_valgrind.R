@@ -16,3 +16,6 @@ tree <- policy_tree(X, Y, depth = depth)
 pp <- predict(tree, X)
 tree.step <- policy_tree(X, Y, depth = depth, split.step = 2)
 pp.step <- predict(tree.step, X)
+
+tree.penalized <- penalized_policy_tree(X, Y, Y / 10, depth = 2)
+pp.penalized <- predict(tree.penalized, X)
