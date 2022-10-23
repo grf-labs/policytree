@@ -16,6 +16,8 @@
 #' @param X The covariates used. Dimension \eqn{N*p} where \eqn{p} is the number of features.
 #' @param Gamma1 The rewards for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.
 #' @param Gamma2 The corresponding penalities for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.
+#' @param penalty.type The type of penalty. Default is "ratio".
+#' @param lambda An optional penalty parameter. Default is 1.
 #' @param depth The depth of the fitted tree. Default is 2.
 #' @param split.step An optional approximation parameter, the number of possible splits
 #'  to consider when performing tree search. split.step = 1 (default) considers every possible split, split.step = 10
@@ -24,7 +26,6 @@
 #'  problem specific manner allows for finer-grained control of the accuracy/runtime tradeoff and may in some cases
 #'  be the preferred approach.
 #' @param min.node.size An integer indicating the smallest terminal node size permitted. Default is 1.
-#' @param penalty.type The type of penalty. Default is "ratio".
 #' @param verbose Give verbose output. Default is TRUE.
 #'
 #' @return A policy_tree object.
@@ -48,10 +49,11 @@
 penalized_policy_tree <- function(X,
                                   Gamma1,
                                   Gamma2,
+                                  penalty.type = c("ratio", "difference"),
+                                  lambda = 1,
                                   depth = 2,
                                   split.step = 1,
                                   min.node.size = 1,
-                                  penalty.type = c("ratio", "difference"),
                                   verbose = TRUE) {
   penalty.type <- match.arg(penalty.type)
   n.features <- ncol(X)

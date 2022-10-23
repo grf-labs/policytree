@@ -8,10 +8,11 @@ penalized_policy_tree(
   X,
   Gamma1,
   Gamma2,
+  penalty.type = c("ratio", "difference"),
+  lambda = 1,
   depth = 2,
   split.step = 1,
   min.node.size = 1,
-  penalty.type = c("ratio", "difference"),
   verbose = TRUE
 )
 }
@@ -21,6 +22,10 @@ penalized_policy_tree(
 \item{Gamma1}{The rewards for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.}
 
 \item{Gamma2}{The corresponding penalities for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.}
+
+\item{penalty.type}{The type of penalty. Default is "ratio".}
+
+\item{lambda}{An optional penalty parameter. Default is 1.}
 
 \item{depth}{The depth of the fitted tree. Default is 2.}
 
@@ -32,8 +37,6 @@ problem specific manner allows for finer-grained control of the accuracy/runtime
 be the preferred approach.}
 
 \item{min.node.size}{An integer indicating the smallest terminal node size permitted. Default is 1.}
-
-\item{penalty.type}{The type of penalty. Default is "ratio".}
 
 \item{verbose}{Give verbose output. Default is TRUE.}
 }
