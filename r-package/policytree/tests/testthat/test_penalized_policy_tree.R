@@ -11,16 +11,16 @@ test_that("penalized policy tree reward calculation works as expected", {
   ppt <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "ratio")
   expect_equal(ppt$nodes[[1]]$action, which.max(objective.ratio))
 
-  # difference objective
-  objective.diff <- colSums(Y1) +  sqrt(colSums(Y2))
-  ppt.diff <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "difference")
-  expect_equal(ppt.diff$nodes[[1]]$action, which.max(objective.diff))
+  # sum objective
+  objective.sum <- colSums(Y1) +  sqrt(colSums(Y2))
+  ppt.sum <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "sum")
+  expect_equal(ppt.sum$nodes[[1]]$action, which.max(objective.sum))
 
-  # penalized difference objective
+  # penalized sum objective
   lambda <- -100
-  objective.diffp <- colSums(Y1) + lambda * sqrt(colSums(Y2))
-  ppt.diffp <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "difference", lambda = lambda)
-  expect_equal(ppt.diffp$nodes[[1]]$action, which.max(objective.diffp))
+  objective.sump <- colSums(Y1) + lambda * sqrt(colSums(Y2))
+  ppt.sump <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "sum", lambda = lambda)
+  expect_equal(ppt.sump$nodes[[1]]$action, which.max(objective.sump))
 })
 
 
@@ -37,11 +37,11 @@ test_that("depth 0 penalized policy tree works as expected", {
 
   # zero penalties: same
   ppt.ratio <- penalized_policy_tree(X, Y1, Y2 * 0, depth = depth, penalty.type = "ratio")
-  ppt.diff <- penalized_policy_tree(X, Y1, Y2 * 0, depth = depth, penalty.type = "difference")
-  ppt.diff.lam <- penalized_policy_tree(X, Y1, Y2, depth = depth, penalty.type = "difference", lambda = 0)
+  ppt.sum <- penalized_policy_tree(X, Y1, Y2 * 0, depth = depth, penalty.type = "sum")
+  ppt.sum.lam <- penalized_policy_tree(X, Y1, Y2, depth = depth, penalty.type = "sum", lambda = 0)
   expect_equal(predict(pt, X), predict(ppt.ratio, X))
-  expect_equal(predict(pt, X), predict(ppt.diff, X))
-  expect_equal(predict(pt, X), predict(ppt.diff.lam, X))
+  expect_equal(predict(pt, X), predict(ppt.sum, X))
+  expect_equal(predict(pt, X), predict(ppt.sum.lam, X))
 
   # invariances
   ppt.ratio <- penalized_policy_tree(X, Y1, Y.ones, depth = depth, penalty.type = "ratio")
@@ -63,11 +63,11 @@ test_that("depth 2 penalized policy tree works as expected", {
 
   # zero penalties: same
   ppt.ratio <- penalized_policy_tree(X, Y1, Y2 * 0, depth = depth, penalty.type = "ratio")
-  ppt.diff <- penalized_policy_tree(X, Y1, Y2 * 0, depth = depth, penalty.type = "difference")
-  ppt.diff.lam <- penalized_policy_tree(X, Y1, Y2, depth = depth, penalty.type = "difference", lambda = 0)
+  ppt.sum <- penalized_policy_tree(X, Y1, Y2 * 0, depth = depth, penalty.type = "sum")
+  ppt.sum.lam <- penalized_policy_tree(X, Y1, Y2, depth = depth, penalty.type = "sum", lambda = 0)
   expect_equal(predict(pt, X), predict(ppt.ratio, X))
-  expect_equal(predict(pt, X), predict(ppt.diff, X))
-  expect_equal(predict(pt, X), predict(ppt.diff.lam, X))
+  expect_equal(predict(pt, X), predict(ppt.sum, X))
+  expect_equal(predict(pt, X), predict(ppt.sum.lam, X))
 
   # invariances
   ppt.ratio <- penalized_policy_tree(X, Y1, Y.ones, depth = depth, penalty.type = "ratio")
