@@ -12,7 +12,7 @@ test_that("penalized policy tree reward calculation works as expected", {
   expect_equal(ppt$nodes[[1]]$action, which.max(objective.ratio))
 
   # sum objective
-  objective.sum <- colSums(Y1) +  sqrt(colSums(Y2))
+  objective.sum <- colSums(Y1) + sqrt(colSums(Y2))
   ppt.sum <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "sum")
   expect_equal(ppt.sum$nodes[[1]]$action, which.max(objective.sum))
 
