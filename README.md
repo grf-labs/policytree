@@ -71,7 +71,13 @@ head(predict(opt.tree, X[-train, ]))
 ```
 
 ### Details
-* `policy_tree()`: fits a depth k tree by exhaustive search (_Nxp_ features on _Nxd_ actions). The optimal tree maximizes the sum of rewards. `hybrid_policy_tree()` employs a mix between a optimal/greedy approach and can be used to fit deeper trees.
+* `policy_tree()`: fits a depth _k_ tree by exhaustive search (_Nxp_ features on _Nxd_ actions). The optimal tree maximizes the sum of rewards: let $\Gamma_i \in \mathbb R^d$ be a vector of unit-specific rewards for each action 1 to $d$ and $\pi(X_i) \in \\{1, ..., d\\}$ a mapping from covariates $X_i$ to action. `policy_tree` solves the following: 
+  
+  $$
+  \pi^* = argmax_{\pi \in \Pi} \left[ \sum_{i=1}^{n} \Gamma_i(\pi(X_i)) \right],
+  $$
+  
+  where $\Pi$ is the class of depth-_k_ decision trees. (`hybrid_policy_tree()` employs a mix between a optimal/greedy approach and can be used to fit deeper trees).
 * `double_robust_scores()`: computes doubly robust reward estimates for a subset of _grf_ forest types.
 
 ### Contributing
