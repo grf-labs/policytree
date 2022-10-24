@@ -8,7 +8,7 @@ penalized_policy_tree(
   X,
   Gamma1,
   Gamma2,
-  penalty.type = c("ratio", "difference"),
+  penalty.type = c("ratio", "sum"),
   lambda = 1,
   depth = 2,
   split.step = 1,
@@ -44,15 +44,15 @@ be the preferred approach.}
 A policy_tree object.
 }
 \description{
-Find a policy tree where the objective is penalized by some term \eqn{\Gamma_2}.
+Find a policy tree where the objective is penalized by some (positive) term \eqn{\Gamma_2}.
 }
 \details{
-Let \eqn{\Gamma_{1,i}, \Gamma_{2,i} \in \mathbb R^d} and \eqn{\pi(X) \in \{1, ..., d\}}.
+Let \eqn{\Gamma_{1,i}, \in \mathbb R^d, \Gamma_{2,i} \in \mathbb R^d_+} and \eqn{\pi(X) \in \{1, ..., d\}}.
 For penalty.type = "ratio", this function solves
 
 \eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \frac{ \sum_{i=1}^{n} \Gamma_{1,i}(\pi(X_i))}{ max\left(1, \sqrt{\sum_{i=1}^{n} \Gamma_{2,i}(\pi(X_i)}\right) }\right]. }
 
-For penalty.type = "difference", this function solves
+For penalty.type = "sum", this function solves
 
 \eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \sum_{i=1}^{n} \Gamma_{1,i}(\pi(X_i)) + \lambda \sqrt{\sum_{i=1}^{n} \Gamma_{2,i}(\pi(X_i))} \right]. }
 
