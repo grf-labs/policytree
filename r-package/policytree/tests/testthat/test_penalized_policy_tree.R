@@ -6,16 +6,21 @@ test_that("penalized policy tree reward calculation works as expected", {
   Y1 <- matrix(rnorm(n * d), n, d)
   Y2 <- matrix(10*runif(n * d), n, d)
 
-  numerator <- colMeans(Y1)
-  denominator <- pmax(1, sqrt(colMeans(Y2)))
-  denominator.diff <- sqrt(colMeans(Y2))
-
+  # ratio objective
+  objective.ratio <- colMeans(Y1) / pmax(1, sqrt(colMeans(Y2)))
   ppt <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "ratio")
-  expect_equal(ppt$nodes[[1]]$action, which.max(numerator / denominator))
+  expect_equal(ppt$nodes[[1]]$action, which.max(objective.ratio))
 
-  # no... TODO
-  # ppt.diff <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "difference")
-  # expect_equal(ppt.diff$nodes[[1]]$action, which.max(numerator + denominator.diff))
+  # difference objective
+  objective.diff <- colSums(Y1) +  sqrt(colSums(Y2))
+  ppt.diff <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "difference")
+  expect_equal(ppt.diff$nodes[[1]]$action, which.max(objective.diff))
+
+  # penalized difference objective
+  lambda <- -100
+  objective.diffp <- colSums(Y1) + lambda * sqrt(colSums(Y2))
+  ppt.diffp <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "difference", lambda = lambda)
+  expect_equal(ppt.diffp$nodes[[1]]$action, which.max(objective.diffp))
 })
 
 
@@ -33,7 +38,7 @@ test_that("depth 0 penalized policy tree works as expected", {
   # zero penalties: same
   ppt.ratio <- penalized_policy_tree(X, Y1, Y2 * 0, depth = depth, penalty.type = "ratio")
   ppt.diff <- penalized_policy_tree(X, Y1, Y2 * 0, depth = depth, penalty.type = "difference")
-  ppt.diff.lam <- penalized_policy_tree(X, Y1, Y2, depth = depth, penalty.type = "difference")
+  ppt.diff.lam <- penalized_policy_tree(X, Y1, Y2, depth = depth, penalty.type = "difference", lambda = 0)
   expect_equal(predict(pt, X), predict(ppt.ratio, X))
   expect_equal(predict(pt, X), predict(ppt.diff, X))
   expect_equal(predict(pt, X), predict(ppt.diff.lam, X))
