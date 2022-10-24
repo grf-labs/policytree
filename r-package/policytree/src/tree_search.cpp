@@ -103,7 +103,7 @@ double reward_function(const std::vector<double>& Gamma_sums,
   } else if (reward_type == 2) {
     return Gamma_sums[0] / std::max(1.0, std::sqrt(Gamma_sums[1]));
   } else if (reward_type == 3) {
-    return Gamma_sums[0] + lambda * std::sqrt(Gamma_sums[1]); // < 0 TODO
+    return Gamma_sums[0] + lambda * std::sqrt(Gamma_sums[1]);
   } else {
     return -1;
   }

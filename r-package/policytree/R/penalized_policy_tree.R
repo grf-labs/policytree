@@ -1,6 +1,6 @@
 #' Fit a penalized tree-based policy
 #'
-#' Find a policy tree where the objective is penalized by some term \eqn{\Gamma_2}.
+#' Find a policy tree where the objective is penalized by some (positive) term \eqn{\Gamma_2}.
 #'
 #' Let \eqn{\Gamma_{1,i}, \Gamma_{2,i} \in \mathbb R^d} and \eqn{\pi(X) \in \{1, ..., d\}}.
 #' For penalty.type = "ratio", this function solves
@@ -88,6 +88,9 @@ penalized_policy_tree <- function(X,
   }
   if (as.integer(min.node.size) != min.node.size || min.node.size < 1) {
     stop("min.node.size should be an integer greater than or equal to 1.")
+  }
+  if (any(Gamma2 < 0)) {
+    stop("Gamma2 must be non-negative.")
   }
 
   if (verbose) {
