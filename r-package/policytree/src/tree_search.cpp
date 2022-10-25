@@ -477,10 +477,11 @@ std::unique_ptr<Node> tree_search(int depth,
     // + 1 because this is a cumulative sum of rewards, entry 0 will be zero.
     v.resize(num_points + 1, 0.0);
   }
-  sum_array2.resize(num_rewards);
-  for (auto& v : sum_array2) {
-    // + 1 because this is a cumulative sum of rewards, entry 0 will be zero.
-    v.resize(num_points + 1, 0.0);
+  if (reward_type > 1) {
+    sum_array2.resize(num_rewards);
+    for (auto& v : sum_array2) {
+      v.resize(num_points + 1, 0.0);
+    }
   }
 
   if (reward_type == 1) {
