@@ -108,7 +108,7 @@ struct SumPenalizedReward {
 };
 
 template<typename T>
-double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, T& reward_type) {
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, const T& reward_type) {
   double reward = 0;
   for (const auto& point : sorted_sets[0]) {
     reward += point.get_reward(d, 0);
@@ -117,7 +117,7 @@ double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_
 }
 
 template <>
-double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, RatioPenalizedReward& reward_type) {
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, const RatioPenalizedReward& reward_type) {
   double sum1 = 0;
   double sum2 = 0;
   for (const auto& point : sorted_sets[0]) {
@@ -128,7 +128,7 @@ double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_
 }
 
 template <>
-double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, SumPenalizedReward& reward_type) {
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, const SumPenalizedReward& reward_type) {
   double sum1 = 0;
   double sum2 = 0;
   for (const auto& point : sorted_sets[0]) {
@@ -139,13 +139,13 @@ double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_
 }
 
 template<typename T>
-void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, T& reward_type) {
+void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, const T& reward_type) {
   reward1 = sum_array1[d][n];
   reward2 = sum_array1[d][N] - reward1;
 }
 
 template <>
-void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, RatioPenalizedReward& reward_type) {
+void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, const RatioPenalizedReward& reward_type) {
   double left_sum1 = sum_array1[d][n];
   double right_sum1 = sum_array1[d][N] - left_sum1;
   double left_sum2 = sum_array2[d][n];
@@ -156,7 +156,7 @@ void compute_reward(double& reward1, double& reward2, const std::vector<std::vec
 }
 
 template <>
-void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, SumPenalizedReward& reward_type) {
+void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, const SumPenalizedReward& reward_type) {
   double left_sum1 = sum_array1[d][n];
   double right_sum1 = sum_array1[d][N] - left_sum1;
   double left_sum2 = sum_array2[d][n];
@@ -168,18 +168,18 @@ void compute_reward(double& reward1, double& reward2, const std::vector<std::vec
 
 
 template<typename T>
-void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, T& reward_type) {
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, const T& reward_type) {
   sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
 }
 
 template <>
-void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, RatioPenalizedReward& reward_type) {
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, const RatioPenalizedReward& reward_type) {
   sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
   sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
 }
 
 template <>
-void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, SumPenalizedReward& reward_type) {
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, const SumPenalizedReward& reward_type) {
   sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
   sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
 }
@@ -189,7 +189,7 @@ void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<s
 template<typename T>
 std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_sets,
                                           const Data* data,
-                                          T& reward_type) {
+                                          const T& reward_type) {
   size_t num_rewards = data->num_rewards();
   size_t best_action = 0;
   double best_reward = -INF;
@@ -214,7 +214,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
                                          std::vector<std::vector<double>>& sum_array2,
                                          int split_step,
                                          size_t min_node_size,
-                                         T& reward_type) {
+                                         const T& reward_type) {
   size_t num_points = sorted_sets[0].size();
   size_t num_rewards = data->num_rewards();
   size_t num_features = data->num_features();
@@ -377,7 +377,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       const Data* data,
                                       std::vector<std::vector<double>>& sum_array1,
                                       std::vector<std::vector<double>>& sum_array2,
-                                      T& reward_type) {
+                                      const T& reward_type) {
   if (level == 0) {
     // this base case will only be hit if `find_best_split` is called directly with level = 0
     return level_zero_learning(sorted_sets, data, reward_type);
