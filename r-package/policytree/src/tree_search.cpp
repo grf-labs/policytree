@@ -96,62 +96,122 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
 
 
 // Find the best action in a leaf node (O(nd))
+template<typename T>
 std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_sets,
                                           const Data* data,
-                                          int reward_type,
-                                          double lambda) {
+                                          double lambda,
+                                          T& RewardType) {
   size_t num_rewards = data->num_rewards();
   size_t best_action = 0;
   double best_reward = -INF;
 
-  if (reward_type == 1) {
-    for (size_t d = 0; d < num_rewards; d++) {
-      double reward = 0;
-      for (const auto& point : sorted_sets[0]) {
-        reward += point.get_reward(d, 0);
-      }
-      if (reward > best_reward) {
-        best_reward = reward;
-        best_action = d;
-      }
-    }
-  } else {
-    for (size_t d = 0; d < num_rewards; d++) {
-      double reward = 0;
-      double sum2 = 0;
-      for (const auto& point : sorted_sets[0]) {
-        reward += point.get_reward(d, 0);
-        sum2 += point.get_reward(d, 1);
-      }
-      if (reward_type == 2) {
-        reward /= std::max(lambda, std::sqrt(sum2));
-      } else {
-        reward -= lambda * std::sqrt(sum2);
-      }
-      if (reward > best_reward) {
-        best_reward = reward;
-        best_action = d;
-      }
+  for (size_t d = 0; d < num_rewards; d++) {
+    double reward = compute_level_zero_reward(sorted_sets, d, lambda, RewardType);
+    if (reward > best_reward) {
+      best_reward = reward;
+      best_action = d;
     }
   }
 
   return std::unique_ptr<Node> (new Node(0, 0.0, best_reward, best_action));
 }
 
+class UnpenalizedReward {};
+class RatioPenalizedReward {};
+class SumPenalizedReward {};
+
+template<typename T>
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, double lambda, T& RewardType) {
+  double reward = 0;
+  for (const auto& point : sorted_sets[0]) {
+    reward += point.get_reward(d, 0);
+  }
+  return reward;
+}
+
+template <>
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, double lambda, RatioPenalizedReward& RewardType) {
+  double sum1 = 0;
+  double sum2 = 0;
+  for (const auto& point : sorted_sets[0]) {
+    sum1 += point.get_reward(d, 0);
+    sum2 += point.get_reward(d, 1);
+  }
+  return sum1 /  std::max(lambda, std::sqrt(sum2));
+}
+
+template <>
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, double lambda, SumPenalizedReward& RewardType) {
+  double sum1 = 0;
+  double sum2 = 0;
+  for (const auto& point : sorted_sets[0]) {
+    sum1 += point.get_reward(d, 0);
+    sum2 += point.get_reward(d, 1);
+  }
+  return sum1 - lambda * std::sqrt(sum2);
+}
+
+// "base" version is the default, specialized version the penalized
+template<typename T>
+void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, double lambda, size_t n, size_t d, size_t N, T& RewardType) {
+  reward1 = sum_array1[d][n];
+  reward2 = sum_array1[d][N] - reward1;
+}
+
+template <>
+void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, double lambda, size_t n, size_t d, size_t N, RatioPenalizedReward& RewardType) {
+  double left_sum1 = sum_array1[d][n];
+  double right_sum1 = sum_array1[d][N] - left_sum1;
+  double left_sum2 = sum_array2[d][n];
+  double right_sum2 = sum_array2[d][N] - left_sum2;
+
+  reward1 = left_sum1 / std::max(lambda, std::sqrt(left_sum2));
+  reward2 = right_sum1 / std::max(lambda, std::sqrt(right_sum2));
+}
+
+template <>
+void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, double lambda, size_t n, size_t d, size_t N, SumPenalizedReward& RewardType) {
+  double left_sum1 = sum_array1[d][n];
+  double right_sum1 = sum_array1[d][N] - left_sum1;
+  double left_sum2 = sum_array2[d][n];
+  double right_sum2 = sum_array2[d][N] - left_sum2;
+
+  reward1 = left_sum1 - lambda * std::sqrt(left_sum2);
+  reward2 = right_sum1 - lambda * std::sqrt(right_sum2);
+}
+
+
+template<typename T>
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, T& RewardType) {
+  sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
+}
+
+template <>
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, RatioPenalizedReward& RewardType) {
+  sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
+  sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
+}
+
+template <>
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, SumPenalizedReward& RewardType) {
+  sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
+  sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
+}
+
 
 // Find the best action (left and right) in the parent of a leaf node (O(npd))
+template<typename T>
 std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_sets,
                                          const Data* data,
                                          std::vector<std::vector<double>>& sum_array1,
                                          std::vector<std::vector<double>>& sum_array2,
-                                         int reward_type,
                                          double lambda,
                                          int split_step,
-                                         size_t min_node_size) {
+                                         size_t min_node_size,
+                                         T& RewardType) {
   size_t num_points = sorted_sets[0].size();
   size_t num_rewards = data->num_rewards();
   size_t num_features = data->num_features();
-  size_t reward_dim = data->reward_dim();
 
   size_t best_action_left = 0;
   size_t best_action_right = 0;
@@ -160,25 +220,16 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
   double best_reward = -INF;
   double global_best_left = -INF;
   double global_best_right = -INF;
+  double left_reward, right_reward;
 
   for (size_t p = 0; p < num_features; p++) {
     // Fill the reward matrix with cumulative sums
-    if (reward_type == 1) {
-      for (size_t d = 0; d < num_rewards; d++) {
-        size_t n = 0;
-        for (const auto &point : sorted_sets[p]) {
-          ++n;
-          sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
-        }
-      }
-    } else {
-      for (size_t d = 0; d < num_rewards; d++) {
-        size_t n = 0;
-        for (const auto &point : sorted_sets[p]) {
-          ++n;
-          sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
-          sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
-        }
+    for (size_t d = 0; d < num_rewards; d++) {
+      size_t n = 0;
+      for (const auto &point : sorted_sets[p]) {
+        ++n;
+        accumulate_sums(sum_array1, sum_array2, n, d, point, RewardType);
+        // sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
       }
     }
     auto it = sorted_sets[p].cbegin();
@@ -211,19 +262,10 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       size_t left_action = 0;
       size_t right_action = 0;
       for (size_t d = 0; d < num_rewards; d++) {
-        double left_reward = sum_array1[d][n];
-        double right_reward = sum_array1[d][num_points] - left_reward;
-        if (reward_type > 1) {
-          double left_sum2 = sum_array2[d][n];
-          double right_sum2 = sum_array2[d][num_points] - left_sum2;
-          if (reward_type == 2) {
-            left_reward /= std::max(lambda, std::sqrt(left_sum2));
-            right_reward /= std::max(lambda, std::sqrt(right_sum2));
-          } else {
-            left_reward -= lambda * std::sqrt(left_sum2);
-            right_reward -= lambda * std::sqrt(right_sum2);
-          }
-        }
+        compute_reward(left_reward, right_reward, sum_array1, sum_array2,lambda, n, d, num_points, RewardType);
+        // double left_reward = sum_array1[d][n];
+        // double right_reward = sum_array1[d][num_points] - left_reward;
+
         if (left_best < left_reward) {
           left_best = left_reward;
           left_action = d;
@@ -257,7 +299,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       return ans;
     }
   } else {
-    return level_zero_learning(sorted_sets, data, reward_type, lambda);
+    return level_zero_learning(sorted_sets, data, lambda, RewardType);
   }
 }
 
@@ -325,6 +367,8 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
  * features, n the number of observations, d the number of actions, and k
  * the tree depth.
  */
+
+template<typename T>
 std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       int level,
                                       int split_step,
@@ -332,14 +376,14 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       const Data* data,
                                       std::vector<std::vector<double>>& sum_array1,
                                       std::vector<std::vector<double>>& sum_array2,
-                                      int reward_type,
-                                      double lambda) {
+                                      double lambda,
+                                      T& RewardType) {
   if (level == 0) {
     // this base case will only be hit if `find_best_split` is called directly with level = 0
-    return level_zero_learning(sorted_sets, data, reward_type, lambda);
+    return level_zero_learning(sorted_sets, data, lambda, RewardType);
   } else if (level == 1) {
     // if at the parent of a leaf node we can compute the optimal action for both leaves
-    return level_one_learning(sorted_sets, data, sum_array1, sum_array2, reward_type, lambda, split_step, min_node_size);
+    return level_one_learning(sorted_sets, data, sum_array1, sum_array2, lambda, split_step, min_node_size, RewardType);
   // else continue the recursion
   } else {
     size_t num_points = sorted_sets[0].size();
@@ -382,8 +426,8 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         } else {
           continue;
         }
-        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size, data, sum_array1, sum_array2, reward_type, lambda);
-        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size, data, sum_array1, sum_array2, reward_type, lambda);
+        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size, data, sum_array1, sum_array2, lambda,RewardType);
+        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size, data, sum_array1, sum_array2, lambda,RewardType);
         if ((best_left_child == nullptr) ||
             (left_child->reward + right_child->reward >
               best_left_child->reward + best_right_child->reward)) {
@@ -395,7 +439,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
       }
     }
     if (best_left_child == nullptr) {
-      return level_zero_learning(sorted_sets, data, reward_type, lambda);
+      return level_zero_learning(sorted_sets, data, lambda, RewardType);
     } else {
           // "pruning", the recursive case (same action in both leaves):
       if ((best_left_child->is_leaf() && best_right_child->is_leaf()) &&
@@ -439,5 +483,14 @@ std::unique_ptr<Node> tree_search(int depth,
     v.resize(num_points + 1, 0.0);
   }
 
-  return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array1, sum_array2, reward_type, lambda);
+  if (reward_type == 1) {
+    auto bla = UnpenalizedReward();
+    return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array1, sum_array2, lambda, bla);
+  } else if (reward_type == 2) {
+    auto bla = RatioPenalizedReward();
+    return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array1, sum_array2, lambda, bla);
+  } else {
+    auto bla = SumPenalizedReward();
+    return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array1, sum_array2, lambda, bla);
+  }
 }
