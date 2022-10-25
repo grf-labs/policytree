@@ -96,12 +96,19 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
 
 
 // Template specializations for different reward calculations.
-class UnpenalizedReward {};
-class RatioPenalizedReward {};
-class SumPenalizedReward {};
+// "base" version is the default, specialized version the penalized.
+struct UnpenalizedReward {};
+struct RatioPenalizedReward {
+  RatioPenalizedReward(double lambda) : lambda(lambda) {}
+  double lambda;
+};
+struct SumPenalizedReward {
+  SumPenalizedReward(double lambda) : lambda(lambda) {}
+  double lambda;
+};
 
 template<typename T>
-double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, double lambda, T& RewardType) {
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, T& reward_type) {
   double reward = 0;
   for (const auto& point : sorted_sets[0]) {
     reward += point.get_reward(d, 0);
@@ -110,70 +117,69 @@ double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_
 }
 
 template <>
-double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, double lambda, RatioPenalizedReward& RewardType) {
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, RatioPenalizedReward& reward_type) {
   double sum1 = 0;
   double sum2 = 0;
   for (const auto& point : sorted_sets[0]) {
     sum1 += point.get_reward(d, 0);
     sum2 += point.get_reward(d, 1);
   }
-  return sum1 /  std::max(lambda, std::sqrt(sum2));
+  return sum1 /  std::max(reward_type.lambda, std::sqrt(sum2));
 }
 
 template <>
-double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, double lambda, SumPenalizedReward& RewardType) {
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, SumPenalizedReward& reward_type) {
   double sum1 = 0;
   double sum2 = 0;
   for (const auto& point : sorted_sets[0]) {
     sum1 += point.get_reward(d, 0);
     sum2 += point.get_reward(d, 1);
   }
-  return sum1 - lambda * std::sqrt(sum2);
+  return sum1 - reward_type.lambda * std::sqrt(sum2);
 }
 
-// "base" version is the default, specialized version the penalized
 template<typename T>
-void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, double lambda, size_t n, size_t d, size_t N, T& RewardType) {
+void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, T& reward_type) {
   reward1 = sum_array1[d][n];
   reward2 = sum_array1[d][N] - reward1;
 }
 
 template <>
-void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, double lambda, size_t n, size_t d, size_t N, RatioPenalizedReward& RewardType) {
+void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, RatioPenalizedReward& reward_type) {
   double left_sum1 = sum_array1[d][n];
   double right_sum1 = sum_array1[d][N] - left_sum1;
   double left_sum2 = sum_array2[d][n];
   double right_sum2 = sum_array2[d][N] - left_sum2;
 
-  reward1 = left_sum1 / std::max(lambda, std::sqrt(left_sum2));
-  reward2 = right_sum1 / std::max(lambda, std::sqrt(right_sum2));
+  reward1 = left_sum1 / std::max(reward_type.lambda, std::sqrt(left_sum2));
+  reward2 = right_sum1 / std::max(reward_type.lambda, std::sqrt(right_sum2));
 }
 
 template <>
-void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, double lambda, size_t n, size_t d, size_t N, SumPenalizedReward& RewardType) {
+void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, SumPenalizedReward& reward_type) {
   double left_sum1 = sum_array1[d][n];
   double right_sum1 = sum_array1[d][N] - left_sum1;
   double left_sum2 = sum_array2[d][n];
   double right_sum2 = sum_array2[d][N] - left_sum2;
 
-  reward1 = left_sum1 - lambda * std::sqrt(left_sum2);
-  reward2 = right_sum1 - lambda * std::sqrt(right_sum2);
+  reward1 = left_sum1 - reward_type.lambda * std::sqrt(left_sum2);
+  reward2 = right_sum1 - reward_type.lambda * std::sqrt(right_sum2);
 }
 
 
 template<typename T>
-void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, T& RewardType) {
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, T& reward_type) {
   sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
 }
 
 template <>
-void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, RatioPenalizedReward& RewardType) {
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, RatioPenalizedReward& reward_type) {
   sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
   sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
 }
 
 template <>
-void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, SumPenalizedReward& RewardType) {
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, SumPenalizedReward& reward_type) {
   sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
   sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
 }
@@ -183,14 +189,13 @@ void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<s
 template<typename T>
 std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_sets,
                                           const Data* data,
-                                          double lambda,
                                           T& reward_type) {
   size_t num_rewards = data->num_rewards();
   size_t best_action = 0;
   double best_reward = -INF;
 
   for (size_t d = 0; d < num_rewards; d++) {
-    double reward = compute_level_zero_reward(sorted_sets, d, lambda, reward_type);
+    double reward = compute_level_zero_reward(sorted_sets, d, reward_type);
     if (reward > best_reward) {
       best_reward = reward;
       best_action = d;
@@ -207,7 +212,6 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
                                          const Data* data,
                                          std::vector<std::vector<double>>& sum_array1,
                                          std::vector<std::vector<double>>& sum_array2,
-                                         double lambda,
                                          int split_step,
                                          size_t min_node_size,
                                          T& reward_type) {
@@ -231,7 +235,6 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       for (const auto &point : sorted_sets[p]) {
         ++n;
         accumulate_sums(sum_array1, sum_array2, n, d, point, reward_type);
-        // sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
       }
     }
     auto it = sorted_sets[p].cbegin();
@@ -264,10 +267,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       size_t left_action = 0;
       size_t right_action = 0;
       for (size_t d = 0; d < num_rewards; d++) {
-        compute_reward(left_reward, right_reward, sum_array1, sum_array2,lambda, n, d, num_points, reward_type);
-        // double left_reward = sum_array1[d][n];
-        // double right_reward = sum_array1[d][num_points] - left_reward;
-
+        compute_reward(left_reward, right_reward, sum_array1, sum_array2, n, d, num_points, reward_type);
         if (left_best < left_reward) {
           left_best = left_reward;
           left_action = d;
@@ -301,7 +301,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       return ans;
     }
   } else {
-    return level_zero_learning(sorted_sets, data, lambda, reward_type);
+    return level_zero_learning(sorted_sets, data, reward_type);
   }
 }
 
@@ -369,7 +369,6 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
  * features, n the number of observations, d the number of actions, and k
  * the tree depth.
  */
-
 template<typename T>
 std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       int level,
@@ -378,14 +377,13 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       const Data* data,
                                       std::vector<std::vector<double>>& sum_array1,
                                       std::vector<std::vector<double>>& sum_array2,
-                                      double lambda,
                                       T& reward_type) {
   if (level == 0) {
     // this base case will only be hit if `find_best_split` is called directly with level = 0
-    return level_zero_learning(sorted_sets, data, lambda, reward_type);
+    return level_zero_learning(sorted_sets, data, reward_type);
   } else if (level == 1) {
     // if at the parent of a leaf node we can compute the optimal action for both leaves
-    return level_one_learning(sorted_sets, data, sum_array1, sum_array2, lambda, split_step, min_node_size, reward_type);
+    return level_one_learning(sorted_sets, data, sum_array1, sum_array2, split_step, min_node_size, reward_type);
   // else continue the recursion
   } else {
     size_t num_points = sorted_sets[0].size();
@@ -428,8 +426,8 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         } else {
           continue;
         }
-        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size, data, sum_array1, sum_array2, lambda, reward_type);
-        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size, data, sum_array1, sum_array2, lambda, reward_type);
+        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size, data, sum_array1, sum_array2, reward_type);
+        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size, data, sum_array1, sum_array2, reward_type);
         if ((best_left_child == nullptr) ||
             (left_child->reward + right_child->reward >
               best_left_child->reward + best_right_child->reward)) {
@@ -441,7 +439,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
       }
     }
     if (best_left_child == nullptr) {
-      return level_zero_learning(sorted_sets, data, lambda, reward_type);
+      return level_zero_learning(sorted_sets, data, reward_type);
     } else {
           // "pruning", the recursive case (same action in both leaves):
       if ((best_left_child->is_leaf() && best_right_child->is_leaf()) &&
@@ -487,12 +485,12 @@ std::unique_ptr<Node> tree_search(int depth,
 
   if (reward_type == 1) {
     auto reward_type = UnpenalizedReward();
-    return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array1, sum_array2, lambda, reward_type);
+    return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array1, sum_array2, reward_type);
   } else if (reward_type == 2) {
-    auto reward_type = RatioPenalizedReward();
-    return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array1, sum_array2, lambda, reward_type);
+    auto reward_type = RatioPenalizedReward(lambda);
+    return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array1, sum_array2, reward_type);
   } else {
-    auto reward_type = SumPenalizedReward();
-    return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array1, sum_array2, lambda, reward_type);
+    auto reward_type = SumPenalizedReward(lambda);
+    return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array1, sum_array2, reward_type);
   }
 }
