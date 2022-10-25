@@ -467,8 +467,10 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         } else {
           continue;
         }
-        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size, data, sum_array1, sum_array2, reward_type);
-        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size, data, sum_array1, sum_array2, reward_type);
+        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size,
+                                          data, sum_array1, sum_array2, reward_type);
+        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size,
+                                           data, sum_array1, sum_array2, reward_type);
         if ((best_left_child == nullptr) ||
             (left_child->reward + right_child->reward >
               best_left_child->reward + best_right_child->reward)) {
