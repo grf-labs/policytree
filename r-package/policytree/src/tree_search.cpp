@@ -104,23 +104,20 @@ std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_se
   size_t reward_dim = data->reward_dim();
   size_t best_action = 0;
   double best_reward = -INF;
-  double sum1, sum2, reward;
 
   for (size_t d = 0; d < num_rewards; d++) {
-    sum1 = 0;
-    sum2 = 0;
+    double reward = 0;
+    double sum2 = 0;
     for (const auto& point : sorted_sets[0]) {
-      sum1 += point.get_reward(d, 0);
+      reward += point.get_reward(d, 0);
       if (reward_dim == 2) {
         sum2 += point.get_reward(d, 1);
       }
     }
-    if (reward_type == 1) {
-      reward = sum1;
-    } else if (reward_type == 2) {
-      reward = sum1 / std::max(1.0, std::sqrt(sum2));
+    if (reward_type == 2) {
+      reward /= std::max(1.0, std::sqrt(sum2));
     } else {
-      reward = sum1 + lambda * std::sqrt(sum2);
+      reward += lambda * std::sqrt(sum2);
     }
     if (reward > best_reward) {
       best_reward = reward;
@@ -153,7 +150,6 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
   double best_reward = -INF;
   double global_best_left = -INF;
   double global_best_right = -INF;
-  double left_sum1, left_sum2, right_sum1, right_sum2, left_reward, right_reward;
 
   for (size_t p = 0; p < num_features; p++) {
     // Fill the reward matrix with cumulative sums
@@ -197,21 +193,18 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       size_t left_action = 0;
       size_t right_action = 0;
       for (size_t d = 0; d < num_rewards; d++) {
-        left_sum1 = sum_array1[d][n];
-        right_sum1 = sum_array1[d][num_points] - left_sum1;
+        double left_reward = sum_array1[d][n];
+        double right_reward = sum_array1[d][num_points] - left_reward;
         if (reward_dim == 2) {
-          left_sum2 = sum_array2[d][n];
-          right_sum2 = sum_array2[d][num_points] - left_sum2;
-        }
-        if (reward_type == 1) {
-          left_reward = left_sum1;
-          right_reward = right_sum1;
-        } else if (reward_type == 2) {
-          left_reward = left_sum1 / std::max(1.0, std::sqrt(left_sum2));
-          right_reward = right_sum1 / std::max(1.0, std::sqrt(right_sum2));
-        } else {
-          left_reward = left_sum1 + lambda * std::sqrt(left_sum2);
-          right_reward = right_sum1 + lambda * std::sqrt(right_sum2);
+          double left_sum2 = sum_array2[d][n];
+          double right_sum2 = sum_array2[d][num_points] - left_sum2;
+          if (reward_type == 2) {
+            left_reward /= std::max(1.0, std::sqrt(left_sum2));
+            right_reward /= std::max(1.0, std::sqrt(right_sum2));
+          } else {
+            left_reward += lambda * std::sqrt(left_sum2);
+            right_reward += lambda * std::sqrt(right_sum2);
+          }
         }
         if (left_best < left_reward) {
           left_best = left_reward;
@@ -412,7 +405,6 @@ std::unique_ptr<Node> tree_search(int depth,
                                   double lambda,
                                   const Data* data) {
   size_t num_rewards = data->num_rewards();
-  size_t reward_dim = data->reward_dim();
   size_t num_points = data->num_rows;
   auto sorted_sets = create_sorted_sets(data);
 
