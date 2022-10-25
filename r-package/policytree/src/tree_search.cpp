@@ -101,27 +101,37 @@ std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_se
                                           int reward_type,
                                           double lambda) {
   size_t num_rewards = data->num_rewards();
-  size_t reward_dim = data->reward_dim();
   size_t best_action = 0;
   double best_reward = -INF;
 
-  for (size_t d = 0; d < num_rewards; d++) {
-    double reward = 0;
-    double sum2 = 0;
-    for (const auto& point : sorted_sets[0]) {
-      reward += point.get_reward(d, 0);
-      if (reward_dim == 2) {
-        sum2 += point.get_reward(d, 1);
+  if (reward_type == 1) {
+    for (size_t d = 0; d < num_rewards; d++) {
+      double reward = 0;
+      for (const auto& point : sorted_sets[0]) {
+        reward += point.get_reward(d, 0);
+      }
+      if (reward > best_reward) {
+        best_reward = reward;
+        best_action = d;
       }
     }
-    if (reward_type == 2) {
-      reward /= std::max(1.0, std::sqrt(sum2));
-    } else {
-      reward += lambda * std::sqrt(sum2);
-    }
-    if (reward > best_reward) {
-      best_reward = reward;
-      best_action = d;
+  } else {
+    for (size_t d = 0; d < num_rewards; d++) {
+      double reward = 0;
+      double sum2 = 0;
+      for (const auto& point : sorted_sets[0]) {
+        reward += point.get_reward(d, 0);
+        sum2 += point.get_reward(d, 1);
+      }
+      if (reward_type == 2) {
+        reward /= std::max(1.0, std::sqrt(sum2));
+      } else {
+        reward += lambda * std::sqrt(sum2);
+      }
+      if (reward > best_reward) {
+        best_reward = reward;
+        best_action = d;
+      }
     }
   }
 
@@ -153,12 +163,20 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
 
   for (size_t p = 0; p < num_features; p++) {
     // Fill the reward matrix with cumulative sums
-    for (size_t d = 0; d < num_rewards; d++) {
-      size_t n = 0;
-      for (const auto &point : sorted_sets[p]) {
-        ++n;
-        sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
-        if (reward_dim == 2) {
+    if (reward_type == 1) {
+      for (size_t d = 0; d < num_rewards; d++) {
+        size_t n = 0;
+        for (const auto &point : sorted_sets[p]) {
+          ++n;
+          sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
+        }
+      }
+    } else {
+      for (size_t d = 0; d < num_rewards; d++) {
+        size_t n = 0;
+        for (const auto &point : sorted_sets[p]) {
+          ++n;
+          sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
           sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
         }
       }
@@ -195,7 +213,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       for (size_t d = 0; d < num_rewards; d++) {
         double left_reward = sum_array1[d][n];
         double right_reward = sum_array1[d][num_points] - left_reward;
-        if (reward_dim == 2) {
+        if (reward_type > 1) {
           double left_sum2 = sum_array2[d][n];
           double right_sum2 = sum_array2[d][num_points] - left_sum2;
           if (reward_type == 2) {
