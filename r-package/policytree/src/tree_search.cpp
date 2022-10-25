@@ -386,10 +386,9 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
  *  considers splitting at every 10'th sample and may give a substantial speedup on dense features.
  * @param min_node_size An integer indicating the smallest terminal node size permitted.
  * @param data: The data class
- * @param sum_array: A global zero initialized (reward_dim) x (num_rewards) x (num_points + 1)
+ * @param sum_array1 and sum_array2: A global zero initialized (num_rewards) x (num_points + 1)
  *  array which is used to calculate cumulative rewards.
  * @param reward_type: The type of objective to maximize.
- * @param reward_type: An optional penalty parameter (defaults to 1).
  * @return The best tree
  *
  * Details:
