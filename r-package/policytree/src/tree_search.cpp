@@ -145,21 +145,21 @@ double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets,
 }
 
 template<typename T>
-void compute_level_one_reward(double& reward1,
-                              double& reward2,
+void compute_level_one_reward(double& left_reward,
+                              double& right_reward,
                               const std::vector<std::vector<double>>& sum_array1,
                               const std::vector<std::vector<double>>& sum_array2,
                               size_t n,
                               size_t d,
                               size_t N,
                               const T& reward_type) {
-  reward1 = sum_array1[d][n];
-  reward2 = sum_array1[d][N] - reward1;
+  left_reward = sum_array1[d][n];
+  right_reward = sum_array1[d][N] - left_reward;
 }
 
 template <>
-void compute_level_one_reward(double& reward1,
-                              double& reward2,
+void compute_level_one_reward(double& left_reward,
+                              double& right_reward,
                               const std::vector<std::vector<double>>& sum_array1,
                               const std::vector<std::vector<double>>& sum_array2,
                               size_t n,
@@ -171,13 +171,13 @@ void compute_level_one_reward(double& reward1,
   double left_sum2 = sum_array2[d][n];
   double right_sum2 = sum_array2[d][N] - left_sum2;
 
-  reward1 = left_sum1 / std::max(reward_type.lambda, std::sqrt(left_sum2));
-  reward2 = right_sum1 / std::max(reward_type.lambda, std::sqrt(right_sum2));
+  left_reward = left_sum1 / std::max(reward_type.lambda, std::sqrt(left_sum2));
+  right_reward = right_sum1 / std::max(reward_type.lambda, std::sqrt(right_sum2));
 }
 
 template <>
-void compute_level_one_reward(double& reward1,
-                              double& reward2,
+void compute_level_one_reward(double& left_reward,
+                              double& right_reward,
                               const std::vector<std::vector<double>>& sum_array1,
                               const std::vector<std::vector<double>>& sum_array2,
                               size_t n,
@@ -189,8 +189,8 @@ void compute_level_one_reward(double& reward1,
   double left_sum2 = sum_array2[d][n];
   double right_sum2 = sum_array2[d][N] - left_sum2;
 
-  reward1 = left_sum1 - reward_type.lambda * std::sqrt(left_sum2);
-  reward2 = right_sum1 - reward_type.lambda * std::sqrt(right_sum2);
+  left_reward = left_sum1 - reward_type.lambda * std::sqrt(left_sum2);
+  right_reward = right_sum1 - reward_type.lambda * std::sqrt(right_sum2);
 }
 
 template<typename T>
