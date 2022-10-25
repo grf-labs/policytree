@@ -108,7 +108,9 @@ struct SumPenalizedReward {
 };
 
 template<typename T>
-double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, const T& reward_type) {
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets,
+                                 size_t d,
+                                 const T& reward_type) {
   double reward = 0;
   for (const auto& point : sorted_sets[0]) {
     reward += point.get_reward(d, 0);
@@ -117,7 +119,9 @@ double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_
 }
 
 template <>
-double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, const RatioPenalizedReward& reward_type) {
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets,
+                                 size_t d,
+                                 const RatioPenalizedReward& reward_type) {
   double sum1 = 0;
   double sum2 = 0;
   for (const auto& point : sorted_sets[0]) {
@@ -128,7 +132,9 @@ double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_
 }
 
 template <>
-double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_t d, const SumPenalizedReward& reward_type) {
+double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets,
+                                 size_t d,
+                                 const SumPenalizedReward& reward_type) {
   double sum1 = 0;
   double sum2 = 0;
   for (const auto& point : sorted_sets[0]) {
@@ -139,13 +145,27 @@ double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets, size_
 }
 
 template<typename T>
-void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, const T& reward_type) {
+void compute_level_one_reward(double& reward1,
+                              double& reward2,
+                              const std::vector<std::vector<double>>& sum_array1,
+                              const std::vector<std::vector<double>>& sum_array2,
+                              size_t n,
+                              size_t d,
+                              size_t N,
+                              const T& reward_type) {
   reward1 = sum_array1[d][n];
   reward2 = sum_array1[d][N] - reward1;
 }
 
 template <>
-void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, const RatioPenalizedReward& reward_type) {
+void compute_level_one_reward(double& reward1,
+                              double& reward2,
+                              const std::vector<std::vector<double>>& sum_array1,
+                              const std::vector<std::vector<double>>& sum_array2,
+                              size_t n,
+                              size_t d,
+                              size_t N,
+                              const RatioPenalizedReward& reward_type) {
   double left_sum1 = sum_array1[d][n];
   double right_sum1 = sum_array1[d][N] - left_sum1;
   double left_sum2 = sum_array2[d][n];
@@ -156,7 +176,14 @@ void compute_reward(double& reward1, double& reward2, const std::vector<std::vec
 }
 
 template <>
-void compute_reward(double& reward1, double& reward2, const std::vector<std::vector<double>>& sum_array1, const std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, size_t N, const SumPenalizedReward& reward_type) {
+void compute_level_one_reward(double& reward1,
+                              double& reward2,
+                              const std::vector<std::vector<double>>& sum_array1,
+                              const std::vector<std::vector<double>>& sum_array2,
+                              size_t n,
+                              size_t d,
+                              size_t N,
+                              const SumPenalizedReward& reward_type) {
   double left_sum1 = sum_array1[d][n];
   double right_sum1 = sum_array1[d][N] - left_sum1;
   double left_sum2 = sum_array2[d][n];
@@ -166,20 +193,34 @@ void compute_reward(double& reward1, double& reward2, const std::vector<std::vec
   reward2 = right_sum1 - reward_type.lambda * std::sqrt(right_sum2);
 }
 
-
 template<typename T>
-void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, const T& reward_type) {
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1,
+                     std::vector<std::vector<double>>& sum_array2,
+                     size_t n,
+                     size_t d,
+                     const Point& point,
+                     const T& reward_type) {
   sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
 }
 
 template <>
-void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, const RatioPenalizedReward& reward_type) {
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1,
+                     std::vector<std::vector<double>>& sum_array2,
+                     size_t n,
+                     size_t d,
+                     const Point& point,
+                     const RatioPenalizedReward& reward_type) {
   sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
   sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
 }
 
 template <>
-void accumulate_sums(std::vector<std::vector<double>>& sum_array1, std::vector<std::vector<double>>& sum_array2, size_t n, size_t d, const Point& point, const SumPenalizedReward& reward_type) {
+void accumulate_sums(std::vector<std::vector<double>>& sum_array1,
+                     std::vector<std::vector<double>>& sum_array2,
+                     size_t n,
+                     size_t d,
+                     const Point& point,
+                     const SumPenalizedReward& reward_type) {
   sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
   sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
 }
@@ -267,7 +308,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
       size_t left_action = 0;
       size_t right_action = 0;
       for (size_t d = 0; d < num_rewards; d++) {
-        compute_reward(left_reward, right_reward, sum_array1, sum_array2, n, d, num_points, reward_type);
+        compute_level_one_reward(left_reward, right_reward, sum_array1, sum_array2, n, d, num_points, reward_type);
         if (left_best < left_reward) {
           left_best = left_reward;
           left_action = d;
