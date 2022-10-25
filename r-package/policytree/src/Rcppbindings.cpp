@@ -54,8 +54,8 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
                             int split_step,
                             int min_node_size,
                             int reward_type,
-                            size_t reward_dim,
                             double lambda) {
+  size_t reward_dim = reward_type > 1 ? 2 : 1;
   size_t num_rows = X.rows();
   size_t num_cols_x = X.cols();
   size_t num_cols_y = Y.cols() / reward_dim;

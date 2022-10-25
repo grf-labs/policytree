@@ -131,7 +131,7 @@ penalized_policy_tree <- function(X,
   }
 
   Gamma <- cbind(Gamma1, Gamma2)
-  result <- tree_search_rcpp(as.matrix(X), as.matrix(Gamma), depth, split.step, min.node.size, reward.type, 2, lambda)
+  result <- tree_search_rcpp(as.matrix(X), as.matrix(Gamma), depth, split.step, min.node.size, reward.type, lambda)
   tree <- list(nodes = result[[1]])
 
   tree[["_tree_array"]] <- result[[2]]
