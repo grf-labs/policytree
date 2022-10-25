@@ -17,8 +17,8 @@ test_that("penalized policy tree reward calculation works as expected", {
   expect_equal(ppt.sum$nodes[[1]]$action, which.max(objective.sum))
 
   # penalized sum objective
-  lambda <- -100
-  objective.sump <- colSums(Y1) + lambda * sqrt(colSums(Y2))
+  lambda <- 100
+  objective.sump <- colSums(Y1) - lambda * sqrt(colSums(Y2))
   ppt.sump <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "sum", lambda = lambda)
   expect_equal(ppt.sump$nodes[[1]]$action, which.max(objective.sump))
 })

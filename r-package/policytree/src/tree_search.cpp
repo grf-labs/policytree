@@ -124,9 +124,9 @@ std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_se
         sum2 += point.get_reward(d, 1);
       }
       if (reward_type == 2) {
-        reward /= std::max(1.0, std::sqrt(sum2));
+        reward /= std::max(lambda, std::sqrt(sum2));
       } else {
-        reward += lambda * std::sqrt(sum2);
+        reward -= lambda * std::sqrt(sum2);
       }
       if (reward > best_reward) {
         best_reward = reward;
@@ -217,11 +217,11 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
           double left_sum2 = sum_array2[d][n];
           double right_sum2 = sum_array2[d][num_points] - left_sum2;
           if (reward_type == 2) {
-            left_reward /= std::max(1.0, std::sqrt(left_sum2));
-            right_reward /= std::max(1.0, std::sqrt(right_sum2));
+            left_reward /= std::max(lambda, std::sqrt(left_sum2));
+            right_reward /= std::max(lambda, std::sqrt(right_sum2));
           } else {
-            left_reward += lambda * std::sqrt(left_sum2);
-            right_reward += lambda * std::sqrt(right_sum2);
+            left_reward -= lambda * std::sqrt(left_sum2);
+            right_reward -= lambda * std::sqrt(right_sum2);
           }
         }
         if (left_best < left_reward) {
