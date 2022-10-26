@@ -3,20 +3,20 @@
 #' Find a policy tree where the objective is penalized by some (positive) term \eqn{\Gamma_2}.
 #'
 #' Let \eqn{\Gamma_{1,i}, \in \mathbb R^d, \Gamma_{2,i} \in \mathbb R^d_+} and \eqn{\pi(X) \in \{1, ..., d\}}.
-#' For penalty.type = "ratio", this function solves
-#'
-#' \eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \frac{ \sum_{i=1}^{n} \Gamma_{1,i}(\pi(X_i))}{ max\left(\lambda, \sqrt{\sum_{i=1}^{n} \Gamma_{2,i}(\pi(X_i)}\right) }\right]. }
-#'
-#' For penalty.type = "sum", this function solves
+#' For penalty.type = "sum", this function solves (Swaminathan and Joachims, 2015)
 #'
 #' \eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \sum_{i=1}^{n} \Gamma_{1,i}(\pi(X_i)) - \lambda \sqrt{\sum_{i=1}^{n} \Gamma_{2,i}(\pi(X_i))} \right]. }
 #'
-#' When \eqn{\Gamma_2} is zero, this function's objective is identical to `policy_tree`.
+#' For penalty.type = "ratio", this function solves
+#'
+#' \eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \frac{ |\sum_{i=1}^{n} \Gamma_{1,i}(\pi(X_i))|}{ max\left(\lambda, \sqrt{\sum_{i=1}^{n} \Gamma_{2,i}(\pi(X_i)}\right) }\right]. }
+#'
+#' \eqn{ \lambda \in \mathbb R} is a penalty parameter. When \eqn{\Gamma_2} is zero, this function's objective is identical to `policy_tree`.
 #'
 #' @param X The covariates used. Dimension \eqn{N*p} where \eqn{p} is the number of features.
 #' @param Gamma1 The rewards for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.
 #' @param Gamma2 The corresponding penalities for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.
-#' @param penalty.type The type of penalty. Default is "ratio".
+#' @param penalty.type The type of penalty. Default is "sum".
 #' @param lambda An optional penalty parameter. Default is 1.
 #' @param depth The depth of the fitted tree. Default is 2.
 #' @param split.step An optional approximation parameter, the number of possible splits
@@ -29,6 +29,10 @@
 #' @param verbose Give verbose output. Default is TRUE.
 #'
 #' @return A policy_tree object.
+#'
+#' @references Swaminathan, Adith, and Thorsten Joachims.
+#'  "Batch learning from logged bandit feedback through counterfactual risk minimization."
+#'  The Journal of Machine Learning Research 16, no. 1 (2015): 1731-1755.
 #'
 #' @examples
 #' \donttest{
@@ -49,7 +53,7 @@
 penalized_policy_tree <- function(X,
                                   Gamma1,
                                   Gamma2,
-                                  penalty.type = c("ratio", "sum"),
+                                  penalty.type = c("sum", "ratio"),
                                   lambda = 1,
                                   depth = 2,
                                   split.step = 1,
@@ -124,9 +128,9 @@ penalized_policy_tree <- function(X,
     columns <- make.names(1:ncol(X))
   }
 
-  if (penalty.type == "ratio") {
+  if (penalty.type == "sum") {
     reward.type = 2
-  } else if (penalty.type == "sum") {
+  } else if (penalty.type == "ratio") {
     reward.type = 3
   }
 

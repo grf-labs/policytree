@@ -8,7 +8,7 @@ penalized_policy_tree(
   X,
   Gamma1,
   Gamma2,
-  penalty.type = c("ratio", "sum"),
+  penalty.type = c("sum", "ratio"),
   lambda = 1,
   depth = 2,
   split.step = 1,
@@ -23,7 +23,7 @@ penalized_policy_tree(
 
 \item{Gamma2}{The corresponding penalities for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.}
 
-\item{penalty.type}{The type of penalty. Default is "ratio".}
+\item{penalty.type}{The type of penalty. Default is "sum".}
 
 \item{lambda}{An optional penalty parameter. Default is 1.}
 
@@ -48,15 +48,15 @@ Find a policy tree where the objective is penalized by some (positive) term \eqn
 }
 \details{
 Let \eqn{\Gamma_{1,i}, \in \mathbb R^d, \Gamma_{2,i} \in \mathbb R^d_+} and \eqn{\pi(X) \in \{1, ..., d\}}.
-For penalty.type = "ratio", this function solves
-
-\eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \frac{ \sum_{i=1}^{n} \Gamma_{1,i}(\pi(X_i))}{ max\left(\lambda, \sqrt{\sum_{i=1}^{n} \Gamma_{2,i}(\pi(X_i)}\right) }\right]. }
-
-For penalty.type = "sum", this function solves
+For penalty.type = "sum", this function solves (Swaminathan and Joachims, 2015)
 
 \eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \sum_{i=1}^{n} \Gamma_{1,i}(\pi(X_i)) - \lambda \sqrt{\sum_{i=1}^{n} \Gamma_{2,i}(\pi(X_i))} \right]. }
 
-When \eqn{\Gamma_2} is zero, this function's objective is identical to \code{policy_tree}.
+For penalty.type = "ratio", this function solves
+
+\eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \frac{ |\sum_{i=1}^{n} \Gamma_{1,i}(\pi(X_i))|}{ max\left(\lambda, \sqrt{\sum_{i=1}^{n} \Gamma_{2,i}(\pi(X_i)}\right) }\right]. }
+
+\eqn{ \lambda \in \mathbb R} is a penalty parameter. When \eqn{\Gamma_2} is zero, this function's objective is identical to \code{policy_tree}.
 }
 \examples{
 \donttest{
@@ -73,4 +73,9 @@ ppt <- penalized_policy_tree(X, Y, Y.ones, depth = 2)
 # Predict treatment assignment.
 pi <- predict(ppt, X)
 }
+}
+\references{
+Swaminathan, Adith, and Thorsten Joachims.
+"Batch learning from logged bandit feedback through counterfactual risk minimization."
+The Journal of Machine Learning Research 16, no. 1 (2015): 1731-1755.
 }
