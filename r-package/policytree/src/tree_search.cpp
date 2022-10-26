@@ -99,11 +99,11 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
 // 1) UnpenalizedReward
 struct UnpenalizedReward {};
 
-inline double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets,
+inline double compute_level_zero_reward(const flat_set& sorted_set,
                                         size_t d,
                                         const UnpenalizedReward& reward_type) {
   double reward = 0;
-  for (const auto& point : sorted_sets[0]) {
+  for (const auto& point : sorted_set) {
     reward += point.get_reward(d, 0);
   }
   return reward;
@@ -123,11 +123,14 @@ inline void compute_level_one_reward(double& left_reward,
 
 inline void accumulate_sums(std::vector<std::vector<double>>& sum_array1,
                             std::vector<std::vector<double>>& sum_array2,
-                            size_t n,
+                            const flat_set& sorted_set,
                             size_t d,
-                            const Point& point,
                             const UnpenalizedReward& reward_type) {
-  sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
+  size_t n = 0;
+  for (const auto &point : sorted_set) {
+    ++n;
+    sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
+  }
 }
 
 
@@ -137,12 +140,12 @@ struct RatioPenalizedReward {
   double lambda;
 };
 
-inline double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets,
+inline double compute_level_zero_reward(const flat_set& sorted_set,
                                         size_t d,
                                         const RatioPenalizedReward& reward_type) {
   double sum1 = 0;
   double sum2 = 0;
-  for (const auto& point : sorted_sets[0]) {
+  for (const auto& point : sorted_set) {
     sum1 += point.get_reward(d, 0);
     sum2 += point.get_reward(d, 1);
   }
@@ -168,12 +171,15 @@ inline void compute_level_one_reward(double& left_reward,
 
 inline void accumulate_sums(std::vector<std::vector<double>>& sum_array1,
                             std::vector<std::vector<double>>& sum_array2,
-                            size_t n,
+                            const flat_set& sorted_set,
                             size_t d,
-                            const Point& point,
                             const RatioPenalizedReward& reward_type) {
-  sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
-  sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
+  size_t n = 0;
+  for (const auto &point : sorted_set) {
+    ++n;
+    sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
+    sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
+  }
 }
 
 
@@ -183,12 +189,12 @@ struct SumPenalizedReward {
   double lambda;
 };
 
-inline double compute_level_zero_reward(const std::vector<flat_set>& sorted_sets,
+inline double compute_level_zero_reward(const flat_set& sorted_set,
                                         size_t d,
                                         const SumPenalizedReward& reward_type) {
   double sum1 = 0;
   double sum2 = 0;
-  for (const auto& point : sorted_sets[0]) {
+  for (const auto& point : sorted_set) {
     sum1 += point.get_reward(d, 0);
     sum2 += point.get_reward(d, 1);
   }
@@ -214,12 +220,15 @@ inline void compute_level_one_reward(double& left_reward,
 
 inline void accumulate_sums(std::vector<std::vector<double>>& sum_array1,
                             std::vector<std::vector<double>>& sum_array2,
-                            size_t n,
+                            const flat_set& sorted_set,
                             size_t d,
-                            const Point& point,
                             const SumPenalizedReward& reward_type) {
-  sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
-  sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
+  size_t n = 0;
+  for (const auto &point : sorted_set) {
+    ++n;
+    sum_array1[d][n] = sum_array1[d][n - 1] + point.get_reward(d, 0);
+    sum_array2[d][n] = sum_array2[d][n - 1] + point.get_reward(d, 1);
+  }
 }
 
 
@@ -233,7 +242,7 @@ std::unique_ptr<Node> level_zero_learning(const std::vector<flat_set>& sorted_se
   double best_reward = -INF;
 
   for (size_t d = 0; d < num_rewards; d++) {
-    double reward = compute_level_zero_reward(sorted_sets, d, reward_type);
+    double reward = compute_level_zero_reward(sorted_sets[0], d, reward_type);
     if (reward > best_reward) {
       best_reward = reward;
       best_action = d;
@@ -269,11 +278,7 @@ std::unique_ptr<Node> level_one_learning(const std::vector<flat_set>& sorted_set
   for (size_t p = 0; p < num_features; p++) {
     // Fill the reward matrix with cumulative sums
     for (size_t d = 0; d < num_rewards; d++) {
-      size_t n = 0;
-      for (const auto &point : sorted_sets[p]) {
-        ++n;
-        accumulate_sums(sum_array1, sum_array2, n, d, point, reward_type);
-      }
+      accumulate_sums(sum_array1, sum_array2, sorted_sets[p], d, reward_type);
     }
     auto it = sorted_sets[p].cbegin();
     int split_counter = 0;
