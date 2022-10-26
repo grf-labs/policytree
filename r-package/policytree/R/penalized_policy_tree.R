@@ -11,7 +11,7 @@
 #'
 #' \eqn{ \pi^* = argmax_{\pi \in \Pi}\left[ \frac{ |\sum_{i=1}^{n} \Gamma_{1,i}(\pi(X_i))|}{ max\left(\lambda, \sqrt{\sum_{i=1}^{n} \Gamma_{2,i}(\pi(X_i)}\right) }\right]. }
 #'
-#' \eqn{ \lambda \in \mathbb R} is a penalty parameter. When \eqn{\Gamma_2} is zero, this function's objective is identical to `policy_tree`.
+#' \eqn{ \lambda \in \mathbb R} is a penalty parameter. When this penalty is zero, the first objective is identical to `policy_tree`.
 #'
 #' @param X The covariates used. Dimension \eqn{N*p} where \eqn{p} is the number of features.
 #' @param Gamma1 The rewards for each action. Dimension \eqn{N*d} where \eqn{d} is the number of actions.
