@@ -7,7 +7,7 @@ test_that("penalized policy tree reward calculation works as expected", {
   Y2 <- matrix(10*runif(n * d), n, d)
 
   # ratio objective
-  objective.ratio <- colMeans(Y1) / pmax(1, sqrt(colMeans(Y2)))
+  objective.ratio <- abs(colMeans(Y1)) / pmax(1, sqrt(colMeans(Y2)))
   ppt <- penalized_policy_tree(X, Y1, Y2, depth = 0, penalty.type = "ratio")
   expect_equal(ppt$nodes[[1]]$action, which.max(objective.ratio))
 

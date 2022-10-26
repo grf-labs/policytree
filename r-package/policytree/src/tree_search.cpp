@@ -184,9 +184,11 @@ inline void accumulate_sums(std::vector<std::vector<double>>& sum_array1,
 
 
 // 3) RatioPenalizedReward
+// Note: this objective's argmax is invariant to squaring both the numerator
+// and denominator. We use this form for perf reasons, avoiding std::sqrt.
 struct RatioPenalizedReward {
-  RatioPenalizedReward(double lambda) : lambda(lambda) {}
-  double lambda;
+  RatioPenalizedReward(double lambda) : lambdasq(pow(lambda, 2.0)) {}
+  double lambdasq;
 };
 
 inline double compute_level_zero_reward(const flat_set& sorted_set,
@@ -198,7 +200,7 @@ inline double compute_level_zero_reward(const flat_set& sorted_set,
     sum1 += point.get_reward(d, 0);
     sum2 += point.get_reward(d, 1);
   }
-  return sum1 / std::max(reward_type.lambda, std::sqrt(sum2));
+  return pow(std::abs(sum1), 2.0) / std::max(reward_type.lambdasq, sum2);
 }
 
 inline void compute_level_one_reward(double& left_reward,
@@ -214,8 +216,8 @@ inline void compute_level_one_reward(double& left_reward,
   double left_sum2 = sum_array2[d][n];
   double right_sum2 = sum_array2[d][N] - left_sum2;
 
-  left_reward = left_sum1 / std::max(reward_type.lambda, std::sqrt(left_sum2));
-  right_reward = right_sum1 / std::max(reward_type.lambda, std::sqrt(right_sum2));
+  left_reward = pow(std::abs(left_sum1), 2.0) / std::max(reward_type.lambdasq, left_sum2);
+  right_reward = pow(std::abs(right_sum1), 2.0) / std::max(reward_type.lambdasq, right_sum2);
 }
 
 inline void accumulate_sums(std::vector<std::vector<double>>& sum_array1,
