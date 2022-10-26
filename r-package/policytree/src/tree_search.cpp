@@ -149,7 +149,7 @@ inline double compute_level_zero_reward(const flat_set& sorted_set,
     sum1 += point.get_reward(d, 0);
     sum2 += point.get_reward(d, 1);
   }
-  return sum1 /  std::max(reward_type.lambda, std::sqrt(sum2));
+  return sum1 / std::max(reward_type.lambda, std::sqrt(sum2));
 }
 
 inline void compute_level_one_reward(double& left_reward,
