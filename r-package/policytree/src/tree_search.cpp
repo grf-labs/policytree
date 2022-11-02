@@ -82,7 +82,7 @@ std::vector<flat_set> create_sorted_sets(const Data* data, bool make_empty=false
 
     flat_set setj(cmp_func);
     if (!make_empty) {
-      setj.reserve(data->num_rows);
+      //setj.reserve(data->num_rows);
       for (size_t i = 0; i < data->num_rows; i++) {
         setj.emplace(i, data);
       }
