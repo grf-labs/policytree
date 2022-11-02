@@ -15,11 +15,11 @@
   along with policytree. If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------*/
 #include <functional>
-#include <boost/container/flat_set.hpp>
+#include <set>
 
 #include "tree_search.h"
 
-typedef boost::container::flat_set<Point, std::function<bool(const Point&, const Point&)>> flat_set;
+typedef std::set<Point, std::function<bool(const Point&, const Point&)>> flat_set;
 
 /**
  * Create a vector of sorted sets
