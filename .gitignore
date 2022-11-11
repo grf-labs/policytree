@@ -28,5 +28,8 @@ docs/
 # clion files
 .idea/
 
+# vscode files
+.vscode/
+
 # temporary files
 tmp_*
