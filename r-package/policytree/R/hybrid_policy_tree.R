@@ -183,7 +183,7 @@ unpack_tree <- function(tree) {
 # For "largish" depth it could also be sparse.
 tree_mat <- function(nodes, depth) {
   num.nodes <- 2^(depth + 1) - 1
-  tree.array <- matrix(0, num.nodes, 4)
+  tree.array <- matrix(0, num.nodes, 5)
   frontier <- 1
   i <- 1
   j <- 1
@@ -193,11 +193,13 @@ tree_mat <- function(nodes, depth) {
     if (nodes[[node]]$is_leaf) {
       tree.array[j, 1] <- -1
       tree.array[j, 2] <- nodes[[node]]$action
+      tree.array[j, 5] <- node - 1
     } else {
       tree.array[j, 1] <- nodes[[node]]$split_variable
       tree.array[j, 2] <- nodes[[node]]$split_value
       tree.array[j, 3] <- i + 1
       tree.array[j, 4] <- i + 2
+      tree.array[j, 5] <- node - 1
       frontier <- c(frontier, nodes[[node]]$left_child, nodes[[node]]$right_child)
       i <- i + 2
     }
