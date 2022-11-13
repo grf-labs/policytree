@@ -31,6 +31,12 @@ test_that("hybrid_policy_tree works as expected", {
   best <- apply(values[, -1], 1, FUN = which.max)
   expect_equal(best[match(hpp.node, values[, 1])], hpp)
 
+  # uses node labels that are the same as the printed labels.
+  printed.node.id <- lapply(seq_along(htree$nodes), function(i) {
+    if (htree$nodes[[i]]$is_leaf) i
+  })
+  expect_true(all(unique(hpp.node) %in% printed.node.id))
+
   # search.depth = 1 when a single split is optimal is identical to a depth 1 policy_tree
   n <- 250
   p <- 2
