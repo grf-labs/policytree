@@ -177,10 +177,8 @@ unpack_tree <- function(tree) {
   nodes
 }
 
-# Convert an adjacency list to array for predictions.
-# see Rcppbindigs.cpp for details.
-# Future TODO: consider performing this here instead of in Rcppbindigs.
-# For "largish" depth it could also be sparse.
+# Convert an adjacency list to array for predictions (see Rcppbindigs.cpp for details).
+# The 5th column is just the node label according to the print() order a hybrid tree has.
 tree_mat <- function(nodes, depth) {
   num.nodes <- 2^(depth + 1) - 1
   tree.array <- matrix(0, num.nodes, 5)
