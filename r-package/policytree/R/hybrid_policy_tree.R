@@ -120,8 +120,10 @@ hybrid_policy_tree <- function(X, Gamma,
     node <- node + 1
   }
 
-  tree[["nodes"]] <- unpack_tree(tree.nodes)
-  tree[["_tree_array"]] <- tree_mat(tree[["nodes"]], depth)
+  unpacked.nodes <- unpack_tree(tree.nodes)
+  converted.nodes <- convert_nodes(unpacked.nodes, depth)
+  tree[["nodes"]] <- converted.nodes[[1]]
+  tree[["_tree_array"]] <- converted.nodes[[2]]
   tree[["depth"]] <- depth
 
   tree
@@ -177,9 +179,10 @@ unpack_tree <- function(tree) {
   nodes
 }
 
-# Convert an adjacency list to array for predictions (see Rcppbindigs.cpp for details).
-# The 5th column is just the node label according to the print() order a hybrid tree has.
-tree_mat <- function(nodes, depth) {
+# 1) Convert tree to array for predictions (see Rcppbindings.cpp for details)
+# and 2) use the same breadth-first node ordering (new.nodes) as the rest of policytree.
+convert_nodes <- function(nodes, depth) {
+  new.nodes <- list()
   num.nodes <- 2^(depth + 1) - 1
   tree.array <- matrix(0, num.nodes, 4)
   frontier <- 1
@@ -191,16 +194,22 @@ tree_mat <- function(nodes, depth) {
     if (nodes[[node]]$is_leaf) {
       tree.array[j, 1] <- -1
       tree.array[j, 2] <- nodes[[node]]$action
+      new.nodes[[j]] <- list(is_leaf = TRUE, action = nodes[[node]]$action)
     } else {
       tree.array[j, 1] <- nodes[[node]]$split_variable
       tree.array[j, 2] <- nodes[[node]]$split_value
       tree.array[j, 3] <- i + 1
       tree.array[j, 4] <- i + 2
+      new.nodes[[j]] <- list(is_leaf = FALSE,
+                             split_variable = nodes[[node]]$split_variable,
+                             split_value = nodes[[node]]$split_value,
+                             left_child = i + 1,
+                             right_child = i + 2)
       frontier <- c(frontier, nodes[[node]]$left_child, nodes[[node]]$right_child)
       i <- i + 2
     }
     j <- j + 1
   }
 
-  tree.array
+  list(nodes = new.nodes, tree.array = tree.array)
 }
