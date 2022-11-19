@@ -58,10 +58,10 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
   // We store the tree as the same list data structure (`nodes`) as GRF for seamless integration with
   // the plot and print methods. We also store the tree as an array (`tree_array`) for faster lookups.
   // This will make a difference for a very large amount of lookups, like n = 1 000 000.
-  // The columns 0 to 4 are:
-  // split_variable (-1 if leaf) | split_value (action_id if leaf) | left_child | right_child | optional node_id
+  // The columns 0 to 3 are:
+  // split_variable (-1 if leaf) | split_value (action_id if leaf) | left_child | right_child
   int num_nodes = pow(2.0, depth + 1.0) - 1;
-  Rcpp::NumericMatrix tree_array(num_nodes, 5);
+  Rcpp::NumericMatrix tree_array(num_nodes, 4);
   Rcpp::List nodes;
   int i = 1;
   int j = 0;
@@ -76,7 +76,6 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
       nodes.push_back(list_node);
       tree_array(j, 0) = -1;
       tree_array(j, 1) = node->action_id + 1;
-      tree_array(j, 4) = j; // only used by hybrid policytree to predict leaf number that matches up with the printed leaf number.
     } else {
       auto list_node = Rcpp::List::create(Rcpp::Named("is_leaf") = false,
                                           Rcpp::Named("split_variable") = node->index + 1, // C++ index
@@ -88,7 +87,6 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
       tree_array(j, 1) = node->value;
       tree_array(j, 2) = i + 1; // left child
       tree_array(j, 3) = i + 2; // right child
-      tree_array(j, 4) = j;
       frontier.push(std::move(node->left_child));
       frontier.push(std::move(node->right_child));
       i += 2;
@@ -122,9 +120,8 @@ Rcpp::NumericMatrix tree_search_rcpp_predict(const Rcpp::NumericMatrix& tree_arr
       bool is_leaf = tree_array(node, 0) == -1;
       if (is_leaf) {
         size_t action = tree_array(node, 1);
-        size_t node_id = tree_array(node, 4);
         result(sample, 0) = action;
-        result(sample, 1) = node_id;
+        result(sample, 1) = node;
         break;
       }
       size_t split_var = tree_array(node, 0) - 1; // Offset by 1 for C++ indexing
