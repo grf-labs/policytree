@@ -1,7 +1,7 @@
 test_that("hybrid_policy_tree works as expected", {
   n <- 500
   p <- 2
-  d <- 2
+  d <- 42
   X <- round(matrix(rnorm(n * p), n, p), 1)
   Y <- matrix(runif(n * d), n, d)
 
@@ -25,6 +25,17 @@ test_that("hybrid_policy_tree works as expected", {
     }
   }
   expect_equal(hpp, pp)
+  # is internally consistent with predicted node ids.
+  hpp.node <- predict(htree, X, type = "node.id")
+  values <- aggregate(Y, by = list(leaf.node = hpp.node), FUN = mean)
+  best <- apply(values[, -1], 1, FUN = which.max)
+  expect_equal(best[match(hpp.node, values[, 1])], hpp)
+
+  # uses node labels that are the same as the printed labels.
+  printed.node.id <- lapply(seq_along(htree$nodes), function(i) {
+    if (htree$nodes[[i]]$is_leaf) i
+  })
+  expect_true(all(unique(hpp.node) %in% printed.node.id))
 
   # search.depth = 1 when a single split is optimal is identical to a depth 1 policy_tree
   n <- 250
@@ -102,7 +113,7 @@ test_that("hybrid_policy_tree utils are internally consistent", {
 
   depth <- 2
   tree <- policy_tree(X, Y, depth = depth)
-  expect_equal(tree_mat(tree[["nodes"]], depth), tree[["_tree_array"]], tolerance = 1e-16)
+  expect_equal(convert_nodes(tree[["nodes"]], depth)[[2]], tree[["_tree_array"]], tolerance = 1e-16)
   tree.nodes <- lapply(seq_along(tree$nodes), function(i) {
     node <- tree$nodes[[i]]
     node$has_subtree <- FALSE
@@ -112,7 +123,7 @@ test_that("hybrid_policy_tree utils are internally consistent", {
 
   depth <- 3
   tree <- policy_tree(X, Y, depth = depth)
-  expect_equal(tree_mat(tree[["nodes"]], depth), tree[["_tree_array"]], tolerance = 1e-16)
+  expect_equal(convert_nodes(tree[["nodes"]], depth)[[2]], tree[["_tree_array"]], tolerance = 1e-16)
   tree.nodes <- lapply(seq_along(tree$nodes), function(i) {
     node <- tree$nodes[[i]]
     node$has_subtree <- FALSE
