@@ -4,6 +4,11 @@ All notable changes to policytree will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2022-11-?
+
+### Fixed
+- Make the print()'d leaf labels in `hybrid_policy_tree` consistent with `policy_tree` (level first). [#156](https://github.com/grf-labs/policytree/pull/156)
+
 ## [1.2.0] - 2022-03-18
 
 ### Added
