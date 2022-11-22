@@ -9,7 +9,7 @@ Some helpful links for getting started:
 
 * The [R package documentation](https://grf-labs.github.io/policytree/) contains usage examples and method references.
 * For community questions and answers around usage, see the GitHub [issues page](https://github.com/grf-labs/policytree/issues).
-* The package [parallel_policy_tree](https://github.com/Yale-Medicaid/parallel_policy_tree) uses an alternate solver that may be faster on large datasets with sparse categorical features.
+* The package [sparse policytree](https://github.com/Yale-Medicaid/sparsepolicytree) uses an alternate solver that may be faster on large datasets with sparse categorical features.
 
 ### Installation
 
