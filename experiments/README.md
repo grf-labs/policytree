@@ -3,7 +3,7 @@
 This directory contains replication code for
 
 * Athey and Wager (2021): `athey_wager_2021`
-* Zhou, Athey, and Wager (2018): `zhou_athey_wager_2018`
+* Zhou, Athey, and Wager (2023): `zhou_athey_wager_2018`
 
 ### References
 
