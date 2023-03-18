@@ -37,7 +37,7 @@
 #'  "policytree: Policy learning via doubly robust empirical welfare maximization over trees."
 #'   Journal of Open Source Software 5, no. 50 (2020): 2232.
 #' @references Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning:
-#'  Generalization and optimization." Operations Research, forthcoming.
+#'  Generalization and optimization." Operations Research 71.1 (2023).
 #'
 #' @examples
 #' \donttest{

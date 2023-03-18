@@ -71,8 +71,8 @@ head(predict(opt.tree, X[-train, ]))
 ```
 
 ### Details
-`policy_tree()`: fits a depth _k_ tree by exhaustive search (_Nxp_ features on _Nxd_ actions). The optimal tree maximizes the sum of rewards: let $\Gamma_i \in \mathbb R^d$ be a vector of unit-specific rewards for each action 1 to $d$ and $\pi(X_i) \in \\{1, ..., d\\}$ a mapping from covariates $X_i$ to action. `policy_tree` solves the following: 
-  
+`policy_tree()`: fits a depth _k_ tree by exhaustive search (_Nxp_ features on _Nxd_ actions). The optimal tree maximizes the sum of rewards: let $\Gamma_i \in \mathbb R^d$ be a vector of unit-specific rewards for each action 1 to $d$ and $\pi(X_i) \in \\{1, ..., d\\}$ a mapping from covariates $X_i$ to action. `policy_tree` solves the following:
+
 $$
 \pi^* = argmax_{\pi \in \Pi} \left[ \sum_{i=1}^{n} \Gamma_i(\pi(X_i)) \right],
 $$
@@ -105,5 +105,6 @@ Erik Sverdrup, Ayush Kanodia, Zhengyuan Zhou, Susan Athey, and Stefan Wager.
 [<a href="https://joss.theoj.org/papers/10.21105/joss.02232">paper</a>]
 
 Zhengyuan Zhou, Susan Athey, and Stefan Wager.
-<b>Offline Multi-Action Policy Learning: Generalization and Optimization.</b> <i> Operations Research</i>, forthcoming.
-[<a href="https://arxiv.org/abs/1810.04778">arxiv</a>]
+<b>Offline Multi-Action Policy Learning: Generalization and Optimization.</b> <i> Operations Research 71.1 (2023).</i>
+[<a href="https://doi.org/10.1287/opre.2022.2271">paper</a>,
+<a href="https://arxiv.org/abs/1810.04778">arxiv</a>]
