@@ -112,7 +112,7 @@ Sverdrup, Erik, Ayush Kanodia, Zhengyuan Zhou, Susan Athey, and Stefan Wager.
 Journal of Open Source Software 5, no. 50 (2020): 2232.
 
 Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning:
-Generalization and optimization." Operations Research, forthcoming.
+Generalization and optimization." Operations Research 71.1 (2023).
 }
 \seealso{
 \code{\link{hybrid_policy_tree}} for building deeper trees.

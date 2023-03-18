@@ -12,7 +12,7 @@
 #' @return A list with realized action \eqn{a_i}, region \eqn{r_i},
 #'  conditional mean \eqn{\mu}, outcome \eqn{Y} and covariates \eqn{X}
 #' @references Zhou, Zhengyuan, Susan Athey, and Stefan Wager. "Offline multi-action policy learning:
-#'  Generalization and optimization." Operations Research, forthcoming.
+#'  Generalization and optimization." Operations Research 71.1 (2023).
 #' @export
 gen_data_mapl <- function(n, p = 10, sigma2 = 4) {
   if (p < 7) {
