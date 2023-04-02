@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This document provides a short introduction to the `policytree` package, with examples from Zhou, Athey and Wager (2018), and Athey and Wager (2021). The last section contains details on the runtime of `policy_tree`.
+This document provides a short introduction to the `policytree` package, with examples from Zhou, Athey and Wager (2023), and Athey and Wager (2021). The last section contains details on the runtime of `policy_tree`.
 
 ```{r, echo = FALSE, message = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
@@ -47,7 +47,7 @@ abline(0, -1, lwd = 4, col = 4)
 
 # Ex. 2: Multi-action treatment effect estimation
 
-The following example is from the 3-action DGP from section 6.4.1 in [Zhou, Athey and Wager (2018)](https://arxiv.org/abs/1810.04778)
+The following example is from the 3-action DGP from section 6.4.1 in [Zhou, Athey and Wager](https://arxiv.org/abs/1810.04778)
 
 ```{r}
 n <- 10000
