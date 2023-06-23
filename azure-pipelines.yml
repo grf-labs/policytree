@@ -42,7 +42,7 @@ jobs:
     condition: eq(variables['Agent.OS'], 'Linux')
   - script: |
       echo CXX_STD = $(cppVer) >> Makevars
-    workingDirectory: r-package/grf/bindings
+    workingDirectory: r-package/policytree/src
     displayName: Specify CXX_STD in R Makevars
     condition: ne(variables['Agent.OS'], 'Linux')
   - script: |
