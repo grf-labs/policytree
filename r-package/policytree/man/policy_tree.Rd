@@ -103,7 +103,6 @@ predicted <- predict(tree, X)
 var.imp <- grf::variable_importance(c.forest)
 top.5 <- order(var.imp, decreasing = TRUE)[1:5]
 tree.top5 <- policy_tree(X[, top.5], dr.scores, 2, split.step = 50)
-
 }
 }
 \references{
