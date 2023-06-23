@@ -27,49 +27,51 @@ Predict values based on fitted policy_tree object.
 }
 \examples{
 \donttest{
-# Fit a depth two tree on doubly robust treatment effect estimates from a causal forest.
+# Construct doubly robust scores using a causal forest.
 n <- 10000
 p <- 10
-# Discretizing continuous covariates decreases runtime.
+# Discretizing continuous covariates decreases runtime for policy learning.
 X <- round(matrix(rnorm(n * p), n, p), 2)
 colnames(X) <- make.names(1:p)
 W <- rbinom(n, 1, 1 / (1 + exp(X[, 3])))
 tau <- 1 / (1 + exp((X[, 1] + X[, 2]) / 2)) - 0.5
 Y <- X[, 3] + W * tau + rnorm(n)
 c.forest <- grf::causal_forest(X, Y, W)
+
+# Retrieve doubly robust scores.
 dr.scores <- double_robust_scores(c.forest)
 
-tree <- policy_tree(X, dr.scores, 2)
+# Learn a depth-2 tree on a training set.
+train <- sample(1:n, n / 2)
+tree <- policy_tree(X[train, ], dr.scores[train, ], 2)
 tree
 
-# Predict treatment assignment.
-predicted <- predict(tree, X)
+# Evaluate the tree on a test set.
+test <- -train
 
-plot(X[, 1], X[, 2], col = predicted)
-legend("topright", c("control", "treat"), col = c(1, 2), pch = 19)
-abline(0, -1, lty = 2)
+# One way to assess the policy is to see whether the leaf node (group) the test set samples
+# are predicted to belong to have mean outcomes in accordance with the prescribed policy.
 
-# Predict the leaf assigned to each sample.
-node.id <- predict(tree, X, type = "node.id")
-# Can be reshaped to a list of samples per leaf node with `split`.
-samples.per.leaf <- split(1:n, node.id)
+# Get the leaf node assigned to each test sample.
+node.id <- predict(tree, X[test, ], type = "node.id")
 
-# The value of all arms (along with SEs) by each leaf node.
-values <- aggregate(dr.scores, by = list(leaf.node = node.id),
-                    FUN = function(x) c(mean = mean(x), se = sd(x) / sqrt(length(x))))
-print(values, digits = 2)
+# Doubly robust estimates of E[Y(control)] and E[Y(treated)] by leaf node.
+values <- aggregate(dr.scores[test, ], by = list(leaf.node = node.id),
+                    FUN = function(dr) c(mean = mean(dr), se = sd(dr) / sqrt(length(dr))))
+print(values, digits = 1)
 
-# Take cost of treatment into account by offsetting the objective
+# Take cost of treatment into account by, for example, offsetting the objective
 # with an estimate of the average treatment effect.
-# See section 5.1 in Athey and Wager (2021) for more details, including
-# suggestions on using cross-validation to assess the accuracy of the learned policy.
 ate <- grf::average_treatment_effect(c.forest)
 cost.offset <- ate[["estimate"]]
 dr.scores[, "treated"] <- dr.scores[, "treated"] - cost.offset
 tree.cost <- policy_tree(X, dr.scores, 2)
 
-# If there are too many covariates to make tree search computationally feasible,
-# one can consider for example only the top 5 features according to GRF's variable importance.
+# Predict treatment assignment for each sample.
+predicted <- predict(tree, X)
+
+# If there are too many covariates to make tree search computationally feasible, then one
+# approach is to consider for example only the top features according to GRF's variable importance.
 var.imp <- grf::variable_importance(c.forest)
 top.5 <- order(var.imp, decreasing = TRUE)[1:5]
 tree.top5 <- policy_tree(X[, top.5], dr.scores, 2, split.step = 50)
