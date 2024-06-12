@@ -31,8 +31,7 @@ jobs:
           sudo apt-get install -qq pandoc
 
           # Install R
-          curl -OLs https://eddelbuettel.github.io/r-ci/run.sh
-          chmod 0755 run.sh
+          curl -OLs https://eddelbuettel.github.io/r-ci/run.sh && chmod 0755 run.sh
           ./run.sh bootstrap
           ./run.sh install_all
 
