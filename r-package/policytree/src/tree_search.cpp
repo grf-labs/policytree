@@ -1,3 +1,7 @@
+// Policy Tree (policytree).
+// https://github.com/grf-labs/policytree
+// Distributed under the MIT License.
+
 #include <functional>
 #include <boost/container/flat_set.hpp>
 
