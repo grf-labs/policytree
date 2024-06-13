@@ -14,7 +14,7 @@ Description: Learn optimal policies via doubly robust empirical
  a shallow decision tree that is globally (or close to) optimal.
 Depends:
     R (>= 3.5.0)
-License: GPL-3
+License: MIT + file LICENSE
 Encoding: UTF-8
 Suggests:
     testthat (>= 3.0.4),
