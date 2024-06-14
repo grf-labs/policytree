@@ -149,6 +149,10 @@ pp <- predict(tree, X)
 
 ## Previous performance test results
 
+**1.2.3**
+
+This is only a minor release updating the license.
+
 **1.2.2**
 
 This is only a patch release dropping CXX in Makevars per latest CRAN guidelines.
