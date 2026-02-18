@@ -25,7 +25,7 @@ To install the latest development version from source:
 devtools::install_github("grf-labs/policytree", subdir = "r-package/policytree")
 ```
 
-Installing from source requires a C++ 11 compiler (on Windows Rtools is required as well) together with the R packages
+Installing from source requires a C++ compiler (on Windows Rtools is required as well) together with the R packages
 `Rcpp` and `BH`.
 
 ### Multi-action policy learning example
