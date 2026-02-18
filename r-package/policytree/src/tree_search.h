@@ -4,6 +4,7 @@
 #include <limits>
 #include <memory>
 #include <stdexcept>
+#include <ostream>
 #include <vector>
 
 const double INF = std::numeric_limits<double>::infinity();
@@ -91,6 +92,6 @@ struct Node {
 };
 
 
-std::unique_ptr<Node> tree_search(int, int, size_t, const Data*, const std::function<void()>&);
+std::unique_ptr<Node> tree_search(int, int, size_t, const Data*, const std::function<void()>&, std::ostream*);
 
 #endif // TREE_SEARCH_H
