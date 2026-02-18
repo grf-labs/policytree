@@ -268,7 +268,8 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       int split_step,
                                       size_t min_node_size,
                                       const Data* data,
-                                      std::vector<std::vector<double>>& sum_array) {
+                                      std::vector<std::vector<double>>& sum_array,
+                                      const std::function<void()>& interrupt_handler) {
   if (level == 0) {
     // this base case will only be hit if `find_best_split` is called directly with level = 0
     return level_zero_learning(sorted_sets, data);
@@ -291,6 +292,9 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
       int split_counter = 0;
       size_t samples_counter = 0;
       for (size_t n = 0; n < num_points - 1; n++) {
+        if ((n & 1023) == 0) {
+          interrupt_handler(); // check for ctrl-c interrupt every 1024 iterations
+        }
         auto point = right_sorted_sets[p].cbegin(); // O(1)
         Point point_bk = *point; // store the Point instance since the iterator will be invalid after erase
         right_sorted_sets[p].erase(point); // O(1)
@@ -317,8 +321,8 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         } else {
           continue;
         }
-        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size, data, sum_array);
-        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size, data, sum_array);
+        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size, data, sum_array, interrupt_handler);
+        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size, data, sum_array, interrupt_handler);
         if ((best_left_child == nullptr) ||
             (left_child->reward + right_child->reward >
               best_left_child->reward + best_right_child->reward)) {
@@ -350,7 +354,8 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
   }
 }
 
-std::unique_ptr<Node> tree_search(int depth, int split_step, size_t min_node_size, const Data* data) {
+std::unique_ptr<Node> tree_search(int depth, int split_step, size_t min_node_size, const Data* data,
+                                  const std::function<void()>& interrupt_handler) {
   size_t num_rewards = data->num_rewards();
   size_t num_points = data->num_rows;
   auto sorted_sets = create_sorted_sets(data);
@@ -362,5 +367,5 @@ std::unique_ptr<Node> tree_search(int depth, int split_step, size_t min_node_siz
     v.resize(num_points + 1, 0.0);
   }
 
-  return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array);
+  return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array, interrupt_handler);
 }
