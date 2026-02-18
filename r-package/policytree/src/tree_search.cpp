@@ -7,6 +7,25 @@
 
 #include "tree_search.h"
 
+// Tiny heartbeat "spinner" to show solver is working.
+inline void print_heartbeat(std::ostream* verbose_stream) {
+  if (verbose_stream == nullptr) return;
+
+  static const char frames[] = {'|', '/', '-', '\\'};
+  static size_t frame = 0;
+
+  (*verbose_stream) << "\r" << frames[frame & 3] << std::flush;
+  frame++;
+}
+
+// Clears heartbeat when solver exits.
+struct ScopedHeartbeat {
+  std::ostream* stream;
+  ~ScopedHeartbeat() {
+    if (stream) (*stream) << "\r \r" << std::flush;
+  }
+};
+
 typedef boost::container::flat_set<Point, std::function<bool(const Point&, const Point&)>> flat_set;
 
 /**
@@ -269,7 +288,8 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
                                       size_t min_node_size,
                                       const Data* data,
                                       std::vector<std::vector<double>>& sum_array,
-                                      const std::function<void()>& interrupt_handler) {
+                                      const std::function<void()>& interrupt_handler,
+                                      std::ostream* verbose_stream) {
   if (level == 0) {
     // this base case will only be hit if `find_best_split` is called directly with level = 0
     return level_zero_learning(sorted_sets, data);
@@ -294,6 +314,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
       for (size_t n = 0; n < num_points - 1; n++) {
         if ((n & 1023) == 0) {
           interrupt_handler(); // check for ctrl-c interrupt every 1024 iterations
+          print_heartbeat(verbose_stream);
         }
         auto point = right_sorted_sets[p].cbegin(); // O(1)
         Point point_bk = *point; // store the Point instance since the iterator will be invalid after erase
@@ -321,8 +342,8 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
         } else {
           continue;
         }
-        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size, data, sum_array, interrupt_handler);
-        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size, data, sum_array, interrupt_handler);
+        auto left_child = find_best_split(left_sorted_sets, level - 1, split_step, min_node_size, data, sum_array, interrupt_handler, verbose_stream);
+        auto right_child = find_best_split(right_sorted_sets, level - 1, split_step, min_node_size, data, sum_array, interrupt_handler, verbose_stream);
         if ((best_left_child == nullptr) ||
             (left_child->reward + right_child->reward >
               best_left_child->reward + best_right_child->reward)) {
@@ -355,7 +376,7 @@ std::unique_ptr<Node> find_best_split(const std::vector<flat_set>& sorted_sets,
 }
 
 std::unique_ptr<Node> tree_search(int depth, int split_step, size_t min_node_size, const Data* data,
-                                  const std::function<void()>& interrupt_handler) {
+                                  const std::function<void()>& interrupt_handler, std::ostream* verbose_stream) {
   size_t num_rewards = data->num_rewards();
   size_t num_points = data->num_rows;
   auto sorted_sets = create_sorted_sets(data);
@@ -367,5 +388,7 @@ std::unique_ptr<Node> tree_search(int depth, int split_step, size_t min_node_siz
     v.resize(num_points + 1, 0.0);
   }
 
-  return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array, interrupt_handler);
+  ScopedHeartbeat heartbeat {verbose_stream};
+
+  return find_best_split(sorted_sets, depth, split_step, min_node_size, data, sum_array, interrupt_handler, verbose_stream);
 }

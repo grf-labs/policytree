@@ -31,14 +31,16 @@ Rcpp::List tree_search_rcpp(const Rcpp::NumericMatrix& X,
                             const Rcpp::NumericMatrix& Y,
                             int depth,
                             int split_step,
-                            int min_node_size) {
+                            int min_node_size,
+                            bool verbose) {
   size_t num_rows = X.rows();
   size_t num_cols_x = X.cols();
   size_t num_cols_y = Y.cols();
   const Data* data = new Data(X.begin(), Y.begin(), num_rows, num_cols_x, num_cols_y);
   const auto interrupt_handler = []() { Rcpp::checkUserInterrupt(); };
+  std::ostream* verbose_stream = verbose ? &Rcpp::Rcout : nullptr;
 
-  std::unique_ptr<Node> root = tree_search(depth, split_step, min_node_size, data, interrupt_handler);
+  std::unique_ptr<Node> root = tree_search(depth, split_step, min_node_size, data, interrupt_handler, verbose_stream);
 
   // We store the tree as the same list data structure (`nodes`) as GRF for seamless integration with
   // the plot and print methods. We also store the tree as an array (`tree_array`) for faster lookups.
