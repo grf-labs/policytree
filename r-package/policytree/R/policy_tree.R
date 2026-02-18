@@ -166,7 +166,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
     columns <- make.names(1:ncol(X))
   }
 
-  result <- tree_search_rcpp(as.matrix(X), as.matrix(Gamma), depth, split.step, min.node.size, verbose)
+  result <- tree_search_rcpp(as.matrix(X), as.matrix(Gamma), depth, split.step, min.node.size, verbose && interactive())
   tree <- list(nodes = result[[1]])
 
   tree[["_tree_array"]] <- result[[2]]
