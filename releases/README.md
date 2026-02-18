@@ -147,6 +147,10 @@ pp <- predict(tree, X)
 
 ## Previous performance test results
 
+**1.2.4**
+
+This is only a patch release touching non-performance sensitive C++.
+
 **1.2.3**
 
 This is only a minor release updating the license.
