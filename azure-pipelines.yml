@@ -13,7 +13,6 @@ jobs:
         imageName: "ubuntu-latest"
       macos:
         imageName: "macOS-latest"
-        cppVer: "CXX11"
   pool:
     vmImage: $(imageName)
 
