@@ -31,8 +31,6 @@ This is just a minor summary document, practically all details are the same as t
 
   https://win-builder.r-project.org/upload.aspx
 
-  https://builder.r-hub.io/ (to check on all builds, including Solaris)
-
   https://cran.r-project.org/submit.html
 
 4. Merge the "Prepare the vx release" and tag it
@@ -148,6 +146,10 @@ pp <- predict(tree, X)
 ```
 
 ## Previous performance test results
+
+**1.2.4**
+
+This is only a patch release touching non-performance sensitive C++.
 
 **1.2.3**
 
