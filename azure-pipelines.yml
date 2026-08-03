@@ -11,8 +11,6 @@ jobs:
     matrix:
       ubuntu:
         imageName: "ubuntu-latest"
-      macos:
-        imageName: "macOS-latest"
   pool:
     vmImage: $(imageName)
 
