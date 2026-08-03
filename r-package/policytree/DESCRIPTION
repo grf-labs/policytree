@@ -8,10 +8,14 @@ Authors@R: c(
     person("Susan", "Athey", role = "aut"),
     person("Stefan", "Wager", role = "aut")
     )
-Description: Learn optimal policies via doubly robust empirical
- welfare maximization over trees. Given doubly robust reward estimates, this package
- finds a rule-based treatment prescription policy, where the policy takes the form of
- a shallow decision tree that is globally (or close to) optimal.
+Description: Learn optimal policies via doubly robust empirical welfare
+    maximization over trees. Given reward estimates, the algorithm finds a
+    rule-based treatment allocation, where the policy takes the form of a
+    shallow decision tree that is globally optimal (or nearly so). Methods are
+    described in Sverdrup, Kanodia, Zhou, Athey, and Wager (2020)
+    <doi:10.21105/joss.02232>, Athey and Wager (2021)
+    <doi:10.3982/ECTA15732>, and Zhou, Athey, and Wager (2023)
+    <doi:10.1287/opre.2022.2271>.
 Depends:
     R (>= 3.5.0)
 License: MIT + file LICENSE
