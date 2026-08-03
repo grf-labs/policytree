@@ -118,7 +118,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
     stop("`depth` cannot be negative.")
   }
   if (n.obs != nrow(Gamma)) {
-    stop("X and Gamma does not have the same number of rows")
+    stop("X and Gamma do not have the same number of rows")
   }
   if (as.integer(split.step) != split.step || split.step < 1) {
     stop("`split.step` should be an integer greater than or equal to 1.")
