@@ -46,7 +46,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Erik Sverdrup \email{erikcs@stanford.edu}
+\strong{Maintainer}: Erik Sverdrup \email{erik.sverdrup@monash.edu}
 
 Authors:
 \itemize{
