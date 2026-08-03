@@ -77,7 +77,7 @@ $$
 \pi^* = argmax_{\pi \in \Pi} \left[\frac{1}{n} \sum_{i=1}^{n} \Gamma_i(\pi(X_i)) \right],
 $$
 
-where $\Pi$ is the class of depth-_k_ decision trees. (`hybrid_policy_tree()` employs a mix between a optimal/greedy approach and can be used to fit deeper trees).
+where $\Pi$ is the class of depth-_k_ decision trees. (`hybrid_policy_tree()` employs a mix between an optimal/greedy approach and can be used to fit deeper trees).
 
 `double_robust_scores()`: computes doubly robust reward estimates for a subset of _grf_ forest types.
 

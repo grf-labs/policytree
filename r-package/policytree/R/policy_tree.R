@@ -12,7 +12,7 @@
 #'
 #' As an example, the runtime of a depth two tree scales quadratically with the number of observations, implying
 #' that doubling the number of samples will quadruple the runtime.
-#' n refers to the number of distinct observations, substantial speedups can be gained
+#' n refers to the number of distinct observations: substantial speedups can be gained
 #' when the features are discrete (with all binary features, the runtime will be ~ linear in n),
 #' and it is therefore beneficial to round down/re-encode very dense data to a lower cardinality
 #' (the optional parameter `split.step` emulates this, though rounding/re-encoding allow for finer-grained control).
@@ -118,7 +118,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
     stop("`depth` cannot be negative.")
   }
   if (n.obs != nrow(Gamma)) {
-    stop("X and Gamma does not have the same number of rows")
+    stop("X and Gamma do not have the same number of rows")
   }
   if (as.integer(split.step) != split.step || split.step < 1) {
     stop("`split.step` should be an integer greater than or equal to 1.")
@@ -134,7 +134,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
         "The cardinality of some covariates exceeds 20000 distinct values. ",
         "Consider using the optional parameter `split.step` to speed up computations, or ",
         "discretize/relabel continuous features for finer grained control ",
-        "(the runtime of exact tree search scales with the number of distinct features, ",
+        "(the runtime of exact tree search scales with the number of distinct feature values, ",
         "see the documentation for details.)"
       ), immediate. = TRUE)
     }

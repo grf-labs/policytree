@@ -71,7 +71,7 @@ hybrid_policy_tree <- function(X, Gamma,
                "`matrix`, `data.frame`"))
   }
   if (nrow(X) != nrow(Gamma)) {
-    stop("X and Gamma does not have the same number of rows")
+    stop("X and Gamma do not have the same number of rows")
   }
   # Dummy tree object.
   tree <- policy_tree(X[1, , drop = FALSE], Gamma[1, , drop = FALSE], depth = 0, verbose = FALSE)
