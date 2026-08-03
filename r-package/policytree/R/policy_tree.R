@@ -134,7 +134,7 @@ policy_tree <- function(X, Gamma, depth = 2, split.step = 1, min.node.size = 1, 
         "The cardinality of some covariates exceeds 20000 distinct values. ",
         "Consider using the optional parameter `split.step` to speed up computations, or ",
         "discretize/relabel continuous features for finer grained control ",
-        "(the runtime of exact tree search scales with the number of distinct features, ",
+        "(the runtime of exact tree search scales with the number of distinct feature values, ",
         "see the documentation for details.)"
       ), immediate. = TRUE)
     }
