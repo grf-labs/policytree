@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [1.2.5] - 2025-08-04
 
 ### Fixed
-- Add minor documentation and package description polish. [#182](https://github.com/grf-labs/policytree/pull/182)
+- Minor documentation and package description polish. [#182](https://github.com/grf-labs/policytree/pull/182)
 
 ## [1.2.4] - 2025-02-18
 
